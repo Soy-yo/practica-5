@@ -27,7 +27,7 @@ public class SimulatorWindow extends JFrame {
         KeyEvent.VK_E, "control W", () -> System.exit(0));
     SimulatorAction save = new SimulatorAction(
         "Save", "save.png", "Save", KeyEvent.VK_S, "control S",
-        ()-> System.err.println("Saving..."));
+        () -> System.err.println("Saving..."));
 
     bar.add(save);
     bar.add(exit);
@@ -60,7 +60,7 @@ public class SimulatorWindow extends JFrame {
   }
 
 
-  public static void main(String ...args) {
+  public static void main(String... args) {
     JFrame window = new SimulatorWindow("Traffic Simulator", new Dimension(1000, 1000));
   }
 
