@@ -4,6 +4,7 @@ import es.ucm.fdi.control.Controller;
 import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.TrafficSimulator;
+
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -210,7 +211,8 @@ public class Main {
     // Call test in order to test the simulator on all examples in a
     // directory.
     //
-    //test("src/test/resources/examples/err");
+	//test("src/test/resources/examples/err");
+	
 
     // Call start to start the simulator from command line, etc.
     start(args);
