@@ -53,7 +53,7 @@ public class TrafficSimulator {
     listeners.add(listener);
     // Evento registrado
     EventUpdater updater = new EventUpdater(EventType.REGISTERED);
-    SwingUtilities.invokeLater(() -> listener.update(updater, null));
+    SwingUtilities.invokeLater(() -> listener.registered(updater));
   }
 
   public void removeListener(Listener listener) {
@@ -62,8 +62,32 @@ public class TrafficSimulator {
 
   private void fireEventUpdater(EventType type, String error) {
     EventUpdater updater = new EventUpdater(type);
-    for (Listener l : listeners) {
-      SwingUtilities.invokeLater(() -> l.update(updater, error));
+    switch (type) {
+      case REGISTERED:
+        for (Listener l : listeners) {
+          SwingUtilities.invokeLater(() -> l.registered(updater));
+        }
+        break;
+      case RESET:
+        for (Listener l : listeners) {
+          SwingUtilities.invokeLater(() -> l.reset(updater));
+        }
+        break;
+      case NEW_EVENT:
+        for (Listener l : listeners) {
+          SwingUtilities.invokeLater(() -> l.newEvent(updater));
+        }
+        break;
+      case ADVANCED:
+        for (Listener l : listeners) {
+          SwingUtilities.invokeLater(() -> l.advanced(updater));
+        }
+        break;
+      case ERROR:
+        for (Listener l : listeners) {
+          SwingUtilities.invokeLater(() -> l.error(updater, error));
+        }
+        break;
     }
   }
 
@@ -145,8 +169,15 @@ public class TrafficSimulator {
   }
 
   public interface Listener {
-    // TODO: utilizar esta opción o la otra? hay que hacer switch en algún lado en cualquier caso?
-    void update(EventUpdater updater, String error);
+    void registered(EventUpdater updater);
+
+    void reset(EventUpdater updater);
+
+    void newEvent(EventUpdater updater);
+
+    void advanced(EventUpdater updater);
+
+    void error(EventUpdater updater, String msg);
   }
 
   public enum EventType {
