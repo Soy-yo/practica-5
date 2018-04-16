@@ -7,16 +7,15 @@ public class EventsEditorPanel extends JScrollPane {
 
   private JTextArea editor;
 
-  EventsEditorPanel(Dimension size) {
-    super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    initialize(size);
+  EventsEditorPanel(Dimension minimumSize) {
+    super();
+    initialize(minimumSize);
   }
 
   private void initialize(Dimension size) {
     editor = new JTextArea();
-    editor.setEditable(true);
-    setPreferredSize(size);
-    add(editor);
+    setMinimumSize(size);
+    setViewportView(editor);
   }
 
 }

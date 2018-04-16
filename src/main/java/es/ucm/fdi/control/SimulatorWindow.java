@@ -51,9 +51,10 @@ public class SimulatorWindow extends JFrame {
 
 	private void addSections() {
 
-    Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 3, WINDOW_SIZE.height / 4);
-    Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 2, WINDOW_SIZE.height / 4);
+    Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 6, WINDOW_SIZE.height / 8);
+    Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3, WINDOW_SIZE.height / 8);
 
+    // TODO añadir bordes con el título en las clases estas
     EventsEditorPanel eventsEditor = new EventsEditorPanel(horizontalThird);
     // TODO: pedir datos para las tablas a las clases
     InfoTablePanel eventsQueue = new InfoTablePanel(horizontalThird,
@@ -68,45 +69,33 @@ public class SimulatorWindow extends JFrame {
 		JPanel roadMap = new JPanel();
 		roadMap.setBackground(Color.BLACK);
 
-		JSplitPane topLeftSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				eventsEditor, eventsQueue);
-		topLeftSplit.setVisible(true);
-		topLeftSplit.setResizeWeight(.5);
-    topLeftSplit.setContinuousLayout(true);
+    JSplitPane topLeftSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
+        eventsEditor, eventsQueue, .5);
+    JSplitPane topRightSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
+        topLeftSplit, reportsArea, .66);
 
-		JSplitPane topRightSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				topLeftSplit, reportsArea);
-		topRightSplit.setVisible(true);
-		topRightSplit.setResizeWeight(.66);
-    topRightSplit.setContinuousLayout(true);
+    JSplitPane bottomLeftTopSplit = createSeparator(JSplitPane.VERTICAL_SPLIT,
+        vehiclesTable, roadsTable, .5);
+    JSplitPane bottomLeftSplit = createSeparator(JSplitPane.VERTICAL_SPLIT,
+        bottomLeftTopSplit, junctionsTable, .66);
 
-		JSplitPane bottomLeftTopSplit = new JSplitPane(
-				JSplitPane.VERTICAL_SPLIT, vehiclesTable, roadsTable);
-		bottomLeftTopSplit.setVisible(true);
-		bottomLeftTopSplit.setResizeWeight(.5);
-    bottomLeftTopSplit.setContinuousLayout(true);
+    JSplitPane bottomSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
+        bottomLeftSplit, roadMap, .5);
 
-		JSplitPane bottomLeftSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				bottomLeftTopSplit, junctionsTable);
-		bottomLeftSplit.setVisible(true);
-		bottomLeftSplit.setResizeWeight(.66);
-    bottomLeftSplit.setContinuousLayout(true);
-		
-		JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				bottomLeftSplit, roadMap);
-		bottomSplit.setVisible(true);
-		bottomSplit.setResizeWeight(.5);
-    bottomSplit.setContinuousLayout(true);
+    JSplitPane main = createSeparator(JSplitPane.VERTICAL_SPLIT,
+        topRightSplit, bottomSplit, .4);
 
-		JPanel simulationPanel = new JPanel(new GridLayout(1, 2));
-		simulationPanel.setBackground(new Color(100, 60, 150));
-
-		JSplitPane main = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				topRightSplit, bottomSplit);
-		main.setResizeWeight(.4);
-		main.setContinuousLayout(true);
 		add(main);
 	}
+
+  private JSplitPane createSeparator(int orientation, Component first, Component second,
+                                     double weight) {
+    JSplitPane splitPane = new JSplitPane(orientation, first, second);
+    splitPane.setVisible(true);
+    splitPane.setResizeWeight(weight);
+    splitPane.setContinuousLayout(true);
+    return splitPane;
+  }
 
 	public static void main(String... args) {
     new SimulatorWindow("Traffic Simulator", WINDOW_SIZE);

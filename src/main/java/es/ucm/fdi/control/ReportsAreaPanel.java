@@ -7,16 +7,16 @@ public class ReportsAreaPanel extends JScrollPane {
 
   private JTextArea area;
 
-  ReportsAreaPanel(Dimension size) {
+  ReportsAreaPanel(Dimension minimumSize) {
     super();
-    initilaize(size);
+    initialize(minimumSize);
   }
 
-  private void initilaize(Dimension size) {
+  private void initialize(Dimension size) {
     area = new JTextArea();
     area.setEditable(false);
-    setPreferredSize(size);
-    add(area);
+    setMinimumSize(size);
+    setViewportView(area);
   }
 
 }
