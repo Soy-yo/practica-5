@@ -1,39 +1,38 @@
 package es.ucm.fdi.extra.dialog;
 
+import javax.swing.*;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
 
 class MyListModel<E> extends DefaultListModel<E> {
 
 	private static final long serialVersionUID = 1L;
-	List<E> _list;
+  List<E> list;
 
 	MyListModel() {
-		_list = null;
+    list = null;
 	}
 
 	public void setList(List<E> l) {
-		_list = l;
+    list = l;
 		refresh();
 	}
 
 	public E get(int index) {
-		return _list.get(index);
+    return list.get(index);
 	}
 
 	@Override
 	public E getElementAt(int index) {
-		return _list.get(index);
+    return list.get(index);
 	}
 
 	@Override
 	public int getSize() {
-		return _list == null ? 0 : _list.size();
+    return list == null ? 0 : list.size();
 	}
 
 	public void refresh() {
-		fireContentsChanged(this, 0, _list.size());
+    fireContentsChanged(this, 0, list.size());
 	}
 
 }

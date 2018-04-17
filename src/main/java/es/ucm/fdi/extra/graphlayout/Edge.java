@@ -4,40 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Edge {
-	private String _id;
-	private Node _source;
-	private Node _target;
-	private int _length;
-	private List<Dot> _dots;
+
+  private String id;
+  private Node source;
+  private Node target;
+  private int length;
+  private List<Dot> dots;
 	
 	public Edge(String id, Node source, Node target, int length) {
-		_source = source;
-		_target = target;
-		_id = id;
-		_length = length;
-		_dots = new ArrayList<>();
+    this.source = source;
+    this.target = target;
+    this.id = id;
+    this.length = length;
+    dots = new ArrayList<>();
 	}
 	
 	public void addDot(Dot e) {
-		_dots.add(e);
-	}
+    dots.add(e);
+  }
+
 	public String getId() {
-		return _id;
+    return id;
 	}
 	
 	public Node getSource() {
-		return _source;
+    return source;
 	}
 	
 	public Node getTarget() {
-		return _target;
+    return target;
 	}
 
 	public int getLength() {
-		return _length;
+    return length;
 	}
 	
 	public List<Dot> getDots() {
-		return _dots;
-	}
+    return dots;
+  }
+
 }
