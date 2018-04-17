@@ -1,19 +1,9 @@
 package es.ucm.fdi.extra.popupmenu;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 public class PopUpMenuExample extends JFrame {
 
@@ -21,10 +11,9 @@ public class PopUpMenuExample extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
-	private JPanel _mainPanel;
-	private JTextArea _editor;
+
+  private JPanel mainPanel;
+  private JTextArea editor;
 
 	public PopUpMenuExample() {
 		super("Pop Up Menu Example");
@@ -32,68 +21,49 @@ public class PopUpMenuExample extends JFrame {
 	}
 
 	private void initGUI() {
-		_mainPanel = new JPanel(new BorderLayout());
-		this.setContentPane(_mainPanel);
+    mainPanel = new JPanel(new BorderLayout());
+    this.setContentPane(mainPanel);
 
 		addEditor();
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.pack();
 		this.setVisible(true);
 	}
 
 	private void addEditor() {
-		_mainPanel.add(new JLabel("Right click over the text-area to get the popup menu."),BorderLayout.PAGE_START);
+    mainPanel.add(new JLabel("Right click over the text-area to get the popup menu."), BorderLayout.PAGE_START);
 
-		_editor = new JTextArea(20, 20);
+    editor = new JTextArea(20, 20);
 
-		_mainPanel.add(new JScrollPane(_editor, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+    mainPanel.add(new JScrollPane(editor, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
 
 		// create the events pop-up menu
-		JPopupMenu _editorPopupMenu = new JPopupMenu();
+    JPopupMenu editorPopupMenu = new JPopupMenu();
 		
 		JMenuItem clearOption = new JMenuItem("Clear");
-		clearOption.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_editor.setText("");
-			}
-		});
+    clearOption.addActionListener(e -> editor.setText(""));
 
 		JMenuItem exitOption = new JMenuItem("Exit");
-		exitOption.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+    exitOption.addActionListener(e -> System.exit(0));
 
 		JMenu subMenu = new JMenu("Insert");
 
 		String[] greetings = { "Hola!", "Hello!", "Ciao!" };
 		for (String s : greetings) {
 			JMenuItem menuItem = new JMenuItem(s);
-			menuItem.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					_editor.insert(s, _editor.getCaretPosition());
-				}
-			});
+      menuItem.addActionListener(e -> editor.insert(s, editor.getCaretPosition()));
 			subMenu.add(menuItem);
 		}
 
-		
-		_editorPopupMenu.add(subMenu);
-		_editorPopupMenu.addSeparator();
-		_editorPopupMenu.add(clearOption);
-		_editorPopupMenu.add(exitOption);
+    editorPopupMenu.add(subMenu);
+    editorPopupMenu.addSeparator();
+    editorPopupMenu.add(clearOption);
+    editorPopupMenu.add(exitOption);
 
 		// connect the popup menu to the text area _editor
-		_editor.addMouseListener(new MouseListener() {
+    editor.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -106,8 +76,8 @@ public class PopUpMenuExample extends JFrame {
 			}
 
 			private void showPopup(MouseEvent e) {
-				if (e.isPopupTrigger() && _editorPopupMenu.isEnabled()) {
-					_editorPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+        if (e.isPopupTrigger() && editorPopupMenu.isEnabled()) {
+          editorPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 
@@ -122,18 +92,13 @@ public class PopUpMenuExample extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
+
 		});
 
 	}
 	
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater( new Runnable() {
-			
-			@Override
-			public void run() {
-				new PopUpMenuExample();
-			}
-		});
+    SwingUtilities.invokeLater(PopUpMenuExample::new);
 	}
 
 }

@@ -1,20 +1,21 @@
 package es.ucm.fdi.extra.graphlayout;
 
 public class Dot {
-	private String _id;
-	private int _location;
+
+  private String id;
+  private int location;
 	
 	public Dot(String id, int location) {
-		_id = id;
-		_location = location;
+    this.id = id;
+    this.location = location;
 	}
 	
 	public String getId() {
-		return _id;
+    return id;
 	}
 	
 	public int getLocation() {
-		return _location;
+    return location;
 	}
 	
 }

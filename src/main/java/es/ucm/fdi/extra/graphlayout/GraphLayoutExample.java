@@ -1,16 +1,14 @@
 package es.ucm.fdi.extra.graphlayout;
 
 import javax.swing.*;
-
-import java.awt.BorderLayout;
-import java.awt.event.*;
+import java.awt.*;
 import java.util.Random;
 
 @SuppressWarnings("serial")
 public class GraphLayoutExample extends JFrame  {
-	
-	private GraphComponent _graphComp;
-    Random _rand;
+
+  private GraphComponent graphComponent;
+  Random rand;
     
 	public GraphLayoutExample() {
 		super("Dialog Example");
@@ -18,25 +16,20 @@ public class GraphLayoutExample extends JFrame  {
 	}
 
 	private void initGUI() {
-		_rand = new Random(System.currentTimeMillis());
+    rand = new Random(System.currentTimeMillis());
 
 		JPanel mainPanel = new JPanel(new BorderLayout() );
-		
-		_graphComp = new GraphComponent();
-		mainPanel.add(_graphComp, BorderLayout.CENTER);
+
+    graphComponent = new GraphComponent();
+    mainPanel.add(graphComponent, BorderLayout.CENTER);
 
 		JButton newGraph = new JButton("New Graph");
-		newGraph.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				generateGraph();
-			}
-		});
+    newGraph.addActionListener(e -> generateGraph());
 		
 		mainPanel.add(newGraph,BorderLayout.PAGE_START);
 		
 		this.setContentPane(mainPanel);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.pack();
 		this.setVisible(true);
 
@@ -45,40 +38,37 @@ public class GraphLayoutExample extends JFrame  {
 	protected void generateGraph() {
 
 		Graph g = new Graph();
-		int numNodes = _rand.nextInt(20)+5;
-		int numEdges = _rand.nextInt(2*numNodes);		
+    int numNodes = rand.nextInt(20) + 5;
+    int numEdges = rand.nextInt(2 * numNodes);
 		
 		for (int i=0; i<numNodes; i++) {
 			g.addNode(new Node("n"+i));
 		}
 		
 		for (int i=0; i<numEdges; i++) {
-			int s = _rand.nextInt(numNodes);
-			int t = _rand.nextInt(numNodes);
+      int s = rand.nextInt(numNodes);
+      int t = rand.nextInt(numNodes);
 			if ( s == t ) {
 				t = (t + 1) % numNodes;
 			}
-			int l = _rand.nextInt(30)+20;
+      int l = rand.nextInt(30) + 20;
 			Edge e = new Edge("e"+i, g.getNodes().get(s), g.getNodes().get(t), l);
-			
-			int numDots = _rand.nextInt(5);
+
+      int numDots = rand.nextInt(5);
 			for(int j=0; j<numDots; j++) {
-				l = Math.max(0, _rand.nextBoolean() ? l/2 : l);
+        l = Math.max(0, rand.nextBoolean() ? l / 2 : l);
 				e.addDot( new Dot("d"+j, l));
 			}
 			
 			g.addEdge(e);
 		}
-		
-		_graphComp.setGraph(g);
+
+    graphComponent.setGraph(g);
 
 	}
 
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new GraphLayoutExample();
-			}
-		});
-	}
+    SwingUtilities.invokeLater(GraphLayoutExample::new);
+  }
+
 }

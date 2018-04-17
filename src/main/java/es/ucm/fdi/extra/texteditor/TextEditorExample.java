@@ -1,13 +1,10 @@
 package es.ucm.fdi.extra.texteditor;
 
 import javax.swing.*;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,7 +51,7 @@ public class TextEditorExample extends JFrame implements ActionListener {
 		// we create the file chooser only once
 		fc = new JFileChooser();
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.pack();
 		this.setVisible(true);
 
@@ -74,28 +71,28 @@ public class TextEditorExample extends JFrame implements ActionListener {
 		load.addActionListener(this);
 		load.setMnemonic(KeyEvent.VK_L);
 		load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-				ActionEvent.ALT_MASK));
+        InputEvent.ALT_MASK));
 
 		save = new JMenuItem("Save");
 		save.setActionCommand(SAVE);
 		save.addActionListener(this);
 		save.setMnemonic(KeyEvent.VK_S);
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				ActionEvent.ALT_MASK));
+        InputEvent.ALT_MASK));
 
 		clear = new JMenuItem("Clear");
 		clear.setActionCommand(CLEAR);
 		clear.addActionListener(this);
 		clear.setMnemonic(KeyEvent.VK_C);
 		clear.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-				ActionEvent.ALT_MASK));
+        InputEvent.ALT_MASK));
 
 		quit = new JMenuItem("Quit");
 		quit.setActionCommand(QUIT);
 		quit.addActionListener(this);
 		quit.setMnemonic(KeyEvent.VK_Q);
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-				ActionEvent.ALT_MASK));
+        InputEvent.ALT_MASK));
 
 		file.add(load);
 		file.add(save);
@@ -188,11 +185,7 @@ public class TextEditorExample extends JFrame implements ActionListener {
 	}
 
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new TextEditorExample();
-			}
-		});
+    SwingUtilities.invokeLater(TextEditorExample::new);
 	}
 
 }

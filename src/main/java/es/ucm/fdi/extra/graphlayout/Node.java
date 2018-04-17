@@ -1,13 +1,15 @@
 package es.ucm.fdi.extra.graphlayout;
 
 public class Node {
-	private String _id;
+
+  private String id;
 	
 	public Node(String id) {
-		_id = id;
+    this.id = id;
 	}
 	
 	public String getId() {
-		return _id;
-	}
+    return id;
+  }
+
 }
