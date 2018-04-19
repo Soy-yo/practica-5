@@ -30,7 +30,7 @@ public class TrafficSimulator {
     events = new MultiTreeMap<>();
     roadMap = new RoadMap();
     if (listeners != null) {
-      fireEventUpdater(EventType.RESET, null);
+      fireUpdateEvent(EventType.RESET, null);
     }
     listeners = new ArrayList<>();
   }
@@ -38,11 +38,11 @@ public class TrafficSimulator {
   public void addEvent(Event event) {
     if (event.getTime() < currentTime) {
       String msg = "Event " + event.getId() + " is breaking the space-time continuum";
-      fireEventUpdater(EventType.ERROR, msg);
+      fireUpdateEvent(EventType.ERROR, msg);
       throw new IllegalStateException(msg);
     }
     events.putValue(event.getTime(), event);
-    fireEventUpdater(EventType.NEW_EVENT, null);
+    fireUpdateEvent(EventType.NEW_EVENT, null);
   }
 
   public void addSimulatedObject(SimulatedObject o) {
@@ -52,40 +52,40 @@ public class TrafficSimulator {
   public void addListener(Listener listener) {
     listeners.add(listener);
     // Evento registrado
-    EventUpdater updater = new EventUpdater(EventType.REGISTERED);
-    SwingUtilities.invokeLater(() -> listener.registered(updater));
+    UpdateEvent ue = new UpdateEvent(EventType.REGISTERED);
+    SwingUtilities.invokeLater(() -> listener.registered(ue));
   }
 
   public void removeListener(Listener listener) {
     listeners.remove(listener);
   }
 
-  private void fireEventUpdater(EventType type, String error) {
-    EventUpdater updater = new EventUpdater(type);
+  private void fireUpdateEvent(EventType type, String error) {
+    UpdateEvent ue = new UpdateEvent(type);
     switch (type) {
       case REGISTERED:
         for (Listener l : listeners) {
-          SwingUtilities.invokeLater(() -> l.registered(updater));
+          SwingUtilities.invokeLater(() -> l.registered(ue));
         }
         break;
       case RESET:
         for (Listener l : listeners) {
-          SwingUtilities.invokeLater(() -> l.reset(updater));
+          SwingUtilities.invokeLater(() -> l.reset(ue));
         }
         break;
       case NEW_EVENT:
         for (Listener l : listeners) {
-          SwingUtilities.invokeLater(() -> l.newEvent(updater));
+          SwingUtilities.invokeLater(() -> l.newEvent(ue));
         }
         break;
       case ADVANCED:
         for (Listener l : listeners) {
-          SwingUtilities.invokeLater(() -> l.advanced(updater));
+          SwingUtilities.invokeLater(() -> l.advanced(ue));
         }
         break;
       case ERROR:
         for (Listener l : listeners) {
-          SwingUtilities.invokeLater(() -> l.error(updater, error));
+          SwingUtilities.invokeLater(() -> l.error(ue, error));
         }
         break;
     }
@@ -103,7 +103,7 @@ public class TrafficSimulator {
       v.setFaulty(time);
     } else {
       String msg = "Vehicle " + id + " not found";
-      fireEventUpdater(EventType.ERROR, msg);
+      fireUpdateEvent(EventType.ERROR, msg);
       throw new IllegalArgumentException(msg);
     }
   }
@@ -115,7 +115,7 @@ public class TrafficSimulator {
         writeReport(o.generateReport(currentTime), out);
       } catch (SimulatorError e) {
         String msg = "Something went wrong while writing " + o + "'s report";
-        fireEventUpdater(EventType.ERROR, msg);
+        fireUpdateEvent(EventType.ERROR, msg);
         throw new SimulatorError(msg, e);
       }
     }
@@ -147,7 +147,7 @@ public class TrafficSimulator {
             e.execute(this);
           } catch (IllegalArgumentException ex) {
             String msg = "Something went wrong while executing event " + e;
-            fireEventUpdater(EventType.ERROR, msg);
+            fireUpdateEvent(EventType.ERROR, msg);
             throw new SimulatorError(msg, ex);
           }
         }
@@ -159,7 +159,7 @@ public class TrafficSimulator {
         j.advance();
       }
       currentTime++;
-      fireEventUpdater(EventType.ADVANCED, null);
+      fireUpdateEvent(EventType.ADVANCED, null);
       if (out != null) {
         writeSimulatedObjectsReports(out, roadMap.getJunctions());
         writeSimulatedObjectsReports(out, roadMap.getRoads());
@@ -169,26 +169,28 @@ public class TrafficSimulator {
   }
 
   public interface Listener {
-    void registered(EventUpdater updater);
 
-    void reset(EventUpdater updater);
+    void registered(UpdateEvent ue);
 
-    void newEvent(EventUpdater updater);
+    void reset(UpdateEvent ue);
 
-    void advanced(EventUpdater updater);
+    void newEvent(UpdateEvent ue);
 
-    void error(EventUpdater updater, String msg);
+    void advanced(UpdateEvent ue);
+
+    void error(UpdateEvent ue, String msg);
+
   }
 
   public enum EventType {
     REGISTERED, RESET, NEW_EVENT, ADVANCED, ERROR
   }
 
-  public class EventUpdater {
+  public class UpdateEvent {
 
     private EventType type;
 
-    private EventUpdater(EventType type) {
+    private UpdateEvent(EventType type) {
       this.type = type;
     }
 

@@ -1,25 +1,46 @@
 package es.ucm.fdi.control;
 
+import es.ucm.fdi.events.Event;
 import es.ucm.fdi.extra.graphlayout.GraphComponent;
+import es.ucm.fdi.model.Junction;
+import es.ucm.fdi.model.Road;
+import es.ucm.fdi.model.TrafficSimulator;
+import es.ucm.fdi.model.Vehicle;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 public class SimulatorWindow extends JFrame {
 
   private static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
 
+  private Controller controller;
+  private EventsEditorPanel eventsEditor;
+  private InfoTablePanel<Event> eventsQueue;
+  private ReportsAreaPanel reportsArea;
+  private InfoTablePanel<Vehicle> vehiclesTable;
+  private InfoTablePanel<Road> roadsTable;
+  private InfoTablePanel<Junction> junctionsTable;
+  private GraphComponent roadMap;
+
 	public SimulatorWindow(String title, Dimension dimension) {
 		super(title);
+    controller = new Controller(new TrafficSimulator());
 		initialize(dimension);
 	}
 
 	private void initialize(Dimension dimension) {
 		setSize(dimension);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		addToolBar();
 		addSections();
+    addToolBar();
+    addListeners();
 		setVisible(true);
 	}
 
@@ -28,18 +49,16 @@ public class SimulatorWindow extends JFrame {
 		JToolBar bar = new JToolBar();
 
     SimulatorAction load = new SimulatorAction("Load events", "open.png",
-        "Load events file", KeyEvent.VK_L, "control L",
-        () -> System.err.println("Opening file..."));
+        "Load events file", KeyEvent.VK_L, "control L", this::loadEvents);
 
     SimulatorAction save = new SimulatorAction("Save events", "save.png",
-        "Save events", KeyEvent.VK_S, "control S",
-        () -> System.err.println("Saving..."));
+        "Save events", KeyEvent.VK_S, "control S", this::saveEvents);
 
     SimulatorAction clear = new SimulatorAction("Clear", "clear.png",
-        "Clear events editor", KeyEvent.VK_C, "control D",
-        () -> System.err.println("Clearing events editor..."));
+        "Clear events editor", KeyEvent.VK_C, "control D", eventsEditor::clear);
 
-    // TODO: events no se qué hace (el que parece un calendario), así que no lo pongo aún
+    SimulatorAction events = new SimulatorAction("Set events", "events.png",
+        "Move events to events queue", null, "control enter", this::readEvents);
 
     SimulatorAction run = new SimulatorAction("Run", "play.png",
         "Run simulation", KeyEvent.VK_R, "control P",
@@ -70,6 +89,7 @@ public class SimulatorWindow extends JFrame {
     bar.add(load);
 		bar.add(save);
     bar.add(clear);
+    bar.add(events);
     bar.add(run);
     bar.add(reset);
     bar.add(generateReport);
@@ -92,6 +112,8 @@ public class SimulatorWindow extends JFrame {
     JMenu simulator = new JMenu("Simulator");
     simulator.add(run);
     simulator.add(reset);
+    simulator.addSeparator();
+    simulator.add(events);
     JMenu reports = new JMenu("Reports");
     reports.add(generateReport);
     reports.add(deleteReport);
@@ -108,18 +130,18 @@ public class SimulatorWindow extends JFrame {
     Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 6, WINDOW_SIZE.height / 8);
     Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3, WINDOW_SIZE.height / 8);
 
-    EventsEditorPanel eventsEditor = new EventsEditorPanel(horizontalThird);
+    eventsEditor = new EventsEditorPanel(horizontalThird);
     // TODO: pedir datos para las tablas a las clases
-    InfoTablePanel eventsQueue = new InfoTablePanel("Events Queue", horizontalThird,
-        new Object[]{"#", "Time", "Type"});
-    ReportsAreaPanel reportsArea = new ReportsAreaPanel(horizontalThird);
-    InfoTablePanel vehiclesTable = new InfoTablePanel("Vehicles", verticalThird,
-        new Object[]{"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"});
-    InfoTablePanel roadsTable = new InfoTablePanel("Roads", verticalThird,
-        new Object[]{"ID", "Source", "Target", "Length", "Max Speed", "Vehicles"});
-    InfoTablePanel junctionsTable = new InfoTablePanel("Junctions", verticalThird,
-        new Object[]{"ID", "Green", "Red"});
-    GraphComponent roadMap = new GraphComponent();
+    eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
+        new String[]{"#", "Time", "Type"});
+    reportsArea = new ReportsAreaPanel(horizontalThird);
+    vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird,
+        new String[]{"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"});
+    roadsTable = new InfoTablePanel<>("Roads", verticalThird,
+        new String[]{"ID", "Source", "Target", "Length", "Max Speed", "Vehicles"});
+    junctionsTable = new InfoTablePanel<>("Junctions", verticalThird,
+        new String[]{"ID", "Green", "Red"});
+    roadMap = new GraphComponent();
 
     JSplitPane topLeftSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
         eventsEditor, eventsQueue, .5);
@@ -140,6 +162,32 @@ public class SimulatorWindow extends JFrame {
 		add(main);
 	}
 
+  private void addListeners() {
+    controller.addListener(new TrafficSimulator.Listener() {
+      @Override
+      public void registered(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void reset(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void newEvent(TrafficSimulator.UpdateEvent ue) {
+        List<Event> events = ue.getEventQueue();
+        eventsQueue.setElements(events);
+      }
+
+      @Override
+      public void advanced(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void error(TrafficSimulator.UpdateEvent ue, String msg) {
+      }
+    });
+  }
+
   private JSplitPane createSeparator(int orientation, Component first, Component second,
                                      double weight) {
     JSplitPane splitPane = new JSplitPane(orientation, first, second);
@@ -150,8 +198,37 @@ public class SimulatorWindow extends JFrame {
     return splitPane;
   }
 
-	public static void main(String... args) {
+  private void loadEvents() {
+    // TODO: apunta adónde?
+    JFileChooser chooser = new JFileChooser();
+    chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
+    int value = chooser.showOpenDialog(this);
+    if (value == JFileChooser.APPROVE_OPTION) {
+      try {
+        eventsEditor.writeFromFile(chooser.getSelectedFile());
+      } catch (IOException ignored) {
+        // TODO: hacer algo con las excecpciones
+      }
+    }
+  }
+
+  private void saveEvents() {
+    // TODO: implementar
+  }
+
+  private void readEvents() {
+    try {
+      String text = eventsEditor.getText();
+      InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
+      controller.loadEvents(is);
+    } catch (IOException ignored) {
+      // TODO: hacer algo con las excecpciones
+    }
+  }
+
+  // TODO: try-catch
+  public static void main(String... args) {
     new SimulatorWindow("Traffic Simulator", WINDOW_SIZE);
-	}
+  }
 
 }

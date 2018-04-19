@@ -3,7 +3,7 @@ package es.ucm.fdi.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class SimulatedObject {
+public abstract class SimulatedObject implements Describable {
 
   protected final String id; // id único
 
@@ -28,6 +28,11 @@ public abstract class SimulatedObject {
     kvps.put("time", "" + time);
     fillReportDetails(kvps);
     return kvps;
+  }
+
+  public Map<String, String> describe() {
+    // TODO: implementar en las subclases
+    return null;
   }
 
   @Override

@@ -52,4 +52,8 @@ public class Controller {
     }
   }
 
+  public void addListener(TrafficSimulator.Listener listener) {
+    simulator.addListener(listener);
+  }
+
 }

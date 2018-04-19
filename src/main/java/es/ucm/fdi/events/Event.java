@@ -1,9 +1,13 @@
 package es.ucm.fdi.events;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 
-public abstract class Event {
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class Event implements Describable {
 
   protected final int time;
   protected final String id;
@@ -22,6 +26,16 @@ public abstract class Event {
   }
 
   public abstract void execute(TrafficSimulator simulator);
+
+  public Map<String, String> describe() {
+    Map<String, String> result = new HashMap<>();
+    // TODO: coger estas de alguna forma para asegurar que coinciden con la vista
+    result.put("#", "?");
+    result.put("time", "" + time);
+    // TODO: utilizar el toString
+    result.put("type", "NOTHING");
+    return result;
+  }
 
   @Override
   public String toString() {

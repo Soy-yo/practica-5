@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface Describable {
 
-  void describe(Map<String, String> out);
+  Map<String, String> describe();
 
 }
