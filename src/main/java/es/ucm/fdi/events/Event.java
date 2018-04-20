@@ -9,6 +9,8 @@ import java.util.Map;
 
 public abstract class Event implements Describable {
 
+  public static final String[] INFO = {"#", "Time", "Type"};
+
   protected final int time;
   protected final String id;
 
@@ -29,11 +31,9 @@ public abstract class Event implements Describable {
 
   public Map<String, String> describe() {
     Map<String, String> result = new HashMap<>();
-    // TODO: coger estas de alguna forma para asegurar que coinciden con la vista
-    result.put("#", "?");
-    result.put("time", "" + time);
-    // TODO: utilizar el toString
-    result.put("type", "NOTHING");
+    result.put(INFO[0], "");
+    result.put(INFO[1], "" + time);
+    result.put(INFO[2], toString());
     return result;
   }
 

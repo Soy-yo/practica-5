@@ -132,8 +132,7 @@ public class SimulatorWindow extends JFrame {
 
     eventsEditor = new EventsEditorPanel(horizontalThird);
     // TODO: pedir datos para las tablas a las clases
-    eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
-        new String[]{"#", "Time", "Type"});
+    eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird, Event.INFO);
     reportsArea = new ReportsAreaPanel(horizontalThird);
     vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird,
         new String[]{"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"});
@@ -163,29 +162,7 @@ public class SimulatorWindow extends JFrame {
 	}
 
   private void addListeners() {
-    controller.addListener(new TrafficSimulator.Listener() {
-      @Override
-      public void registered(TrafficSimulator.UpdateEvent ue) {
-      }
 
-      @Override
-      public void reset(TrafficSimulator.UpdateEvent ue) {
-      }
-
-      @Override
-      public void newEvent(TrafficSimulator.UpdateEvent ue) {
-        List<Event> events = ue.getEventQueue();
-        eventsQueue.setElements(events);
-      }
-
-      @Override
-      public void advanced(TrafficSimulator.UpdateEvent ue) {
-      }
-
-      @Override
-      public void error(TrafficSimulator.UpdateEvent ue, String msg) {
-      }
-    });
   }
 
   private JSplitPane createSeparator(int orientation, Component first, Component second,
@@ -221,8 +198,12 @@ public class SimulatorWindow extends JFrame {
       String text = eventsEditor.getText();
       InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
       controller.loadEvents(is);
+      List<Event> events = controller.getLoadedEvents();
+      eventsQueue.setElements(events);
     } catch (IOException ignored) {
       // TODO: hacer algo con las excecpciones
+    } catch (IllegalStateException e) {
+      System.out.println("ERROR!");
     }
   }
 
