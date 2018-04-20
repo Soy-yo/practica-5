@@ -10,6 +10,7 @@ import es.ucm.fdi.model.TrafficSimulator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public class Controller {
 
@@ -50,6 +51,10 @@ public class Controller {
     } catch (IOException e) {
       throw new IllegalStateException("Something went wrong while reading ini file", e);
     }
+  }
+
+  public List<Event> getLoadedEvents() {
+    return simulator.getEvents();
   }
 
   public void addListener(TrafficSimulator.Listener listener) {

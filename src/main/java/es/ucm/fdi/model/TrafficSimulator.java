@@ -9,10 +9,7 @@ import es.ucm.fdi.util.MultiTreeMap;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class TrafficSimulator {
 
@@ -43,6 +40,10 @@ public class TrafficSimulator {
     }
     events.putValue(event.getTime(), event);
     fireUpdateEvent(EventType.NEW_EVENT, null);
+  }
+
+  public List<Event> getEvents() {
+    return Collections.unmodifiableList(events.valuesList());
   }
 
   public void addSimulatedObject(SimulatedObject o) {
@@ -211,7 +212,7 @@ public class TrafficSimulator {
     }
 
     public List<Event> getEventQueue() {
-      return events.valuesList();
+      return getEvents();
     }
 
     public int getCurrentTime() {
