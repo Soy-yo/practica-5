@@ -106,7 +106,7 @@ public class SimulatorWindow extends JFrame {
 				"Exit application", KeyEvent.VK_E, "control W",
 				() -> System.exit(0));
 
-		bar.add(load);
+		/*bar.add(load);
 		bar.add(save);
 		bar.add(clear);
 		bar.add(events);
@@ -119,7 +119,12 @@ public class SimulatorWindow extends JFrame {
 		bar.add(generateReport);
 		bar.add(deleteReport);
 		bar.add(saveReport);
-		bar.add(exit);
+		bar.add(exit);*/
+
+		addActionToToolBar(bar, load, save, clear, events, run, reset);
+		addComponentToToolBar(bar, new JLabel(" Steps: "), stepCounter, new JLabel(
+				" Time: "), time);
+		addActionToToolBar(bar, generateReport, deleteReport, saveReport, exit);
 
 		add(bar, BorderLayout.NORTH);
 
@@ -127,20 +132,27 @@ public class SimulatorWindow extends JFrame {
 		JMenuBar menu = new JMenuBar();
 
 		JMenu file = new JMenu("File");
-		file.add(load);
+		/*file.add(load);
 		file.add(save);
 		file.addSeparator();
 		file.add(saveReport);
 		file.addSeparator();
 		file.add(exit);
+		*/
+		addActionToMenu(file, load, save, null, saveReport, null, exit);
+
 		JMenu simulator = new JMenu("Simulator");
-		simulator.add(run);
+		/*simulator.add(run);
 		simulator.add(reset);
 		simulator.addSeparator();
-		simulator.add(events);
+		simulator.add(events);*/
+		
+		addActionToMenu(simulator, run, reset, null, events);
 		JMenu reports = new JMenu("Reports");
-		reports.add(generateReport);
-		reports.add(deleteReport);
+		/*reports.add(generateReport);
+		reports.add(deleteReport);*/
+		
+		addActionToMenu(reports, generateReport, deleteReport);
 
 		menu.add(file);
 		menu.add(simulator);
@@ -246,12 +258,28 @@ public class SimulatorWindow extends JFrame {
 		}
 	}
 
-	//TODO: borrar
-	/*private void addToBar(JComponent bar, JComponent... elements) {
+	// TODO: borrar
+	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {
 			bar.add(c);
 		}
-	}*/
+	}
+
+	private void addActionToToolBar(JToolBar bar, Action... actions) {
+		for (Action a : actions) {
+			bar.add(a);
+		}
+	}
+	
+	private void addActionToMenu(JMenu menu, Action... actions) {
+		for (Action a : actions) {
+			if(a != null) {
+			menu.add(a);
+			} else {
+				menu.addSeparator();
+			}
+		}
+	}
 
 	// TODO: try-catch
 	public static void main(String... args) {
