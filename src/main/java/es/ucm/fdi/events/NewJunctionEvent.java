@@ -6,6 +6,7 @@ import es.ucm.fdi.model.TrafficSimulator;
 
 public class NewJunctionEvent extends Event {
 
+  private static final String FRIENDLY_CLASS_NAME = "New Junction";
   protected static final String SECTION_TAG_NAME = "new_junction";
 
   NewJunctionEvent(int time, String id) {
@@ -15,6 +16,11 @@ public class NewJunctionEvent extends Event {
   @Override
   public void execute(TrafficSimulator simulator) {
     simulator.addSimulatedObject(new Junction(id));
+  }
+
+  @Override
+  public String toString() {
+    return FRIENDLY_CLASS_NAME + " " + id;
   }
 
   static class Builder implements Event.Builder {
@@ -35,6 +41,18 @@ public class NewJunctionEvent extends Event {
 
     public NewJunctionEvent parseType(IniSection section, int time, String id) {
       return new NewJunctionEvent(time, id);
+    }
+
+    @Override
+    public String getEventName() {
+      return FRIENDLY_CLASS_NAME;
+    }
+
+    @Override
+    public String getEventFileTemplate() {
+      return "[" + SECTION_TAG_NAME + "]\n" +
+          "time=\n" +
+          "id=\n";
     }
 
   }

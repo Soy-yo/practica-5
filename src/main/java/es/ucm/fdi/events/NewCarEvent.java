@@ -6,6 +6,8 @@ import es.ucm.fdi.model.TrafficSimulator;
 
 public class NewCarEvent extends NewVehicleEvent {
 
+  private static final String FRIENDLY_CLASS_NAME = "New Car";
+
   private int resistance;
   private double faultProbability;
   private int maxFaultDuration;
@@ -25,6 +27,11 @@ public class NewCarEvent extends NewVehicleEvent {
   public void execute(TrafficSimulator simulator) {
     simulator.addSimulatedObject(new Car(id, maxSpeed, simulator.getPath(itinerary),
         resistance, faultProbability, maxFaultDuration, seed));
+  }
+
+  @Override
+  public String toString() {
+    return FRIENDLY_CLASS_NAME + " " + id;
   }
 
   static class Builder extends NewVehicleEvent.Builder {
@@ -48,6 +55,25 @@ public class NewCarEvent extends NewVehicleEvent {
 
       return new NewCarEvent(time, id, maxSpeed, itinerary, resistance,
           faultProbability, maxFaultDuration, seed);
+    }
+
+    @Override
+    public String getEventName() {
+      return FRIENDLY_CLASS_NAME;
+    }
+
+    @Override
+    public String getEventFileTemplate() {
+      return "[" + SECTION_TAG_NAME + "]\n" +
+          "time=\n" +
+          "id=\n" +
+          "type=" + Car.TYPE + "\n" +
+          "max_speed=\n" +
+          "itinerary=\n" +
+          "resistance=\n" +
+          "faulty_probability=\n" +
+          "max_fault_duration=\n" +
+          "seed=\n";
     }
 
   }

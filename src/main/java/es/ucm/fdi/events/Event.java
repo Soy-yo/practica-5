@@ -7,6 +7,7 @@ import es.ucm.fdi.model.TrafficSimulator;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: repasar añadidos en las subclases por si se pudiera sacar factor común
 public abstract class Event implements Describable {
 
   public static final String[] INFO = {"#", "Time", "Type"};
@@ -45,6 +46,10 @@ public abstract class Event implements Describable {
   public interface Builder {
 
     Event parse(IniSection section);
+
+    String getEventName();
+
+    String getEventFileTemplate();
 
     // Comprueba que el tipo especificado sea el mismo que la subclase de Event concreta
     default boolean matchesType(IniSection section) {

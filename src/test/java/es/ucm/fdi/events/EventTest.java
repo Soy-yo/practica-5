@@ -54,10 +54,22 @@ class EventTest {
   }
 
   private class Implementation implements Event.Builder {
+
     @Override
     public Event parse(IniSection section) {
       throw new UnsupportedOperationException("Nothing to do");
     }
+
+    @Override
+    public String getEventName() {
+      throw new UnsupportedOperationException("Nothing to do");
+    }
+
+    @Override
+    public String getEventFileTemplate() {
+      throw new UnsupportedOperationException("Nothing to do");
+    }
+
   }
 
 }
