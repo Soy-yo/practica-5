@@ -16,6 +16,8 @@ public abstract class SimulatedObject implements Describable {
   public abstract void fillReportDetails(Map<String, String> kvps);
 
   protected abstract String getReportHeader();
+  
+  public abstract Map<String, String> describe();
 
   public String getId() {
     return id;
@@ -30,10 +32,6 @@ public abstract class SimulatedObject implements Describable {
     return kvps;
   }
 
-  public Map<String, String> describe() {
-    // TODO: implementar en las subclases
-    return null;
-  }
 
   @Override
   public boolean equals(Object o) {

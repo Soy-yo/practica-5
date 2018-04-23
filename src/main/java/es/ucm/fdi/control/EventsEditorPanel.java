@@ -53,7 +53,8 @@ public class EventsEditorPanel extends JScrollPane {
     return editor.getText();
   }
 
-  private class EventsEditorPopupMenu extends JPopupMenu {
+  @SuppressWarnings("serial")
+private class EventsEditorPopupMenu extends JPopupMenu {
 
     EventsEditorPopupMenu() {
       super();
