@@ -19,7 +19,7 @@ import java.util.List;
 
 public class SimulatorWindow extends JFrame {
 
-	private static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
+	protected static final Dimension WINDOW_SIZE = new Dimension(1000, 1000);
 
 	private Controller controller;
 	private EventsEditorPanel eventsEditor;
@@ -90,11 +90,11 @@ public class SimulatorWindow extends JFrame {
 
 		SimulatorAction deleteReport = new SimulatorAction("Delete report",
 				"delete_report.png", "Delete current report", null, null,
-				() -> System.err.println("Deleting report..."));
+				reportsArea::clear);
 
 		SimulatorAction saveReport = new SimulatorAction("Save report",
 				"save_report.png", "Save current report", null,
-				"control shift S", () -> System.err.println("Saving report..."));
+				"control shift S", this::saveReport);
 
 		SimulatorAction exit = new SimulatorAction("Exit", "exit.png",
 				"Exit application", KeyEvent.VK_E, "control W",
@@ -159,12 +159,9 @@ public class SimulatorWindow extends JFrame {
 				Event.INFO);
 		reportsArea = new ReportsAreaPanel(horizontalThird);
 		vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird,
-				new String[] { "ID", "Road", "Location", "Speed", "Km",
-						"Faulty Units", "Itinerary" });
-		roadsTable = new InfoTablePanel<>("Roads", verticalThird, new String[] {
-				"ID", "Source", "Target", "Length", "Max Speed", "Vehicles" });
-		junctionsTable = new InfoTablePanel<>("Junctions", verticalThird,
-				new String[] { "ID", "Green", "Red" });
+				Vehicle.INFO);
+		roadsTable = new InfoTablePanel<>("Roads", verticalThird, Road.INFO);
+		junctionsTable = new InfoTablePanel<>("Junctions", verticalThird, Junction.INFO);
 		roadMap = new GraphComponent();
 
 		JSplitPane topLeftSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
@@ -241,8 +238,20 @@ public class SimulatorWindow extends JFrame {
 			System.out.println("ERROR!");
 		}
 	}
+	
+	private void saveReport() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
+		int value = chooser.showSaveDialog(this);
+		if (value == JFileChooser.APPROVE_OPTION) {
+			try {
+				reportsArea.saveToFile(chooser.getSelectedFile());
+			} catch (IOException e) {
+				// TODO
+			}
+		}	
+	}
 
-	// TODO: borrar
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {
 			bar.add(c);

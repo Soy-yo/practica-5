@@ -4,127 +4,171 @@ import java.util.*;
 
 public class Junction extends SimulatedObject {
 
-  private static String SECTION_TAG_NAME = "junction_report";
-  protected Map<Road, IncomingRoad> incomingRoads;
-  protected IncomingRoad currentRoadOn; // carretera con semáforo en verde actualmente
-  protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del semáforo en verde
+	private static final String SECTION_TAG_NAME = "junction_report";
+	public static final String[] INFO = { "ID", "Green", "Red" };
 
-  public Junction(String id) {
-    super(id);
-    incomingRoads = new LinkedHashMap<>();
-  }
+	protected Map<Road, IncomingRoad> incomingRoads;
+	protected IncomingRoad currentRoadOn; // carretera con semáforo en verde
+											// actualmente
+	protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del
+												// semáforo en verde
 
-  public void addRoad(Road road) {
-    incomingRoads.put(road, new IncomingRoad());
-  }
+	public Junction(String id) {
+		super(id);
+		incomingRoads = new LinkedHashMap<>();
+	}
 
-  public void vehicleIn(Vehicle vehicle) {
-    incomingRoads.get(vehicle.getRoad()).vehicleIn(vehicle);
-  }
+	public void addRoad(Road road) {
+		incomingRoads.put(road, new IncomingRoad());
+	}
 
-  @Override
-  public void advance() {
-    if (!incomingRoads.isEmpty()) {
-      if (currentRoadOn != null && !currentRoadOn.isEmpty()) {
-        currentRoadOn.vehicleOut();
-      }
-      switchLights();
-    }
-  }
+	public void vehicleIn(Vehicle vehicle) {
+		incomingRoads.get(vehicle.getRoad()).vehicleIn(vehicle);
+	}
 
-  protected void switchLights() {
-    IncomingRoad previous = currentRoadOn;
-    currentRoadOn = getNextRoad();
-    if (previous != null) {
-      previous.switchLight();
-    }
-    currentRoadOn.switchLight();
-  }
+	@Override
+	public void advance() {
+		if (!incomingRoads.isEmpty()) {
+			if (currentRoadOn != null && !currentRoadOn.isEmpty()) {
+				currentRoadOn.vehicleOut();
+			}
+			switchLights();
+		}
+	}
 
-  protected IncomingRoad getNextRoad() {
-    // Reinicia el iterador cada vuelta
-    if (nextRoad == null || !nextRoad.hasNext()) {
-      nextRoad = incomingRoads.values().iterator();
-    }
-    return nextRoad.next();
-  }
+	protected void switchLights() {
+		IncomingRoad previous = currentRoadOn;
+		currentRoadOn = getNextRoad();
+		if (previous != null) {
+			previous.switchLight();
+		}
+		currentRoadOn.switchLight();
+	}
 
-  // Devuelve la carretera que une el cruce con id previousJunction con esta (si existe)
-  public Road getStraightRoad(String previousJunction) {
-    for (Road r : incomingRoads.keySet()) {
-      if (r.getSource().equals(previousJunction)) {
-        return r;
-      }
-    }
-    return null;
-  }
+	protected IncomingRoad getNextRoad() {
+		// Reinicia el iterador cada vuelta
+		if (nextRoad == null || !nextRoad.hasNext()) {
+			nextRoad = incomingRoads.values().iterator();
+		}
+		return nextRoad.next();
+	}
 
-  @Override
-  public void fillReportDetails(Map<String, String> kvps) {
-    if (!incomingRoads.isEmpty()) {
-      StringBuilder stringBuilder = new StringBuilder();
-      for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
-        // Para cada carretera entrante
-        stringBuilder.append("(" + e.getKey() + "," + e.getValue().lightColor() + ",[");
-        // Rellena los vehículos en la cola
-        for (Vehicle v : e.getValue().vehicles()) {
-          stringBuilder.append(v + ",");
-        }
-        if (!e.getValue().isEmpty()) {
-          stringBuilder.deleteCharAt(stringBuilder.length() - 1); // coma
-        }
-        stringBuilder.append("]),");
-      }
-      kvps.put("queues", stringBuilder.substring(0, stringBuilder.length() - 1));
-    } else {
-      kvps.put("queues", "");
-    }
-  }
+	// Devuelve la carretera que une el cruce con id previousJunction con esta
+	// (si existe)
+	public Road getStraightRoad(String previousJunction) {
+		for (Road r : incomingRoads.keySet()) {
+			if (r.getSource().equals(previousJunction)) {
+				return r;
+			}
+		}
+		return null;
+	}
 
-  @Override
-  protected String getReportHeader() {
-    return SECTION_TAG_NAME;
-  }
+	@Override
+	public void fillReportDetails(Map<String, String> kvps) {
+		if (!incomingRoads.isEmpty()) {
+			StringBuilder stringBuilder = new StringBuilder();
+			for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
+				// Para cada carretera entrante
+				stringBuilder.append("(" + e.getKey() + ","
+						+ e.getValue().lightColor() + ",[");
+				// Rellena los vehículos en la cola
+				for (Vehicle v : e.getValue().vehicles()) {
+					stringBuilder.append(v + ",");
+				}
+				if (!e.getValue().isEmpty()) {
+					stringBuilder.deleteCharAt(stringBuilder.length() - 1); // coma
+				}
+				stringBuilder.append("]),");
+			}
+			kvps.put("queues",
+					stringBuilder.substring(0, stringBuilder.length() - 1));
+		} else {
+			kvps.put("queues", "");
+		}
+	}
 
-  protected class IncomingRoad {
+	@Override
+	public Map<String, String> describe() {
+		Map<String, String> result = new HashMap<>();
+		StringBuilder greenBuilder = new StringBuilder();
+		StringBuilder redBuilder = new StringBuilder();
+		for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
+			// Para cada carretera entrante
+			if(e.getValue().lightColor().equals("green")) {
+			greenBuilder.append("(" + e.getKey() + ","
+					+ e.getValue().lightColor() + ",[");
+			// Rellena los vehículos en la cola
+			for (Vehicle v : e.getValue().vehicles()) {
+				greenBuilder.append(v + ",");
+			}
+			if (!e.getValue().isEmpty()) {
+				greenBuilder.deleteCharAt(greenBuilder.length() - 1); // coma
+			}
+			greenBuilder.append("]),");
+		} else {
+			redBuilder.append("(" + e.getKey() + ","
+					+ e.getValue().lightColor() + ",[");
+			// Rellena los vehículos en la cola
+			for (Vehicle v : e.getValue().vehicles()) {
+				redBuilder.append(v + ",");
+			}
+			if (!e.getValue().isEmpty()) {
+				redBuilder.deleteCharAt(redBuilder.length() - 1); // coma
+			}
+			redBuilder.append("]),");
+		}
+		}
+		result.put(INFO[0], super.id);
+		result.put(INFO[1], greenBuilder.toString());
+		result.put(INFO[2], redBuilder.toString());
+		return result;
+	}
 
-    Queue<Vehicle> vehicleList;
-    boolean greenLight;
+	@Override
+	protected String getReportHeader() {
+		return SECTION_TAG_NAME;
+	}
 
-    public IncomingRoad() {
-      this.vehicleList = new ArrayDeque<>();
-      greenLight = false;
-    }
+	protected class IncomingRoad {
 
-    void vehicleIn(Vehicle vehicle) {
-      vehicleList.add(vehicle);
-    }
+		Queue<Vehicle> vehicleList;
+		boolean greenLight;
 
-    void vehicleOut() {
-      Vehicle vehicle = vehicleList.poll();
-      vehicle.moveToNextRoad();
-    }
+		public IncomingRoad() {
+			this.vehicleList = new ArrayDeque<>();
+			greenLight = false;
+		}
 
-    int vehicleCount() {
-      return vehicleList.size();
-    }
+		void vehicleIn(Vehicle vehicle) {
+			vehicleList.add(vehicle);
+		}
 
-    boolean isEmpty() {
-      return vehicleList.size() == 0;
-    }
+		void vehicleOut() {
+			Vehicle vehicle = vehicleList.poll();
+			vehicle.moveToNextRoad();
+		}
 
-    void switchLight() {
-      greenLight = !greenLight;
-    }
+		int vehicleCount() {
+			return vehicleList.size();
+		}
 
-    String lightColor() {
-      return greenLight ? "green" : "red";
-    }
+		boolean isEmpty() {
+			return vehicleList.size() == 0;
+		}
 
-    Iterable<Vehicle> vehicles() {
-      return () -> vehicleList.iterator();
-    }
+		void switchLight() {
+			greenLight = !greenLight;
+		}
 
-  }
+		String lightColor() {
+			return greenLight ? "green" : "red";
+		}
+
+		Iterable<Vehicle> vehicles() {
+			return () -> vehicleList.iterator();
+		}
+
+	}
 
 }
