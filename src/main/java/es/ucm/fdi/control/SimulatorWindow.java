@@ -6,19 +6,15 @@ import es.ucm.fdi.model.Junction;
 import es.ucm.fdi.model.Road;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.Vehicle;
+import es.ucm.fdi.util.TextAreaOutputStream;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicArrowButton;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 public class SimulatorWindow extends JFrame {
@@ -54,19 +50,16 @@ public class SimulatorWindow extends JFrame {
 		JToolBar bar = new JToolBar();
 
 		SimulatorAction load = new SimulatorAction("Load events", "open.png",
-				"Load events file", KeyEvent.VK_L, "control L",
-				this::loadEvents);
+        "Load events file", KeyEvent.VK_L, "control L", this::loadEvents);
 
 		SimulatorAction save = new SimulatorAction("Save events", "save.png",
 				"Save events", KeyEvent.VK_S, "control S", this::saveEvents);
 
 		SimulatorAction clear = new SimulatorAction("Clear", "clear.png",
-				"Clear events editor", KeyEvent.VK_C, "control D",
-				eventsEditor::clear);
+        "Clear events editor", KeyEvent.VK_C, "control D", eventsEditor::clear);
 
-		SimulatorAction events = new SimulatorAction("Set events",
-				"events.png", "Move events to events queue", null,
-				"control enter", this::readEvents);
+    SimulatorAction events = new SimulatorAction("Set events", "events.png",
+        "Move events to events queue", null, "control enter", this::readEvents);
 
 		SimulatorAction run = new SimulatorAction("Run", "play.png",
 				"Run simulation", KeyEvent.VK_R, "control P",
@@ -88,11 +81,8 @@ public class SimulatorWindow extends JFrame {
 		time.setMaximumSize(new Dimension(75, 30));
 		time.setHorizontalAlignment(JTextField.RIGHT);
 
-		// TODO: añadir funcionalidad de steps y time
-
-		SimulatorAction generateReport = new SimulatorAction("Generate report",
-				"report.png", "Generate new report", null, null,
-				() -> System.err.println("Generating report..."));
+    SimulatorAction generateReport = new SimulatorAction("Generate report", "report.png",
+        "Generate new report", null, null, this::generateReports);
 
 		SimulatorAction deleteReport = new SimulatorAction("Delete report",
 				"delete_report.png", "Delete current report", null, null,
@@ -106,21 +96,6 @@ public class SimulatorWindow extends JFrame {
 				"Exit application", KeyEvent.VK_E, "control W",
 				() -> System.exit(0));
 
-		/*bar.add(load);
-		bar.add(save);
-		bar.add(clear);
-		bar.add(events);
-		bar.add(run);
-		bar.add(reset);
-		bar.add(new JLabel(" Steps: "));
-		bar.add(stepCounter);
-		bar.add(new JLabel(" Time: "));
-		bar.add(time);
-		bar.add(generateReport);
-		bar.add(deleteReport);
-		bar.add(saveReport);
-		bar.add(exit);*/
-
 		addActionToToolBar(bar, load, save, clear, events, run, reset);
 		addComponentToToolBar(bar, new JLabel(" Steps: "), stepCounter, new JLabel(
 				" Time: "), time);
@@ -132,26 +107,21 @@ public class SimulatorWindow extends JFrame {
 		JMenuBar menu = new JMenuBar();
 
 		JMenu file = new JMenu("File");
-		/*file.add(load);
-		file.add(save);
-		file.addSeparator();
-		file.add(saveReport);
-		file.addSeparator();
-		file.add(exit);
-		*/
 		addActionToMenu(file, load, save, null, saveReport, null, exit);
 
 		JMenu simulator = new JMenu("Simulator");
-		/*simulator.add(run);
-		simulator.add(reset);
-		simulator.addSeparator();
-		simulator.add(events);*/
-		
+    JCheckBoxMenuItem redirectOutput = new JCheckBoxMenuItem("Redirect output");
+    redirectOutput.addItemListener(e -> {
+      if (redirectOutput.isSelected()) {
+        controller.setOutputStream(new TextAreaOutputStream(reportsArea.getArea()));
+      } else {
+        controller.setOutputStream(null);
+      }
+    });
 		addActionToMenu(simulator, run, reset, null, events);
+    simulator.add(redirectOutput);
+
 		JMenu reports = new JMenu("Reports");
-		/*reports.add(generateReport);
-		reports.add(deleteReport);*/
-		
 		addActionToMenu(reports, generateReport, deleteReport);
 
 		menu.add(file);
@@ -257,6 +227,12 @@ public class SimulatorWindow extends JFrame {
 			System.out.println("ERROR!");
 		}
 	}
+
+  private void generateReports() {
+    // TODO: lanzar emergente para elegir qué mostrar
+    reportsArea.clear();
+    controller.generateReports(new TextAreaOutputStream(reportsArea.getArea()));
+  }
 
 	// TODO: borrar
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
