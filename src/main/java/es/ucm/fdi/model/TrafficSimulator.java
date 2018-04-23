@@ -42,6 +42,10 @@ public class TrafficSimulator {
     fireUpdateEvent(EventType.NEW_EVENT, null);
   }
 
+  public void clearEvents() {
+    events.clear();
+  }
+
   public List<Event> getEvents() {
     return Collections.unmodifiableList(events.valuesList());
   }

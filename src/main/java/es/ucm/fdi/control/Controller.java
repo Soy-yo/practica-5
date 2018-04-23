@@ -53,6 +53,10 @@ public class Controller {
     }
   }
 
+  public void clearEvents() {
+    simulator.clearEvents();
+  }
+
   public List<Event> getLoadedEvents() {
     return simulator.getEvents();
   }

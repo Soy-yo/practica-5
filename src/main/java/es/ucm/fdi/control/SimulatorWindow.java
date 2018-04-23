@@ -10,14 +10,12 @@ import es.ucm.fdi.util.TextAreaOutputStream;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.List;
 
 public class SimulatorWindow extends JFrame {
@@ -150,14 +148,7 @@ public class SimulatorWindow extends JFrame {
 		Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3,
 				WINDOW_SIZE.height / 8);
 
-
-		try {
-			String text = initialFile == null ? null :
-					new String(Files.readAllBytes(initialFile.toPath()), "UTF-8");
-			eventsEditor = new EventsEditorPanel(horizontalThird, text);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    eventsEditor = new EventsEditorPanel(horizontalThird, initialFile);
 		// TODO: pedir datos para las tablas a las clases
 		eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
 				Event.INFO);
@@ -232,6 +223,7 @@ public class SimulatorWindow extends JFrame {
 		try {
 			String text = eventsEditor.getText();
 			InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
+      controller.clearEvents();
 			controller.loadEvents(is);
 			List<Event> events = controller.getLoadedEvents();
 			eventsQueue.setElements(events);
