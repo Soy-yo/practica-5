@@ -33,6 +33,10 @@ public class Controller {
     }
   }
 
+  public void reset() {
+    simulator.reset();
+  }
+
   public void loadEvents(InputStream is) {
     try {
       Ini ini = new Ini(is);

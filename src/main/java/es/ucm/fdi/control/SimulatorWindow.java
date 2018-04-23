@@ -23,6 +23,7 @@ public class SimulatorWindow extends JFrame {
 	public static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
 
 	private Controller controller;
+
 	private EventsEditorPanel eventsEditor;
 	private InfoTablePanel<Event> eventsQueue;
 	private ReportsAreaPanel reportsArea;
@@ -30,6 +31,9 @@ public class SimulatorWindow extends JFrame {
 	private InfoTablePanel<Road> roadsTable;
 	private InfoTablePanel<Junction> junctionsTable;
 	private GraphComponent roadMap;
+
+  private JSpinner stepCounter;
+  private JTextField time;
 
 	public SimulatorWindow(String title, File initialFile, int steps, Dimension dimension) {
 		super(title);
@@ -63,18 +67,15 @@ public class SimulatorWindow extends JFrame {
         "Move events to events queue", null, "control enter", this::readEvents);
 
 		SimulatorAction run = new SimulatorAction("Run", "play.png",
-				"Run simulation", KeyEvent.VK_R, "control P",
-				() -> System.err.println("Running..."));
+        "Run simulation", KeyEvent.VK_R, "control P", this::run);
 
 		SimulatorAction reset = new SimulatorAction("Reset", "reset.png",
-				"Reset simulation", null, "control shift P",
-				() -> System.err.println("Resetting..."));
+        "Reset simulation", null, "control shift P", this::reset);
 
-		SpinnerNumberModel steps = new SpinnerNumberModel(initialSteps, 0, 100, 1);
-		JSpinner stepCounter = new JSpinner(steps);
+    stepCounter = new JSpinner(new SpinnerNumberModel(initialSteps, 0, 100, 1));
 		stepCounter.setMaximumSize(new Dimension(75, 30));
 
-		JTextField time = new JTextField("0", 4);
+    time = new JTextField("0", 4);
 		time.setMaximumSize(new Dimension(75, 30));
 		time.setHorizontalAlignment(JTextField.RIGHT);
 		time.setEnabled(false);
@@ -141,7 +142,7 @@ public class SimulatorWindow extends JFrame {
 		setJMenuBar(menu);
 	}
 
-	private void addSections(File initialFile) {
+  private void addSections(File initialFile) {
 
 		Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 6,
 				WINDOW_SIZE.height / 8);
@@ -178,7 +179,32 @@ public class SimulatorWindow extends JFrame {
 	}
 
 	private void addListeners() {
+    controller.addListener(new TrafficSimulator.Listener() {
+      @Override
+      public void registered(TrafficSimulator.UpdateEvent ue) {
 
+      }
+
+      @Override
+      public void reset(TrafficSimulator.UpdateEvent ue) {
+
+      }
+
+      @Override
+      public void newEvent(TrafficSimulator.UpdateEvent ue) {
+
+      }
+
+      @Override
+      public void advanced(TrafficSimulator.UpdateEvent ue) {
+        time.setText("" + ue.getCurrentTime());
+      }
+
+      @Override
+      public void error(TrafficSimulator.UpdateEvent ue, String msg) {
+
+      }
+    });
 	}
 
 	private JSplitPane createSeparator(int orientation, Component first,
@@ -230,9 +256,21 @@ public class SimulatorWindow extends JFrame {
 		} catch (IOException ignored) {
 			// TODO: hacer algo con las excecpciones
 		} catch (IllegalStateException e) {
-			System.out.println("ERROR!");
+      e.printStackTrace();
 		}
 	}
+
+  private void run() {
+    int ticks = (Integer) stepCounter.getValue();
+    //controller.setOutputStream(System.out); // para verlo por pantalla en principio
+    controller.run(ticks);
+  }
+
+  private void reset() {
+    eventsQueue.clear();
+    reportsArea.clear();
+    controller.reset();
+  }
 
 	private void saveReport() {
 		JFileChooser chooser = new JFileChooser();
@@ -253,7 +291,6 @@ public class SimulatorWindow extends JFrame {
     controller.generateReports(new TextAreaOutputStream(reportsArea.getArea()));
   }
 
-	// TODO: borrar
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {
 			bar.add(c);

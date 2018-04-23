@@ -19,6 +19,7 @@ public class TrafficSimulator {
   private List<Listener> listeners;
 
   public TrafficSimulator() {
+    listeners = new ArrayList<>();
     reset();
   }
 
@@ -26,10 +27,7 @@ public class TrafficSimulator {
     currentTime = 0;
     events = new MultiTreeMap<>();
     roadMap = new RoadMap();
-    if (listeners != null) {
-      fireUpdateEvent(EventType.RESET, null);
-    }
-    listeners = new ArrayList<>();
+    fireUpdateEvent(EventType.RESET, null);
   }
 
   public void addEvent(Event event) {

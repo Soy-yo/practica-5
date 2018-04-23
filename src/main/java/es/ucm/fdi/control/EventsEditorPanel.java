@@ -40,7 +40,7 @@ public class EventsEditorPanel extends JScrollPane {
   }
 
   public void writeFromFile(File file) throws IOException {
-    // FIXME: no funciona
+    // FIXME: no funciona la primera vez (por alguna razón después sí)
     border.setTitle(makeTitle(file));
     String text = new String(Files.readAllBytes(file.toPath()), "UTF-8");
     editor.setText(text);
@@ -63,7 +63,7 @@ public class EventsEditorPanel extends JScrollPane {
   }
 
   @SuppressWarnings("serial")
-private class EventsEditorPopupMenu extends JPopupMenu {
+  private class EventsEditorPopupMenu extends JPopupMenu {
 
     EventsEditorPopupMenu() {
       super();

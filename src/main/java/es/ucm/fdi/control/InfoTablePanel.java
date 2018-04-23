@@ -42,12 +42,16 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
     table.setDefaultRenderer(String.class, centerRenderer);
   }
 
-  private void setElement(T element, int row) {
+  public void clear() {
+    model.clear();
+  }
+
+  public void setElement(T element, int row) {
     model.setRow(element, row);
   }
 
   public void setElements(List<T> elements) {
-    model.clear();
+    clear();
     for (T element : elements) {
       addElement(element);
     }
