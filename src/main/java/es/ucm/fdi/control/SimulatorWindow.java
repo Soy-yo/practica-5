@@ -9,16 +9,12 @@ import es.ucm.fdi.model.Vehicle;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicArrowButton;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 public class SimulatorWindow extends JFrame {
@@ -76,17 +72,15 @@ public class SimulatorWindow extends JFrame {
 				"Reset simulation", null, "control shift P",
 				() -> System.err.println("Resetting..."));
 
-		Integer value = new Integer(1);
-		Integer min = new Integer(0);
-		Integer max = new Integer(100);
-		Integer step = new Integer(1);
-		SpinnerNumberModel steps = new SpinnerNumberModel(value, min, max, step);
+		SpinnerNumberModel steps = new SpinnerNumberModel(1, 0, 100, 1);
 		JSpinner stepCounter = new JSpinner(steps);
 		stepCounter.setMaximumSize(new Dimension(75, 30));
 
 		JTextField time = new JTextField("0", 4);
 		time.setMaximumSize(new Dimension(75, 30));
 		time.setHorizontalAlignment(JTextField.RIGHT);
+		time.setEnabled(false);
+		time.setDisabledTextColor(UIManager.getColor("TextField.foreground"));
 
 		// TODO: añadir funcionalidad de steps y time
 
@@ -106,24 +100,17 @@ public class SimulatorWindow extends JFrame {
 				"Exit application", KeyEvent.VK_E, "control W",
 				() -> System.exit(0));
 
-		/*bar.add(load);
-		bar.add(save);
-		bar.add(clear);
-		bar.add(events);
-		bar.add(run);
-		bar.add(reset);
-		bar.add(new JLabel(" Steps: "));
-		bar.add(stepCounter);
-		bar.add(new JLabel(" Time: "));
-		bar.add(time);
-		bar.add(generateReport);
-		bar.add(deleteReport);
-		bar.add(saveReport);
-		bar.add(exit);*/
+		/*
+		 * bar.add(load); bar.add(save); bar.add(clear); bar.add(events);
+		 * bar.add(run); bar.add(reset); bar.add(new JLabel(" Steps: "));
+		 * bar.add(stepCounter); bar.add(new JLabel(" Time: ")); bar.add(time);
+		 * bar.add(generateReport); bar.add(deleteReport); bar.add(saveReport);
+		 * bar.add(exit);
+		 */
 
 		addActionToToolBar(bar, load, save, clear, events, run, reset);
-		addComponentToToolBar(bar, new JLabel(" Steps: "), stepCounter, new JLabel(
-				" Time: "), time);
+		addComponentToToolBar(bar, new JLabel(" Steps: "), stepCounter,
+				new JLabel(" Time: "), time);
 		addActionToToolBar(bar, generateReport, deleteReport, saveReport, exit);
 
 		add(bar, BorderLayout.NORTH);
@@ -132,27 +119,25 @@ public class SimulatorWindow extends JFrame {
 		JMenuBar menu = new JMenuBar();
 
 		JMenu file = new JMenu("File");
-		/*file.add(load);
+
+		file.add(load);
 		file.add(save);
 		file.addSeparator();
 		file.add(saveReport);
 		file.addSeparator();
 		file.add(exit);
-		*/
-		addActionToMenu(file, load, save, null, saveReport, null, exit);
 
 		JMenu simulator = new JMenu("Simulator");
-		/*simulator.add(run);
+
+		simulator.add(run);
 		simulator.add(reset);
 		simulator.addSeparator();
-		simulator.add(events);*/
-		
-		addActionToMenu(simulator, run, reset, null, events);
+		simulator.add(events);
+
 		JMenu reports = new JMenu("Reports");
-		/*reports.add(generateReport);
-		reports.add(deleteReport);*/
-		
-		addActionToMenu(reports, generateReport, deleteReport);
+
+		reports.add(generateReport);
+		reports.add(deleteReport);
 
 		menu.add(file);
 		menu.add(simulator);
@@ -232,8 +217,7 @@ public class SimulatorWindow extends JFrame {
 	private void saveEvents() {
 		// TODO: revisar
 		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(new FileNameExtensionFilter("TXT/INI/DOC files",
-				"txt", "ini", "doc"));
+		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
 		int value = chooser.showSaveDialog(this);
 		if (value == JFileChooser.APPROVE_OPTION) {
 			try {
@@ -268,16 +252,6 @@ public class SimulatorWindow extends JFrame {
 	private void addActionToToolBar(JToolBar bar, Action... actions) {
 		for (Action a : actions) {
 			bar.add(a);
-		}
-	}
-	
-	private void addActionToMenu(JMenu menu, Action... actions) {
-		for (Action a : actions) {
-			if(a != null) {
-			menu.add(a);
-			} else {
-				menu.addSeparator();
-			}
 		}
 	}
 

@@ -42,9 +42,7 @@ public class EventsEditorPanel extends JScrollPane {
   }
   
   public void saveToFile(File file) throws IOException {
-	  PrintWriter out = new PrintWriter(file);
-	  out.print(editor.getText());
-	  out.close();
+	  Files.write(file.toPath(), editor.getText().getBytes("UTF-8"));
   }
 
   public void clear() {
