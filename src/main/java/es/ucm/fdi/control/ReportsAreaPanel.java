@@ -35,4 +35,12 @@ public class ReportsAreaPanel extends JScrollPane {
     setViewportView(area);
   }
 
+  public void clear() {
+    area.setText("");
+  }
+
+  JTextArea getArea() {
+    return area;
+  }
+
 }

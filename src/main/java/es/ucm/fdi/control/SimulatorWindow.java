@@ -6,6 +6,7 @@ import es.ucm.fdi.model.Junction;
 import es.ucm.fdi.model.Road;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.Vehicle;
+import es.ucm.fdi.util.TextAreaOutputStream;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -13,13 +14,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 public class SimulatorWindow extends JFrame {
 
-	protected static final Dimension WINDOW_SIZE = new Dimension(1000, 1000);
+	public static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
 
 	private Controller controller;
 	private EventsEditorPanel eventsEditor;
@@ -30,39 +33,36 @@ public class SimulatorWindow extends JFrame {
 	private InfoTablePanel<Junction> junctionsTable;
 	private GraphComponent roadMap;
 
-	public SimulatorWindow(String title, Dimension dimension) {
+	public SimulatorWindow(String title, File initialFile, int steps, Dimension dimension) {
 		super(title);
 		controller = new Controller(new TrafficSimulator());
-		initialize(dimension);
+		initialize(dimension, initialFile, steps);
 	}
 
-	private void initialize(Dimension dimension) {
+	private void initialize(Dimension dimension, File initialFile, int steps) {
 		setSize(dimension);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		addSections();
-		addToolBar();
+		addSections(initialFile);
+		addToolBar(steps);
 		addListeners();
 		setVisible(true);
 	}
 
-	private void addToolBar() {
+	private void addToolBar(int initialSteps) {
 		// Tool bar
 		JToolBar bar = new JToolBar();
 
 		SimulatorAction load = new SimulatorAction("Load events", "open.png",
-				"Load events file", KeyEvent.VK_L, "control L",
-				this::loadEvents);
+        "Load events file", KeyEvent.VK_L, "control L", this::loadEvents);
 
 		SimulatorAction save = new SimulatorAction("Save events", "save.png",
 				"Save events", KeyEvent.VK_S, "control S", this::saveEvents);
 
 		SimulatorAction clear = new SimulatorAction("Clear", "clear.png",
-				"Clear events editor", KeyEvent.VK_C, "control D",
-				eventsEditor::clear);
+        "Clear events editor", KeyEvent.VK_C, "control D", eventsEditor::clear);
 
-		SimulatorAction events = new SimulatorAction("Set events",
-				"events.png", "Move events to events queue", null,
-				"control enter", this::readEvents);
+    SimulatorAction events = new SimulatorAction("Set events", "events.png",
+        "Move events to events queue", null, "control enter", this::readEvents);
 
 		SimulatorAction run = new SimulatorAction("Run", "play.png",
 				"Run simulation", KeyEvent.VK_R, "control P",
@@ -72,7 +72,7 @@ public class SimulatorWindow extends JFrame {
 				"Reset simulation", null, "control shift P",
 				() -> System.err.println("Resetting..."));
 
-		SpinnerNumberModel steps = new SpinnerNumberModel(1, 0, 100, 1);
+		SpinnerNumberModel steps = new SpinnerNumberModel(initialSteps, 0, 100, 1);
 		JSpinner stepCounter = new JSpinner(steps);
 		stepCounter.setMaximumSize(new Dimension(75, 30));
 
@@ -82,31 +82,18 @@ public class SimulatorWindow extends JFrame {
 		time.setEnabled(false);
 		time.setDisabledTextColor(UIManager.getColor("TextField.foreground"));
 
-		// TODO: añadir funcionalidad de steps y time
+    SimulatorAction generateReport = new SimulatorAction("Generate report", "report.png",
+        "Generate new report", null, null, this::generateReports);
 
-		SimulatorAction generateReport = new SimulatorAction("Generate report",
-				"report.png", "Generate new report", null, null,
-				() -> System.err.println("Generating report..."));
+		SimulatorAction deleteReport = new SimulatorAction("Delete report", "delete_report.png",
+        "Delete current report", null, null, reportsArea::clear);
 
-		SimulatorAction deleteReport = new SimulatorAction("Delete report",
-				"delete_report.png", "Delete current report", null, null,
-				reportsArea::clear);
-
-		SimulatorAction saveReport = new SimulatorAction("Save report",
-				"save_report.png", "Save current report", null,
-				"control shift S", this::saveReport);
+		SimulatorAction saveReport = new SimulatorAction("Save report", "save_report.png", "Save " +
+        "current report", null, "control shift S", this::saveReport);
 
 		SimulatorAction exit = new SimulatorAction("Exit", "exit.png",
 				"Exit application", KeyEvent.VK_E, "control W",
 				() -> System.exit(0));
-
-		/*
-		 * bar.add(load); bar.add(save); bar.add(clear); bar.add(events);
-		 * bar.add(run); bar.add(reset); bar.add(new JLabel(" Steps: "));
-		 * bar.add(stepCounter); bar.add(new JLabel(" Time: ")); bar.add(time);
-		 * bar.add(generateReport); bar.add(deleteReport); bar.add(saveReport);
-		 * bar.add(exit);
-		 */
 
 		addActionToToolBar(bar, load, save, clear, events, run, reset);
 		addComponentToToolBar(bar, new JLabel(" Steps: "), stepCounter,
@@ -114,6 +101,15 @@ public class SimulatorWindow extends JFrame {
 		addActionToToolBar(bar, generateReport, deleteReport, saveReport, exit);
 
 		add(bar, BorderLayout.NORTH);
+
+    JCheckBoxMenuItem redirectOutput = new JCheckBoxMenuItem("Redirect output");
+    redirectOutput.addItemListener(e -> {
+      if (redirectOutput.isSelected()) {
+        controller.setOutputStream(new TextAreaOutputStream(reportsArea.getArea()));
+      } else {
+        controller.setOutputStream(null);
+      }
+    });
 
 		// Menu bar
 		JMenuBar menu = new JMenuBar();
@@ -133,6 +129,7 @@ public class SimulatorWindow extends JFrame {
 		simulator.add(reset);
 		simulator.addSeparator();
 		simulator.add(events);
+    simulator.add(redirectOutput);
 
 		JMenu reports = new JMenu("Reports");
 
@@ -146,20 +143,26 @@ public class SimulatorWindow extends JFrame {
 		setJMenuBar(menu);
 	}
 
-	private void addSections() {
+	private void addSections(File initialFile) {
 
 		Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 6,
 				WINDOW_SIZE.height / 8);
 		Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3,
 				WINDOW_SIZE.height / 8);
 
-		eventsEditor = new EventsEditorPanel(horizontalThird);
+
+		try {
+			String text = initialFile == null ? null :
+					new String(Files.readAllBytes(initialFile.toPath()), "UTF-8");
+			eventsEditor = new EventsEditorPanel(horizontalThird, text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		// TODO: pedir datos para las tablas a las clases
 		eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
 				Event.INFO);
 		reportsArea = new ReportsAreaPanel(horizontalThird);
-		vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird,
-				Vehicle.INFO);
+		vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird, Vehicle.INFO);
 		roadsTable = new InfoTablePanel<>("Roads", verticalThird, Road.INFO);
 		junctionsTable = new InfoTablePanel<>("Junctions", verticalThird, Junction.INFO);
 		roadMap = new GraphComponent();
@@ -238,7 +241,7 @@ public class SimulatorWindow extends JFrame {
 			System.out.println("ERROR!");
 		}
 	}
-	
+
 	private void saveReport() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
@@ -249,9 +252,16 @@ public class SimulatorWindow extends JFrame {
 			} catch (IOException e) {
 				// TODO
 			}
-		}	
+		}
 	}
 
+  private void generateReports() {
+    // TODO: lanzar emergente para elegir qué mostrar
+    reportsArea.clear();
+    controller.generateReports(new TextAreaOutputStream(reportsArea.getArea()));
+  }
+
+	// TODO: borrar
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {
 			bar.add(c);
@@ -262,11 +272,6 @@ public class SimulatorWindow extends JFrame {
 		for (Action a : actions) {
 			bar.add(a);
 		}
-	}
-
-	// TODO: try-catch
-	public static void main(String... args) {
-		new SimulatorWindow("Traffic Simulator", WINDOW_SIZE);
 	}
 
 }

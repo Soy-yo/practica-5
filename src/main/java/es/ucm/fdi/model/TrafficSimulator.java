@@ -109,6 +109,14 @@ public class TrafficSimulator {
     }
   }
 
+  public void generateReports(OutputStream out) {
+    if (out != null) {
+      writeSimulatedObjectsReports(out, roadMap.getJunctions());
+      writeSimulatedObjectsReports(out, roadMap.getRoads());
+      writeSimulatedObjectsReports(out, roadMap.getVehicles());
+    }
+  }
+
   private void writeSimulatedObjectsReports(OutputStream out,
                                             List<? extends SimulatedObject> objects) {
     for (SimulatedObject o : objects) {
@@ -161,11 +169,7 @@ public class TrafficSimulator {
       }
       currentTime++;
       fireUpdateEvent(EventType.ADVANCED, null);
-      if (out != null) {
-        writeSimulatedObjectsReports(out, roadMap.getJunctions());
-        writeSimulatedObjectsReports(out, roadMap.getRoads());
-        writeSimulatedObjectsReports(out, roadMap.getVehicles());
-      }
+      generateReports(out);
     }
   }
 
