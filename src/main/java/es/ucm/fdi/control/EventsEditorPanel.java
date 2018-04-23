@@ -1,5 +1,8 @@
 package es.ucm.fdi.control;
 
+import es.ucm.fdi.events.Event;
+import es.ucm.fdi.events.EventBuilder;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -27,6 +30,7 @@ public class EventsEditorPanel extends JScrollPane {
     border = new TitledBorder(new LineBorder(Color.BLACK), "Events editor");
     setBorder(border);
     setMinimumSize(size);
+    editor.setComponentPopupMenu(new EventsEditorPopupMenu());
     setViewportView(editor);
   }
 
@@ -49,6 +53,26 @@ public class EventsEditorPanel extends JScrollPane {
 
   public String getText() {
     return editor.getText();
+  }
+
+  private class EventsEditorPopupMenu extends JPopupMenu {
+
+    EventsEditorPopupMenu() {
+      super();
+      initialize();
+    }
+
+    private void initialize() {
+      setEnabled(true);
+      // Aprovecha los Event.Builder
+      for (Event.Builder builder : EventBuilder.SUPPORTED_EVENTS) {
+        JMenuItem item = new JMenuItem(builder.getEventName());
+        item.addActionListener(e ->
+            editor.insert("\n" + builder.getEventFileTemplate(), editor.getCaretPosition()));
+        add(item);
+      }
+    }
+
   }
 
 }

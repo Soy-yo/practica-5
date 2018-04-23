@@ -6,6 +6,8 @@ import es.ucm.fdi.model.TrafficSimulator;
 
 public class NewLaneRoadEvent extends NewRoadEvent {
 
+  private static final String FRIENDLY_CLASS_NAME = "New Lane Road";
+
   private int lanes;
 
   NewLaneRoadEvent(int time, String id, String sourceId,
@@ -20,6 +22,11 @@ public class NewLaneRoadEvent extends NewRoadEvent {
         lanes));
   }
 
+  @Override
+  public String toString() {
+    return FRIENDLY_CLASS_NAME + " " + id;
+  }
+
   static class Builder extends NewRoadEvent.Builder {
 
     @Override
@@ -32,6 +39,24 @@ public class NewLaneRoadEvent extends NewRoadEvent {
                                   String dest, int maxSpeed, int length) {
       int lanes = parsePositiveInt(section, "lanes");
       return new NewLaneRoadEvent(time, id, src, dest, maxSpeed, length, lanes);
+    }
+
+    @Override
+    public String getEventName() {
+      return FRIENDLY_CLASS_NAME;
+    }
+
+    @Override
+    public String getEventFileTemplate() {
+      return "[" + SECTION_TAG_NAME + "]\n" +
+          "time=\n" +
+          "id=\n" +
+          "type=" + LaneRoad.TYPE + "\n" +
+          "src=\n" +
+          "dest=\n" +
+          "max_speed=\n" +
+          "length=\n" +
+          "lanes=\n";
     }
 
   }
