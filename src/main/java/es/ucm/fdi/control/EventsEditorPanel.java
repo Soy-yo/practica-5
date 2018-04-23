@@ -9,7 +9,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 
 public class EventsEditorPanel extends JScrollPane {
@@ -17,14 +16,23 @@ public class EventsEditorPanel extends JScrollPane {
   private JTextArea editor;
   private TitledBorder border;
 
-  EventsEditorPanel(Dimension minimumSize, String text) {
+  EventsEditorPanel(Dimension minimumSize, File file) {
     super();
-    initialize(minimumSize, text);
+    initialize(minimumSize, file);
   }
 
-  private void initialize(Dimension size, String text) {
+  private void initialize(Dimension size, File file) {
+    String text = null;
+    if (file != null) {
+      try {
+        text = new String(Files.readAllBytes(file.toPath()), "UTF-8");
+      } catch (IOException e) {
+        // TODO: hacer algo con esto
+      }
+    }
     editor = new JTextArea(text);
-    border = new TitledBorder(new LineBorder(Color.BLACK), "Events editor");
+    border = new TitledBorder(new LineBorder(Color.BLACK), file == null ? "Events editor" :
+        makeTitle(file));
     setBorder(border);
     setMinimumSize(size);
     editor.setComponentPopupMenu(new EventsEditorPopupMenu());
@@ -32,10 +40,14 @@ public class EventsEditorPanel extends JScrollPane {
   }
 
   public void writeFromFile(File file) throws IOException {
-    // FIXME: no funciona
-    border.setTitle("Events: " + file.getName());
+    // FIXME: no funciona la primera vez (por alguna razón después sí)
+    border.setTitle(makeTitle(file));
     String text = new String(Files.readAllBytes(file.toPath()), "UTF-8");
     editor.setText(text);
+  }
+
+  private String makeTitle(File file) {
+    return "Events: " + file.getName();
   }
   
   public void saveToFile(File file) throws IOException {
@@ -51,7 +63,7 @@ public class EventsEditorPanel extends JScrollPane {
   }
 
   @SuppressWarnings("serial")
-private class EventsEditorPopupMenu extends JPopupMenu {
+  private class EventsEditorPopupMenu extends JPopupMenu {
 
     EventsEditorPopupMenu() {
       super();

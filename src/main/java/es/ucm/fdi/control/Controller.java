@@ -33,6 +33,10 @@ public class Controller {
     }
   }
 
+  public void reset() {
+    simulator.reset();
+  }
+
   public void loadEvents(InputStream is) {
     try {
       Ini ini = new Ini(is);
@@ -51,6 +55,10 @@ public class Controller {
     } catch (IOException e) {
       throw new IllegalStateException("Something went wrong while reading ini file", e);
     }
+  }
+
+  public void clearEvents() {
+    simulator.clearEvents();
   }
 
   public List<Event> getLoadedEvents() {
