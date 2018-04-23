@@ -13,13 +13,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 public class SimulatorWindow extends JFrame {
 
-	private static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
+	public static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
 
 	private Controller controller;
 	private EventsEditorPanel eventsEditor;
@@ -30,22 +32,22 @@ public class SimulatorWindow extends JFrame {
 	private InfoTablePanel<Junction> junctionsTable;
 	private GraphComponent roadMap;
 
-	public SimulatorWindow(String title, Dimension dimension) {
+	public SimulatorWindow(String title, File initialFile, Integer steps, Dimension dimension) {
 		super(title);
 		controller = new Controller(new TrafficSimulator());
-		initialize(dimension);
+		initialize(dimension, initialFile, steps);
 	}
 
-	private void initialize(Dimension dimension) {
+	private void initialize(Dimension dimension, File initialFile, Integer steps) {
 		setSize(dimension);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		addSections();
-		addToolBar();
+		addSections(initialFile);
+		addToolBar(steps);
 		addListeners();
 		setVisible(true);
 	}
 
-	private void addToolBar() {
+	private void addToolBar(Integer initialSteps) {
 		// Tool bar
 		JToolBar bar = new JToolBar();
 
@@ -69,11 +71,10 @@ public class SimulatorWindow extends JFrame {
 				"Reset simulation", null, "control shift P",
 				() -> System.err.println("Resetting..."));
 
-		Integer value = new Integer(1);
 		Integer min = new Integer(0);
 		Integer max = new Integer(100);
 		Integer step = new Integer(1);
-		SpinnerNumberModel steps = new SpinnerNumberModel(value, min, max, step);
+		SpinnerNumberModel steps = new SpinnerNumberModel(initialSteps, min, max, step);
 		JSpinner stepCounter = new JSpinner(steps);
 		stepCounter.setMaximumSize(new Dimension(75, 30));
 
@@ -131,14 +132,21 @@ public class SimulatorWindow extends JFrame {
 		setJMenuBar(menu);
 	}
 
-	private void addSections() {
+	private void addSections(File initialFile) {
 
 		Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 6,
 				WINDOW_SIZE.height / 8);
 		Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3,
 				WINDOW_SIZE.height / 8);
 
-		eventsEditor = new EventsEditorPanel(horizontalThird);
+
+		try {
+			String text = initialFile == null ? null :
+					new String(Files.readAllBytes(initialFile.toPath()), "UTF-8");
+			eventsEditor = new EventsEditorPanel(horizontalThird, text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		// TODO: pedir datos para las tablas a las clases
 		eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
 				Event.INFO);
@@ -255,11 +263,6 @@ public class SimulatorWindow extends JFrame {
 				menu.addSeparator();
 			}
 		}
-	}
-
-	// TODO: try-catch
-	public static void main(String... args) {
-		new SimulatorWindow("Traffic Simulator", WINDOW_SIZE);
 	}
 
 }

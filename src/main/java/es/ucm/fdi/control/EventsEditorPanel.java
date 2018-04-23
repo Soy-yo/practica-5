@@ -6,12 +6,9 @@ import es.ucm.fdi.events.EventBuilder;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 
@@ -20,13 +17,13 @@ public class EventsEditorPanel extends JScrollPane {
   private JTextArea editor;
   private TitledBorder border;
 
-  EventsEditorPanel(Dimension minimumSize) {
+  EventsEditorPanel(Dimension minimumSize, String text) {
     super();
-    initialize(minimumSize);
+    initialize(minimumSize, text);
   }
 
-  private void initialize(Dimension size) {
-    editor = new JTextArea();
+  private void initialize(Dimension size, String text) {
+    editor = new JTextArea(text);
     border = new TitledBorder(new LineBorder(Color.BLACK), "Events editor");
     setBorder(border);
     setMinimumSize(size);

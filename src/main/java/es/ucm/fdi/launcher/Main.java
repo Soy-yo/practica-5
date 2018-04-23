@@ -1,10 +1,10 @@
 package es.ucm.fdi.launcher;
 
 import es.ucm.fdi.control.Controller;
+import es.ucm.fdi.control.SimulatorWindow;
 import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.TrafficSimulator;
-
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -12,9 +12,11 @@ import java.io.*;
 public class Main {
 
   private final static Integer TIME_LIMIT_DEFAULT_VALUE = 10;
+
   private static Integer timeLimit = null;
   private static String infile = null;
   private static String outfile = null;
+  private static Boolean guiMode = null;
 
   private static void parseArgs(String[] args) {
 
@@ -28,6 +30,7 @@ public class Main {
     try {
       CommandLine line = parser.parse(cmdLineOptions, args);
       parseHelpOption(line, cmdLineOptions);
+      parseMode(line);
       parseInFileOption(line);
       parseOutFileOption(line);
       parseStepsOption(line);
@@ -59,6 +62,8 @@ public class Main {
         .desc("Print this message").build());
     cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg()
         .desc("Events input file").build());
+    cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg()
+        .desc("’batch’ for batch mode and ’gui’ for GUI mode\n(default value is ’batch’)").build());
     cmdLineOptions.addOption(Option.builder("o").longOpt("output").hasArg()
         .desc("Output file, where reports are written.").build());
     cmdLineOptions
@@ -80,9 +85,13 @@ public class Main {
     }
   }
 
+  private static void parseMode(CommandLine line) {
+    guiMode = "gui".equals(line.getOptionValue("m"));
+  }
+
   private static void parseInFileOption(CommandLine line) throws ParseException {
     infile = line.getOptionValue("i");
-    if (infile == null) {
+    if (!guiMode && infile == null) {
       throw new ParseException("An events file is missing");
     }
   }
@@ -153,6 +162,13 @@ public class Main {
     return equalOutput;
   }
 
+
+  private static void startGuiMode() {
+    File initialFile = infile == null ? null : new File(infile);
+    new SimulatorWindow("Traffic Simulator", initialFile, timeLimit == null ? 1 : timeLimit,
+        SimulatorWindow.WINDOW_SIZE);
+  }
+
   /**
    * Run the simulator in batch mode
    */
@@ -194,7 +210,11 @@ public class Main {
 
   private static void start(String[] args) {
     parseArgs(args);
-    startBatchMode();
+    if (guiMode) {
+      startGuiMode();
+    } else {
+      startBatchMode();
+    }
   }
 
   public static void main(String[] args) {
