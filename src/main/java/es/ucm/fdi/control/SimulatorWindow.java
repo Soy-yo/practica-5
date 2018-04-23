@@ -273,7 +273,7 @@ public class SimulatorWindow extends JFrame {
 	
 	private void addActionToMenu(JMenu menu, Action... actions) {
 		for (Action a : actions) {
-			if(a != null) {
+			if (a != null) {
 			menu.add(a);
 			} else {
 				menu.addSeparator();
