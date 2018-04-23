@@ -57,6 +57,10 @@ public class Controller {
     return simulator.getEvents();
   }
 
+  void generateReports(OutputStream out) {
+    simulator.generateReports(out);
+  }
+
   public void addListener(TrafficSimulator.Listener listener) {
     simulator.addListener(listener);
   }
