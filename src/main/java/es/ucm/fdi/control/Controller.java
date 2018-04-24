@@ -6,6 +6,7 @@ import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.TrafficSimulator;
+import es.ucm.fdi.model.Vehicle;
 
 import java.io.IOException;
 import java.io.InputStream;

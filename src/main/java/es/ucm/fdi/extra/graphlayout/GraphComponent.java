@@ -1,8 +1,14 @@
 package es.ucm.fdi.extra.graphlayout;
 
 import javax.swing.*;
+
+import es.ucm.fdi.model.Junction;
+import es.ucm.fdi.model.Road;
+import es.ucm.fdi.model.Vehicle;
+
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GraphComponent extends JComponent {
@@ -12,18 +18,18 @@ public class GraphComponent extends JComponent {
 	/**
 	 * The radius of each node
 	 */
-  private static final int NODE_RADIUS = 20;
+	private static final int NODE_RADIUS = 20;
 
 	/**
 	 * The radius of each dot
 	 */
-  private static final int DOT_RADIUS = 5;
+	private static final int DOT_RADIUS = 5;
 
 	/**
-	 * An inner class that represent a location of a node. Fields cX and cY are the
-	 * center of the node, and fields tX and tY are the location where the label of
-	 * the node is drawn. This is calculated for each node in the method
-	 * {@code calculateNodeCoordinates()}
+	 * An inner class that represent a location of a node. Fields cX and cY are
+	 * the center of the node, and fields tX and tY are the location where the
+	 * label of the node is drawn. This is calculated for each node in the
+	 * method {@code calculateNodeCoordinates()}
 	 *
 	 */
 	private class Point {
@@ -43,34 +49,36 @@ public class GraphComponent extends JComponent {
 	/**
 	 * The graph to layout
 	 */
-  private Graph graph;
+	private Graph graph;
 
 	/**
 	 * A map to store the location of each node
 	 */
-  private Map<String, Point> nodesPositions;
+	private Map<String, Point> nodesPositions;
 
 	/**
 	 * width and height of the window when it was last resized. When change we
 	 * recalculate the location of nodes to scale the graph, etc.
 	 */
-  private int lastWidth;
-  private int lastHeight;
+	private int lastWidth;
+	private int lastHeight;
 
-  public GraphComponent() {
-    nodesPositions = new HashMap<>();
+	public GraphComponent() {
+		nodesPositions = new HashMap<>();
 		setMinimumSize(new Dimension(500, 500));
 		setPreferredSize(new Dimension(500, 500));
-    lastWidth = -1;
-    lastHeight = -1;
+		lastWidth = -1;
+		lastHeight = -1;
 	}
-
+	
 	public void paint(Graphics graphics) {
 		Graphics2D g = (Graphics2D) graphics;
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-    if (graph == null || graph.getNodes().size() == 0) {
+		if (graph == null || graph.getNodes().size() == 0) {
 			g.setColor(Color.red);
 			g.drawString("No graph yet!", getWidth() / 2 - 50, getHeight() / 2);
 		} else {
@@ -83,64 +91,69 @@ public class GraphComponent extends JComponent {
 		// if the size of the component has changed since the last time we
 		// calculated the positions of the nodes, then we recalculate again.
 		// This way the map get scaled down/up.
-    if (lastHeight != getHeight() || lastWidth != getWidth()) {
-      lastHeight = getHeight();
-      lastWidth = getWidth();
+		if (lastHeight != getHeight() || lastWidth != getWidth()) {
+			lastHeight = getHeight();
+			lastWidth = getWidth();
 			calculateNodeCoordinates();
 		}
 
 		// draw nodes
-    for (Node j : graph.getNodes()) {
-      Point p = nodesPositions.get(j.getId());
+		for (Node j : graph.getNodes()) {
+			Point p = nodesPositions.get(j.getId());
 			g.setColor(Color.blue);
-      g.fillOval(p.cX - NODE_RADIUS / 2, p.cY - NODE_RADIUS / 2, NODE_RADIUS, NODE_RADIUS);
+			g.fillOval(p.cX - NODE_RADIUS / 2, p.cY - NODE_RADIUS / 2,
+					NODE_RADIUS, NODE_RADIUS);
 			g.setColor(Color.black);
 			g.drawString(j.getId(), p.tX, p.tY);
 		}
 
 		// draw edges
-    for (Edge e : graph.getEdges()) {
-      Point p1 = nodesPositions.get(e.getSource().getId());
-      Point p2 = nodesPositions.get(e.getTarget().getId());
+		for (Edge e : graph.getEdges()) {
+			Point p1 = nodesPositions.get(e.getSource().getId());
+			Point p2 = nodesPositions.get(e.getTarget().getId());
 
 			// draw the edge
 			Color arrowColor = Math.random() > 0.5 ? Color.RED : Color.GREEN;
-			drawArrowLine(g, p1.cX, p1.cY, p2.cX, p2.cY, 15, 5, Color.BLACK, arrowColor);
+			drawArrowLine(g, p1.cX, p1.cY, p2.cX, p2.cY, 15, 5, Color.BLACK,
+					arrowColor);
 
-			// draw dots as circles. Dots at the same location are drawn with circles of
+			// draw dots as circles. Dots at the same location are drawn with
+			// circles of
 			// different diameter.
 			int lastLocation = -1;
-      int diam = DOT_RADIUS;
+			int diam = DOT_RADIUS;
 			for (Dot d : e.getDots()) {
 				if (lastLocation != d.getLocation()) {
 					lastLocation = d.getLocation();
-          diam = DOT_RADIUS;
+					diam = DOT_RADIUS;
 				} else {
-          diam += DOT_RADIUS;
+					diam += DOT_RADIUS;
 				}
-				Color dotColor = Math.random() > 0.5 ? Color.MAGENTA : Color.ORANGE;
-				drawCircleOnALine(g, p1.cX, p1.cY, p2.cX, p2.cY, e.getLength(), d.getLocation(), diam, dotColor,
-						d.getId());
+				Color dotColor = Math.random() > 0.5 ? Color.MAGENTA
+						: Color.ORANGE;
+				drawCircleOnALine(g, p1.cX, p1.cY, p2.cX, p2.cY, e.getLength(),
+						d.getLocation(), diam, dotColor, d.getId());
 			}
 		}
 	}
 
 	/**
-	 * put the objects in a circle, for each one store the center coordinate and a
-	 * coordinate for a corresponding text.
+	 * put the objects in a circle, for each one store the center coordinate and
+	 * a coordinate for a corresponding text.
 	 */
 	private void calculateNodeCoordinates() {
 
-    int r = Math.min(lastHeight, lastWidth) / 2 - NODE_RADIUS - 50; // 50 for
-																			// text
-    int tr = (r + NODE_RADIUS + 10);
+		int r = Math.min(lastHeight, lastWidth) / 2 - NODE_RADIUS - 50; // 50
+																		// for
+																		// text
+		int tr = (r + NODE_RADIUS + 10);
 
-    int xc = lastWidth / 2 - 10;
-    int yc = lastHeight / 2 - 10;
+		int xc = lastWidth / 2 - 10;
+		int yc = lastHeight / 2 - 10;
 
-    double slice = 2 * Math.PI / graph.getNodes().size();
+		double slice = 2 * Math.PI / graph.getNodes().size();
 		int i = 0;
-    for (Node n : graph.getNodes()) {
+		for (Node n : graph.getNodes()) {
 
 			double angle = slice * i;
 			int cX = (int) (xc + r * Math.cos(angle));
@@ -148,28 +161,32 @@ public class GraphComponent extends JComponent {
 			int tX = (int) (xc + tr * Math.cos(angle));
 			int tY = (int) (yc + tr * Math.sin(angle));
 
-      nodesPositions.put(n.getId(), new Point(cX, cY, tX, tY));
+			nodesPositions.put(n.getId(), new Point(cX, cY, tX, tY));
 			i++;
 		}
 
 	}
 
 	/**
-	 * Draws a circle on the line from (x1,y1) to (x2,y2). Assuming the (virtual)
-	 * length of the line is virtualLength, the circles is drawn at location
-	 * virtualLocation (0..virtualLength). The diameter is 'diam'
+	 * Draws a circle on the line from (x1,y1) to (x2,y2). Assuming the
+	 * (virtual) length of the line is virtualLength, the circles is drawn at
+	 * location virtualLocation (0..virtualLength). The diameter is 'diam'
 	 */
-	private void drawCircleOnALine(Graphics g, int x1, int y1, int x2, int y2, int virtualLength, int virtualLocation,
-			int diam, Color c, String txt) {
+	private void drawCircleOnALine(Graphics g, int x1, int y1, int x2, int y2,
+			int virtualLength, int virtualLocation, int diam, Color c,
+			String txt) {
 
 		// The actual length of the line
-		double lineActualLength = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)) - 45;
+		double lineActualLength = Math.sqrt(Math.pow(x1 - x2, 2)
+				+ Math.pow(y1 - y2, 2)) - 45;
 
 		// the angle of the line with the horizontal axis
-		double alpha = Math.atan(((double) Math.abs(x1 - x2)) / ((double) Math.abs(y1 - y2)));
+		double alpha = Math.atan(((double) Math.abs(x1 - x2))
+				/ ((double) Math.abs(y1 - y2)));
 
 		// the actual location on the line (0..lineActualLength)
-		double actualLocation = lineActualLength * ((double) virtualLocation) / ((double) virtualLength) + 15;
+		double actualLocation = lineActualLength * ((double) virtualLocation)
+				/ ((double) virtualLength) + 15;
 
 		// the coordinates of the location
 		double x = Math.sin(alpha) * actualLocation;
@@ -181,19 +198,22 @@ public class GraphComponent extends JComponent {
 
 		// draw the point
 		g.setColor(c);
-		g.drawOval(x1 + xDir * ((int) x) - diam / 2, y1 + yDir * ((int) y) - diam / 2, diam, diam);
+		g.drawOval(x1 + xDir * ((int) x) - diam / 2, y1 + yDir * ((int) y)
+				- diam / 2, diam, diam);
 
 		// draw the text
 		g.setColor(Color.darkGray);
-		g.drawString(txt, x1 + xDir * ((int) x) - diam / 2, y1 + yDir * ((int) y) - diam / 2);
+		g.drawString(txt, x1 + xDir * ((int) x) - diam / 2, y1 + yDir
+				* ((int) y) - diam / 2);
 	}
 
 	/**
-	 * Draws a line from (x1,y1) to (x2,y2) with an arrow of width d and height h.
-	 * The color of the line is lineColor and that of the arrow is arrowColor.
+	 * Draws a line from (x1,y1) to (x2,y2) with an arrow of width d and height
+	 * h. The color of the line is lineColor and that of the arrow is
+	 * arrowColor.
 	 */
-	private void drawArrowLine(Graphics g, int x1, int y1, int x2, int y2, int d, int h, Color lineColor,
-			Color arrowColor) {
+	private void drawArrowLine(Graphics g, int x1, int y1, int x2, int y2,
+			int d, int h, Color lineColor, Color arrowColor) {
 		int dx = x2 - x1, dy = y2 - y1;
 		double D = Math.sqrt(dx * dx + dy * dy);
 		double xm = D - d, xn = xm, ym = h, yn = -h, x;
@@ -217,13 +237,36 @@ public class GraphComponent extends JComponent {
 	}
 
 	public void setGraph(Graph graph) {
-    this.graph = graph;
+		this.graph = graph;
 		calculateNodeCoordinates();
 		refresh();
 	}
 
 	public void refresh() {
 		repaint();
+	}
+
+	public void generateGraph(List<Vehicle> vehicles, List<Road> roads,
+			List<Junction> junctions) {
+		graph = new Graph();
+		Map<Junction, Node> js = new HashMap<>();
+		for (Junction j : junctions) {
+			Node n = new Node(j.getId());
+			js.put(j, n); // <-- para convertir Junction a Node en aristas
+			graph.addNode(n);
+		}
+		for (Road r : roads) {
+			Node source = graph.getNode(r.getSource());
+			Node destiny = graph.getNode(r.getDestiny());
+			Edge e = new Edge(r.getId(), source, destiny, r.getLength());
+			graph.addEdge(e);
+		}
+		for (Vehicle v : vehicles) {
+			Edge e = graph.getEdge(v.getRoad().getId());
+			e.addDot(new Dot(v.getId(), v.getLocation()));
+		}
+		calculateNodeCoordinates();
+		refresh();
 	}
 
 }

@@ -32,10 +32,11 @@ public class SimulatorWindow extends JFrame {
 	private InfoTablePanel<Junction> junctionsTable;
 	private GraphComponent roadMap;
 
-  private JSpinner stepCounter;
-  private JTextField time;
+	private JSpinner stepCounter;
+	private JTextField time;
 
-	public SimulatorWindow(String title, File initialFile, int steps, Dimension dimension) {
+	public SimulatorWindow(String title, File initialFile, int steps,
+			Dimension dimension) {
 		super(title);
 		controller = new Controller(new TrafficSimulator());
 		initialize(dimension, initialFile, steps);
@@ -55,40 +56,47 @@ public class SimulatorWindow extends JFrame {
 		JToolBar bar = new JToolBar();
 
 		SimulatorAction load = new SimulatorAction("Load events", "open.png",
-        "Load events file", KeyEvent.VK_L, "control L", this::loadEvents);
+				"Load events file", KeyEvent.VK_L, "control L",
+				this::loadEvents);
 
 		SimulatorAction save = new SimulatorAction("Save events", "save.png",
 				"Save events", KeyEvent.VK_S, "control S", this::saveEvents);
 
 		SimulatorAction clear = new SimulatorAction("Clear", "clear.png",
-        "Clear events editor", KeyEvent.VK_C, "control D", eventsEditor::clear);
+				"Clear events editor", KeyEvent.VK_C, "control D",
+				eventsEditor::clear);
 
-    SimulatorAction events = new SimulatorAction("Set events", "events.png",
-        "Move events to events queue", null, "control enter", this::readEvents);
+		SimulatorAction events = new SimulatorAction("Set events",
+				"events.png", "Move events to events queue", null,
+				"control enter", this::readEvents);
 
 		SimulatorAction run = new SimulatorAction("Run", "play.png",
-        "Run simulation", KeyEvent.VK_R, "control P", this::run);
+				"Run simulation", KeyEvent.VK_R, "control P", this::run);
 
 		SimulatorAction reset = new SimulatorAction("Reset", "reset.png",
-        "Reset simulation", null, "control shift P", this::reset);
+				"Reset simulation", null, "control shift P", this::reset);
 
-    stepCounter = new JSpinner(new SpinnerNumberModel(initialSteps, 0, 100, 1));
+		stepCounter = new JSpinner(new SpinnerNumberModel(initialSteps, 0, 100,
+				1));
 		stepCounter.setMaximumSize(new Dimension(75, 30));
 
-    time = new JTextField("0", 4);
+		time = new JTextField("0", 4);
 		time.setMaximumSize(new Dimension(75, 30));
 		time.setHorizontalAlignment(JTextField.RIGHT);
 		time.setEnabled(false);
 		time.setDisabledTextColor(UIManager.getColor("TextField.foreground"));
 
-    SimulatorAction generateReport = new SimulatorAction("Generate report", "report.png",
-        "Generate new report", null, null, this::generateReports);
+		SimulatorAction generateReport = new SimulatorAction("Generate report",
+				"report.png", "Generate new report", null, null,
+				this::generateReports);
 
-		SimulatorAction deleteReport = new SimulatorAction("Delete report", "delete_report.png",
-        "Delete current report", null, null, reportsArea::clear);
+		SimulatorAction deleteReport = new SimulatorAction("Delete report",
+				"delete_report.png", "Delete current report", null, null,
+				reportsArea::clear);
 
-		SimulatorAction saveReport = new SimulatorAction("Save report", "save_report.png", "Save " +
-        "current report", null, "control shift S", this::saveReport);
+		SimulatorAction saveReport = new SimulatorAction("Save report",
+				"save_report.png", "Save " + "current report", null,
+				"control shift S", this::saveReport);
 
 		SimulatorAction exit = new SimulatorAction("Exit", "exit.png",
 				"Exit application", KeyEvent.VK_E, "control W",
@@ -101,14 +109,16 @@ public class SimulatorWindow extends JFrame {
 
 		add(bar, BorderLayout.NORTH);
 
-    JCheckBoxMenuItem redirectOutput = new JCheckBoxMenuItem("Redirect output");
-    redirectOutput.addItemListener(e -> {
-      if (redirectOutput.isSelected()) {
-        controller.setOutputStream(new TextAreaOutputStream(reportsArea.getArea()));
-      } else {
-        controller.setOutputStream(null);
-      }
-    });
+		JCheckBoxMenuItem redirectOutput = new JCheckBoxMenuItem(
+				"Redirect output");
+		redirectOutput.addItemListener(e -> {
+			if (redirectOutput.isSelected()) {
+				controller.setOutputStream(new TextAreaOutputStream(reportsArea
+						.getArea()));
+			} else {
+				controller.setOutputStream(null);
+			}
+		});
 
 		// Menu bar
 		JMenuBar menu = new JMenuBar();
@@ -128,7 +138,7 @@ public class SimulatorWindow extends JFrame {
 		simulator.add(reset);
 		simulator.addSeparator();
 		simulator.add(events);
-    simulator.add(redirectOutput);
+		simulator.add(redirectOutput);
 
 		JMenu reports = new JMenu("Reports");
 
@@ -142,21 +152,23 @@ public class SimulatorWindow extends JFrame {
 		setJMenuBar(menu);
 	}
 
-  private void addSections(File initialFile) {
+	private void addSections(File initialFile) {
 
 		Dimension horizontalThird = new Dimension(WINDOW_SIZE.width / 6,
 				WINDOW_SIZE.height / 8);
 		Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3,
 				WINDOW_SIZE.height / 8);
 
-    eventsEditor = new EventsEditorPanel(horizontalThird, initialFile);
+		eventsEditor = new EventsEditorPanel(horizontalThird, initialFile);
 		// TODO: pedir datos para las tablas a las clases
 		eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
 				Event.INFO);
 		reportsArea = new ReportsAreaPanel(horizontalThird);
-		vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird, Vehicle.INFO);
+		vehiclesTable = new InfoTablePanel<>("Vehicles", verticalThird,
+				Vehicle.INFO);
 		roadsTable = new InfoTablePanel<>("Roads", verticalThird, Road.INFO);
-		junctionsTable = new InfoTablePanel<>("Junctions", verticalThird, Junction.INFO);
+		junctionsTable = new InfoTablePanel<>("Junctions", verticalThird,
+				Junction.INFO);
 		roadMap = new GraphComponent();
 
 		JSplitPane topLeftSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
@@ -179,32 +191,37 @@ public class SimulatorWindow extends JFrame {
 	}
 
 	private void addListeners() {
-    controller.addListener(new TrafficSimulator.Listener() {
-      @Override
-      public void registered(TrafficSimulator.UpdateEvent ue) {
+		controller.addListener(new TrafficSimulator.Listener() {
+			@Override
+			public void registered(TrafficSimulator.UpdateEvent ue) {
 
-      }
+			}
 
-      @Override
-      public void reset(TrafficSimulator.UpdateEvent ue) {
+			@Override
+			public void reset(TrafficSimulator.UpdateEvent ue) {
+				refreshTables(ue.getVehicles(), ue.getRoads(),
+						ue.getJunctions());
+			}
 
-      }
+			@Override
+			public void newEvent(TrafficSimulator.UpdateEvent ue) {
 
-      @Override
-      public void newEvent(TrafficSimulator.UpdateEvent ue) {
+			}
 
-      }
+			@Override
+			public void advanced(TrafficSimulator.UpdateEvent ue) {
+				time.setText("" + ue.getCurrentTime());
+				refreshTables(ue.getVehicles(), ue.getRoads(),
+						ue.getJunctions());
+				roadMap.generateGraph(ue.getVehicles(), ue.getRoads(),
+						ue.getJunctions());
+			}
 
-      @Override
-      public void advanced(TrafficSimulator.UpdateEvent ue) {
-        time.setText("" + ue.getCurrentTime());
-      }
+			@Override
+			public void error(TrafficSimulator.UpdateEvent ue, String msg) {
 
-      @Override
-      public void error(TrafficSimulator.UpdateEvent ue, String msg) {
-
-      }
-    });
+			}
+		});
 	}
 
 	private JSplitPane createSeparator(int orientation, Component first,
@@ -249,28 +266,29 @@ public class SimulatorWindow extends JFrame {
 		try {
 			String text = eventsEditor.getText();
 			InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
-      controller.clearEvents();
+			controller.clearEvents();
 			controller.loadEvents(is);
 			List<Event> events = controller.getLoadedEvents();
 			eventsQueue.setElements(events);
 		} catch (IOException ignored) {
 			// TODO: hacer algo con las excecpciones
 		} catch (IllegalStateException e) {
-      e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
-  private void run() {
-    int ticks = (Integer) stepCounter.getValue();
-    //controller.setOutputStream(System.out); // para verlo por pantalla en principio
-    controller.run(ticks);
-  }
+	private void run() {
+		int ticks = (Integer) stepCounter.getValue();
+		// controller.setOutputStream(System.out); // para verlo por pantalla en
+		// principio
+		controller.run(ticks);
+	}
 
-  private void reset() {
-    eventsQueue.clear();
-    reportsArea.clear();
-    controller.reset();
-  }
+	private void reset() {
+		eventsQueue.clear();
+		reportsArea.clear();
+		controller.reset();
+	}
 
 	private void saveReport() {
 		JFileChooser chooser = new JFileChooser();
@@ -285,11 +303,12 @@ public class SimulatorWindow extends JFrame {
 		}
 	}
 
-  private void generateReports() {
-    // TODO: lanzar emergente para elegir qué mostrar
-    reportsArea.clear();
-    controller.generateReports(new TextAreaOutputStream(reportsArea.getArea()));
-  }
+	private void generateReports() {
+		// TODO: lanzar emergente para elegir qué mostrar
+		reportsArea.clear();
+		controller.generateReports(new TextAreaOutputStream(reportsArea
+				.getArea()));
+	}
 
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {
@@ -301,6 +320,13 @@ public class SimulatorWindow extends JFrame {
 		for (Action a : actions) {
 			bar.add(a);
 		}
+	}
+
+	private void refreshTables(List<Vehicle> vehicles, List<Road> roads,
+			List<Junction> junctions) {
+		vehiclesTable.setElements(vehicles);
+		roadsTable.setElements(roads);
+		junctionsTable.setElements(junctions);
 	}
 
 }

@@ -114,6 +114,7 @@ public class Road extends SimulatedObject {
 		int i = 0;
 		for(Vehicle v : vehicleList.valuesList()) {
 			ids[i] = v.getId();
+			i++;
 		}
 		return ids;
 	}

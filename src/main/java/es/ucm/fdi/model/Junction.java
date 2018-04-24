@@ -93,32 +93,36 @@ public class Junction extends SimulatedObject {
 		Map<String, String> result = new HashMap<>();
 		StringBuilder greenBuilder = new StringBuilder();
 		StringBuilder redBuilder = new StringBuilder();
+		greenBuilder.append('[');
+		redBuilder.append('[');
 		for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
 			// Para cada carretera entrante
-			if(e.getValue().lightColor().equals("green")) {
-			greenBuilder.append("(" + e.getKey() + ","
-					+ e.getValue().lightColor() + ",[");
-			// Rellena los vehículos en la cola
-			for (Vehicle v : e.getValue().vehicles()) {
-				greenBuilder.append(v + ",");
+			if (e.getValue().lightColor().equals("green")) {
+				greenBuilder.append("(" + e.getKey() + ","
+						+ e.getValue().lightColor() + ",[");
+				// Rellena los vehículos en la cola
+				for (Vehicle v : e.getValue().vehicles()) {
+					greenBuilder.append(v + ",");
+				}
+				if (!e.getValue().isEmpty()) {
+					greenBuilder.deleteCharAt(greenBuilder.length() - 1); // coma
+				}
+				greenBuilder.append("]),");
+			} else {
+				redBuilder.append("(" + e.getKey() + ","
+						+ e.getValue().lightColor() + ",[");
+				// Rellena los vehículos en la cola
+				for (Vehicle v : e.getValue().vehicles()) {
+					redBuilder.append(v + ",");
+				}
+				if (!e.getValue().isEmpty()) {
+					redBuilder.deleteCharAt(redBuilder.length() - 1); // coma
+				}
+				redBuilder.append("]),");
 			}
-			if (!e.getValue().isEmpty()) {
-				greenBuilder.deleteCharAt(greenBuilder.length() - 1); // coma
-			}
-			greenBuilder.append("]),");
-		} else {
-			redBuilder.append("(" + e.getKey() + ","
-					+ e.getValue().lightColor() + ",[");
-			// Rellena los vehículos en la cola
-			for (Vehicle v : e.getValue().vehicles()) {
-				redBuilder.append(v + ",");
-			}
-			if (!e.getValue().isEmpty()) {
-				redBuilder.deleteCharAt(redBuilder.length() - 1); // coma
-			}
-			redBuilder.append("]),");
 		}
-		}
+		greenBuilder.append(']');
+		redBuilder.append(']');
 		result.put(INFO[0], super.id);
 		result.put(INFO[1], greenBuilder.toString());
 		result.put(INFO[2], redBuilder.toString());
