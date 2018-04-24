@@ -7,6 +7,8 @@ import es.ucm.fdi.model.TrafficSimulator;
 public class NewCarEvent extends NewVehicleEvent {
 
   private static final String FRIENDLY_CLASS_NAME = "New Car";
+  private static final String[] ATTRIBUTES = {"resistance", "fault_probability",
+      "max_fault_duration", "seed"};
 
   private int resistance;
   private double faultProbability;
@@ -44,17 +46,11 @@ public class NewCarEvent extends NewVehicleEvent {
     @Override
     public NewVehicleEvent parseType(IniSection section, int time, String id, int maxSpeed,
                                      String[] itinerary) {
-
-      int resistance = parsePositiveInt(section, "resistance");
-
-      double faultProbability = parsePositiveDouble(section, "fault_probability", 1.0);
-
-      int maxFaultDuration = parsePositiveInt(section, "max_fault_duration");
-
-      long seed = parsePositiveLong(section, "seed", System.currentTimeMillis());
-
-      return new NewCarEvent(time, id, maxSpeed, itinerary, resistance,
-          faultProbability, maxFaultDuration, seed);
+      return new NewCarEvent(time, id, maxSpeed, itinerary,
+          parsePositiveInt(section, ATTRIBUTES[0]),
+          parsePositiveDouble(section, ATTRIBUTES[1], 1.0),
+          parsePositiveInt(section, ATTRIBUTES[2]),
+          parsePositiveLong(section, ATTRIBUTES[3], System.currentTimeMillis()));
     }
 
     @Override
@@ -64,16 +60,8 @@ public class NewCarEvent extends NewVehicleEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "type=" + Car.TYPE + "\n" +
-          "max_speed=\n" +
-          "itinerary=\n" +
-          "resistance=\n" +
-          "faulty_probability=\n" +
-          "max_fault_duration=\n" +
-          "seed=\n";
+      return super.getEventFileTemplate() + "\ntype=" + Car.TYPE + "\n" +
+          String.join("=\n", ATTRIBUTES) + "=";
     }
 
   }

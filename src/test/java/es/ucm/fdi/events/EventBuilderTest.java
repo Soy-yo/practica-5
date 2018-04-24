@@ -4,7 +4,8 @@ import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
@@ -21,9 +22,7 @@ class EventBuilderTest {
     simulator.addSimulatedObject(j1);
     simulator.addSimulatedObject(j2);
     simulator.addSimulatedObject(r);
-    List<Junction> junctions = new ArrayList<>();
-    junctions.add(j1);
-    junctions.add(j2);
+    List<Junction> junctions = Arrays.asList(j1, j2);
 
     IniSection section = new IniSection("new_vehicle");
     section.setValue("time", 0);
@@ -36,8 +35,13 @@ class EventBuilderTest {
     assertNotNull(event);
     event.execute(simulator);
 
-    assertEquals(simulator.getJunctions(), junctions);
-    assertEquals(simulator.getVehicles().get(0).getId(), "vt1");
+    // No se puede usar assertEquals en las colecciones porque no sobreescriben equals()
+    int i = 0;
+    for (Junction j : simulator.getJunctions()) {
+      assertEquals(junctions.get(i), j);
+      i++;
+    }
+    assertEquals("vt1", simulator.getVehicles().iterator().next().getId());
   }
 
   @Test
@@ -74,10 +78,9 @@ class EventBuilderTest {
     IniSection section = new IniSection("new_junction");
     section.setValue("time", "-1");
     section.setValue("id", "j");
-    Event event = EventBuilder.parse(section);
-    assertEquals(event.time, 0);
-    section.setValue("time", "hello world");
-    assertEquals(event.time, 0);
+    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    section.setValue("time", "hello_world");
+    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
   }
 
   @Test
@@ -106,15 +109,15 @@ class EventBuilderTest {
       return roadMapTest.getPath(path);
     }
 
-    List<Vehicle> getVehicles() {
+    Collection<Vehicle> getVehicles() {
       return roadMapTest.getVehicles();
     }
 
-    List<Road> getRoads() {
+    Collection<Road> getRoads() {
       return roadMapTest.getRoads();
     }
 
-    List<Junction> getJunctions() {
+    Collection<Junction> getJunctions() {
       return roadMapTest.getJunctions();
     }
 

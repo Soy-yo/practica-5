@@ -7,6 +7,7 @@ import es.ucm.fdi.model.TrafficSimulator;
 public class NewRoundRobinJunctionEvent extends NewJunctionEvent {
 
   private static final String FRIENDLY_CLASS_NAME = "New RR Junction";
+  private static final String[] ATTRIBUTES = {"min_time_slice", "max_time_slice"};
 
   private int maxTimeSlice;
   private int minTimeSlice;
@@ -36,9 +37,9 @@ public class NewRoundRobinJunctionEvent extends NewJunctionEvent {
 
     @Override
     public NewJunctionEvent parseType(IniSection section, int time, String id) {
-      int maxTimeSlice = parsePositiveInt(section, "max_time_slice");
-      int minTimeSlice = parsePositiveInt(section, "min_time_slice");
-      return new NewRoundRobinJunctionEvent(time, id, minTimeSlice, maxTimeSlice);
+      return new NewRoundRobinJunctionEvent(time, id,
+          parsePositiveInt(section, ATTRIBUTES[0]),
+          parsePositiveInt(section, ATTRIBUTES[1]));
     }
 
     @Override
@@ -48,12 +49,8 @@ public class NewRoundRobinJunctionEvent extends NewJunctionEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "type=" + RoundRobinJunction.TYPE + "\n" +
-          "max_time_slice=\n" +
-          "min_time_slice=\n";
+      return super.getEventFileTemplate() + "\ntype=" + RoundRobinJunction.TYPE + "\n" +
+          String.join("=\n", ATTRIBUTES) + "=";
     }
 
   }

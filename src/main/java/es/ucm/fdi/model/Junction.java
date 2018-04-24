@@ -88,6 +88,11 @@ public class Junction extends SimulatedObject {
 		}
 	}
 
+  @Override
+  protected String getReportHeader() {
+    return SECTION_TAG_NAME;
+  }
+
 	@Override
 	public Map<String, String> describe() {
 		Map<String, String> result = new HashMap<>();
@@ -95,39 +100,34 @@ public class Junction extends SimulatedObject {
 		StringBuilder redBuilder = new StringBuilder();
 		for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
 			// Para cada carretera entrante
-			if(e.getValue().lightColor().equals("green")) {
-			greenBuilder.append("(" + e.getKey() + ","
-					+ e.getValue().lightColor() + ",[");
-			// Rellena los vehículos en la cola
-			for (Vehicle v : e.getValue().vehicles()) {
-				greenBuilder.append(v + ",");
-			}
-			if (!e.getValue().isEmpty()) {
-				greenBuilder.deleteCharAt(greenBuilder.length() - 1); // coma
-			}
-			greenBuilder.append("]),");
-		} else {
-			redBuilder.append("(" + e.getKey() + ","
-					+ e.getValue().lightColor() + ",[");
-			// Rellena los vehículos en la cola
-			for (Vehicle v : e.getValue().vehicles()) {
-				redBuilder.append(v + ",");
-			}
-			if (!e.getValue().isEmpty()) {
-				redBuilder.deleteCharAt(redBuilder.length() - 1); // coma
-			}
-			redBuilder.append("]),");
-		}
-		}
-		result.put(INFO[0], super.id);
+      if (e.getValue().hasGreenLight()) {
+        greenBuilder.append("(" + e.getKey() + ","
+            + e.getValue().lightColor() + ",[");
+        // Rellena los vehículos en la cola
+        for (Vehicle v : e.getValue().vehicles()) {
+          greenBuilder.append(v + ",");
+        }
+        if (!e.getValue().isEmpty()) {
+          greenBuilder.deleteCharAt(greenBuilder.length() - 1); // coma
+        }
+        greenBuilder.append("]),");
+      } else {
+        redBuilder.append("(" + e.getKey() + ","
+            + e.getValue().lightColor() + ",[");
+        // Rellena los vehículos en la cola
+        for (Vehicle v : e.getValue().vehicles()) {
+          redBuilder.append(v + ",");
+        }
+        if (!e.getValue().isEmpty()) {
+          redBuilder.deleteCharAt(redBuilder.length() - 1); // coma
+        }
+        redBuilder.append("]),");
+      }
+    }
+    result.put(INFO[0], id);
 		result.put(INFO[1], greenBuilder.toString());
 		result.put(INFO[2], redBuilder.toString());
 		return result;
-	}
-
-	@Override
-	protected String getReportHeader() {
-		return SECTION_TAG_NAME;
 	}
 
 	protected class IncomingRoad {
@@ -160,6 +160,10 @@ public class Junction extends SimulatedObject {
 		void switchLight() {
 			greenLight = !greenLight;
 		}
+
+    boolean hasGreenLight() {
+      return greenLight;
+    }
 
 		String lightColor() {
 			return greenLight ? "green" : "red";

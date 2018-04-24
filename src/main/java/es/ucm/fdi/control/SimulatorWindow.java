@@ -187,7 +187,7 @@ public class SimulatorWindow extends JFrame {
 
       @Override
       public void reset(TrafficSimulator.UpdateEvent ue) {
-
+        time.setText("" + 0);
       }
 
       @Override

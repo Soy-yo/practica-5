@@ -8,6 +8,7 @@ public class NewVehicleEvent extends Event {
 
   private static final String FRIENDLY_CLASS_NAME = "New Vehicle";
   protected static final String SECTION_TAG_NAME = "new_vehicle";
+  protected static final String[] ATTRIBUTES = {"time", "id", "max_speed", "itinerary"};
 
   protected int maxSpeed;
   protected String[] itinerary;
@@ -32,19 +33,13 @@ public class NewVehicleEvent extends Event {
 
     @Override
     public Event parse(IniSection section) {
-
       if (!section.getTag().equals(SECTION_TAG_NAME) || !matchesType(section)) {
         return null;
       }
-
-      int time = parsePositiveInt(section, "time", 0);
-
+      int time = parsePositiveInt(section, ATTRIBUTES[0], 0);
       String id = getId(section);
-
-      int maxSpeed = parsePositiveInt(section, "max_speed");
-
-      String[] itinerary = parseIdList(section, "itinerary", 2);
-
+      int maxSpeed = parsePositiveInt(section, ATTRIBUTES[2]);
+      String[] itinerary = parseIdList(section, ATTRIBUTES[3], 2);
       return parseType(section, time, id, maxSpeed, itinerary);
     }
 
@@ -60,11 +55,7 @@ public class NewVehicleEvent extends Event {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "max_speed=\n" +
-          "itinerary=\n";
+      return "[" + SECTION_TAG_NAME + "]\n" + String.join("=\n", ATTRIBUTES) + "=";
     }
 
   }

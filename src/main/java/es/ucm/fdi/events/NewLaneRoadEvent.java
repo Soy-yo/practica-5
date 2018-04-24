@@ -7,11 +7,12 @@ import es.ucm.fdi.model.TrafficSimulator;
 public class NewLaneRoadEvent extends NewRoadEvent {
 
   private static final String FRIENDLY_CLASS_NAME = "New Lane Road";
+  private static final String[] ATTRIBUTES = {"lanes"};
 
   private int lanes;
 
-  NewLaneRoadEvent(int time, String id, String sourceId,
-                   String destinationId, int maxSpeed, int length, int lanes) {
+  NewLaneRoadEvent(int time, String id, String sourceId, String destinationId, int maxSpeed,
+                   int length, int lanes) {
     super(time, id, sourceId, destinationId, maxSpeed, length);
     this.lanes = lanes;
   }
@@ -37,8 +38,8 @@ public class NewLaneRoadEvent extends NewRoadEvent {
     @Override
     public NewRoadEvent parseType(IniSection section, int time, String id, String src,
                                   String dest, int maxSpeed, int length) {
-      int lanes = parsePositiveInt(section, "lanes");
-      return new NewLaneRoadEvent(time, id, src, dest, maxSpeed, length, lanes);
+      return new NewLaneRoadEvent(time, id, src, dest, maxSpeed, length,
+          parsePositiveInt(section, ATTRIBUTES[0]));
     }
 
     @Override
@@ -48,15 +49,8 @@ public class NewLaneRoadEvent extends NewRoadEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "type=" + LaneRoad.TYPE + "\n" +
-          "src=\n" +
-          "dest=\n" +
-          "max_speed=\n" +
-          "length=\n" +
-          "lanes=\n";
+      return super.getEventFileTemplate() + "\ntype=" + LaneRoad.TYPE + "\n" +
+          String.join("=\n", ATTRIBUTES) + "=";
     }
 
   }
