@@ -1,17 +1,17 @@
 package es.ucm.fdi.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for MultiTreeMap
  */
-public class MultiTreeMapTest {
+class MultiTreeMapTest {
 
     /**
      * A simple test class with 2 fields, only the first of which is
@@ -21,7 +21,7 @@ public class MultiTreeMapTest {
         private int i;
         private String s;
 
-        public T(int i, String s) {
+      T(int i, String s) {
             this.i = i;
             this.s = s;
         }
@@ -58,7 +58,7 @@ public class MultiTreeMapTest {
     }
 
     @Test
-    public void testValuesListGet() throws Exception {
+    void testValuesListGet() throws Exception {
         MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
         T[] array = new T[]{
                 new T(0, "0"),   // 0
@@ -79,7 +79,7 @@ public class MultiTreeMapTest {
     }
 
     @Test
-    public void putAndRemove() throws Exception {
+    void putAndRemove() throws Exception {
         MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
         T[] array = new T[]{
                 new T(3, "3"),
@@ -101,15 +101,15 @@ public class MultiTreeMapTest {
         assertEquals(3, ts.get(t.i).size());
         // borrar elimina el primero, pero no el duplicado
         boolean removed = ts.removeValue(t.i, t);
-        assertTrue("removed correctly", removed);
+      assertTrue(removed, "removed correctly");
         assertTrue(ts.get(t.i).get(1) == t);
         removed = ts.removeValue(t.i, t);
-        assertTrue("removed correctly", removed);
+      assertTrue(removed, "removed correctly");
         assertEquals(1, ts.get(t.i).size());
     }
 
     @Test
-    public void testEmptiesCorrectly() throws Exception {
+    void testEmptiesCorrectly() throws Exception {
         MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
         T one = new T(1, "1");
         ts.putValue(1, one);
@@ -120,7 +120,7 @@ public class MultiTreeMapTest {
     }
 
     @Test
-    public void sizeComputation() throws Exception {
+    void sizeComputation() throws Exception {
         MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
         T[] array = new T[]{
                 new T(3, "3"),
@@ -134,12 +134,11 @@ public class MultiTreeMapTest {
                 new T(2, "2.2")};
 
         for (T t : array) ts.putValue(t.i, t);
-        assertEquals("size ok", array.length,
-                ts.sizeOfValues());
+      assertEquals(array.length, ts.sizeOfValues(), "size ok");
     }
 
     @Test
-    public void innerValuesAscending() throws Exception {
+    void innerValuesAscending() throws Exception {
         MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
         T[] array = new T[]{
                 new T(3, "3"),
@@ -158,14 +157,14 @@ public class MultiTreeMapTest {
         int i=0;
         for (T t : ts.innerValues()) {
             //System.err.println(t + " vs " + array[i]);
-            assertEquals("correct order at position " + i, array[i], t);
+          assertEquals(array[i], t, "correct order at position " + i);
             i++;
         }
-        assertEquals("all elements iterated", array.length, i);
+      assertEquals(array.length, i, "all elements iterated");
     }
 
     @Test
-    public void innerValuesDescending() throws Exception {
+    void innerValuesDescending() throws Exception {
         MultiTreeMap<Integer, T> ts = new MultiTreeMap<>((Integer a, Integer b)->b.compareTo(a));
         T[] array = new T[]{
                 new T(3, "3"),
@@ -184,9 +183,10 @@ public class MultiTreeMapTest {
         int i=0;
         for (T t : ts.innerValues()) {
             System.err.println(t + " vs " + array[i]);
-            assertEquals("correct order at position " + i, array[i], t);
+          assertEquals(array[i], t, "correct order at position " + i);
             i++;
         }
-        assertEquals("all elements iterated", array.length, i);
+      assertEquals(array.length, i, "all elements iterated");
     }
+
 }

@@ -120,7 +120,7 @@ public class TrafficSimulator {
   }
 
   private void writeSimulatedObjectsReports(OutputStream out,
-                                            List<? extends SimulatedObject> objects) {
+                                            Collection<? extends SimulatedObject> objects) {
     for (SimulatedObject o : objects) {
       try {
         writeReport(o.generateReport(currentTime), out);
@@ -205,15 +205,15 @@ public class TrafficSimulator {
       return type;
     }
 
-    public List<Vehicle> getVehicles() {
+    public Collection<Vehicle> getVehicles() {
       return roadMap.getVehicles();
     }
 
-    public List<Road> getRoads() {
+    public Collection<Road> getRoads() {
       return roadMap.getRoads();
     }
 
-    public List<Junction> getJunctions() {
+    public Collection<Junction> getJunctions() {
       return roadMap.getJunctions();
     }
 

@@ -165,8 +165,7 @@ public class Main {
 
   private static void startGuiMode() {
     File initialFile = infile == null ? null : new File(infile);
-    new SimulatorWindow("Traffic Simulator", initialFile, timeLimit == null ? 1 : timeLimit,
-        SimulatorWindow.WINDOW_SIZE);
+    new SimulatorWindow("Traffic Simulator", initialFile, timeLimit, SimulatorWindow.WINDOW_SIZE);
   }
 
   /**
@@ -177,35 +176,20 @@ public class Main {
     Controller controller = new Controller(new TrafficSimulator());
 
     try {
-      try {
-        controller.loadEvents(new FileInputStream(infile));
-      } catch (IllegalStateException e) {
-        throw new SimulatorError("Load failed", e);
-      } catch (IOException e) {
-        System.out.println("Something went wrong with input file (" + infile + ")");
-      }
-
-      try {
-        controller.setOutputStream(outfile == null ? System.out : new FileOutputStream(outfile));
-      } catch (IOException e) {
-        System.out.println("Something went wrong with output file (" + outfile + ")");
-      }
-
-      controller.run(timeLimit);
-    } catch (SimulatorError e) {
-      printErrors(e);
+      controller.loadEvents(new FileInputStream(infile));
+    } catch (IllegalStateException e) {
+      throw new SimulatorError("Load failed", e);
+    } catch (IOException e) {
+      throw new SimulatorError("Something went wrong with input file (" + infile + ")", e);
     }
 
-  }
-
-  private static void printErrors(Exception e) {
-    Throwable cause = e;
-    String indent = "";
-    while (cause != null) {
-      System.out.println(indent + cause.getMessage());
-      indent += "\t";
-      cause = cause.getCause();
+    try {
+      controller.setOutputStream(outfile == null ? System.out : new FileOutputStream(outfile));
+    } catch (IOException e) {
+      throw new SimulatorError("Something went wrong with output file (" + outfile + ")", e);
     }
+
+    controller.run(timeLimit);
   }
 
   private static void start(String[] args) {

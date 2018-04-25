@@ -77,9 +77,15 @@ public abstract class Event implements Describable {
         if (result >= 0) {
           return result;
         }
-      } catch (Exception e) {
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException(key + " must be a number", e);
+      } catch (IllegalArgumentException e) {
+        // No existía la clave, devuelve el valor por defecto
+        return defaultValue;
       }
-      return defaultValue;
+      // Si ha llegado aquí es que es negativo
+      // No se lanza antes para que no lo capture el catch
+      throw new IllegalArgumentException(key + " must be positive or zero");
     }
 
     default int parsePositiveInt(IniSection section, String key) {
@@ -101,9 +107,13 @@ public abstract class Event implements Describable {
         if (result > 0) {
           return result;
         }
-      } catch (Exception e) {
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException(key + " must be a number", e);
+      } catch (IllegalArgumentException e) {
+        // No existía la clave, devuelve el valor por defecto
+        return defaultValue;
       }
-      return defaultValue;
+      throw new IllegalArgumentException(key + " must be positive");
     }
 
     default double parsePositiveDouble(IniSection section, String key, double maxValue) {

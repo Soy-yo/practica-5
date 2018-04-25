@@ -42,12 +42,7 @@ public class NewBicycleEvent extends NewVehicleEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "type=" + Bicycle.TYPE + "\n" +
-          "max_speed=\n" +
-          "itinerary=\n";
+      return super.getEventFileTemplate() + "\ntype=" + Bicycle.TYPE + "\n";
     }
 
   }

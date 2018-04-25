@@ -8,14 +8,21 @@ public class RoadMap {
   private Map<String, Road> roads;
   private Map<String, Junction> junctions;
 
+  private Collection<Vehicle> unmodifiableVehicleList;
+  private Collection<Road> unmodifiableRoadList;
+  private Collection<Junction> unmodifiableJunctionList;
+
   public RoadMap() {
     reset();
   }
 
   public void reset() {
     vehicles = new LinkedHashMap<>();
+    unmodifiableVehicleList = Collections.unmodifiableCollection(vehicles.values());
     roads = new LinkedHashMap<>();
+    unmodifiableRoadList = Collections.unmodifiableCollection(roads.values());
     junctions = new LinkedHashMap<>();
+    unmodifiableJunctionList = Collections.unmodifiableCollection(junctions.values());
   }
 
   public boolean contains(String id) {
@@ -90,16 +97,16 @@ public class RoadMap {
     return junctions.get(id);
   }
 
-  public List<Vehicle> getVehicles() {
-    return Collections.unmodifiableList(new ArrayList<>(vehicles.values()));
+  public Collection<Vehicle> getVehicles() {
+    return unmodifiableVehicleList;
   }
 
-  public List<Road> getRoads() {
-    return Collections.unmodifiableList(new ArrayList<>(roads.values()));
+  public Collection<Road> getRoads() {
+    return unmodifiableRoadList;
   }
 
-  public List<Junction> getJunctions() {
-    return Collections.unmodifiableList(new ArrayList<>(junctions.values()));
+  public Collection<Junction> getJunctions() {
+    return unmodifiableJunctionList;
   }
 
   // Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que

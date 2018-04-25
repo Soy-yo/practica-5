@@ -41,10 +41,7 @@ public class NewMostCrowdedJunctionEvent extends NewJunctionEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "type=" + MostCrowdedJunction.TYPE + "\n";
+      return super.getEventFileTemplate() + "\ntype=" + MostCrowdedJunction.TYPE + "\n";
     }
 
   }

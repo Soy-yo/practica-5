@@ -8,8 +8,8 @@ public class NewDirtRoadEvent extends NewRoadEvent {
 
   private static final String FRIENDLY_CLASS_NAME = "New Dirt Road";
 
-  NewDirtRoadEvent(int time, String id, String sourceId,
-                   String destinationId, int maxSpeed, int length) {
+  NewDirtRoadEvent(int time, String id, String sourceId, String destinationId, int maxSpeed,
+                   int length) {
     super(time, id, sourceId, destinationId, maxSpeed, length);
   }
 
@@ -44,14 +44,7 @@ public class NewDirtRoadEvent extends NewRoadEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "id=\n" +
-          "type=" + DirtRoad.TYPE + "\n" +
-          "src=\n" +
-          "dest=\n" +
-          "max_speed=\n" +
-          "length=\n";
+      return super.getEventFileTemplate() + "\ntype=" + DirtRoad.TYPE + "\n";
     }
 
   }

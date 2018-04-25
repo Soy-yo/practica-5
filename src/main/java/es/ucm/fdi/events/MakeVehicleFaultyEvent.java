@@ -6,6 +6,7 @@ import es.ucm.fdi.model.TrafficSimulator;
 public class MakeVehicleFaultyEvent extends Event {
 
   private static final String SECTION_TAG_NAME = "make_vehicle_faulty";
+  private static final String[] ATTRIBUTES = {"time", "vehicles", "duration"};
 
   private String[] vehicles;
   private int duration;
@@ -32,17 +33,12 @@ public class MakeVehicleFaultyEvent extends Event {
 
     @Override
     public Event parse(IniSection section) {
-
       if (!section.getTag().equals(SECTION_TAG_NAME)) {
         return null;
       }
-
-      int time = parsePositiveInt(section, "time", 0);
-
-      String[] vehicles = parseIdList(section, "vehicles", 1);
-
-      int duration = parsePositiveInt(section, "duration");
-
+      int time = parsePositiveInt(section, ATTRIBUTES[0], 0);
+      String[] vehicles = parseIdList(section, ATTRIBUTES[1], 1);
+      int duration = parsePositiveInt(section, ATTRIBUTES[2]);
       return new MakeVehicleFaultyEvent(time, "", vehicles, duration);
     }
 
@@ -53,10 +49,7 @@ public class MakeVehicleFaultyEvent extends Event {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" +
-          "time=\n" +
-          "vehicles=\n" +
-          "duration=\n";
+      return "[" + SECTION_TAG_NAME + "]\n" + String.join("=\n", ATTRIBUTES) + "=";
     }
 
   }

@@ -2,11 +2,13 @@ package es.ucm.fdi.model;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.joining;
+
 public class Vehicle extends SimulatedObject {
 
   private static final String SECTION_TAG_NAME = "vehicle_report";
-  public static final String[] INFO = { "ID", "Road", "Location", "Speed", "Km",
-		"Faulty Units", "Itinerary" };
+  public static final String[] INFO = {"ID", "Road", "Location", "Speed", "Km",
+      "Faulty Units", "Itinerary"};
 
   protected int maxSpeed;
   protected int currentSpeed;
@@ -104,31 +106,34 @@ public class Vehicle extends SimulatedObject {
   }
 
   @Override
-  public Map<String, String> describe() {
-	  Map<String, String> result = new HashMap<>();
-	    result.put(INFO[0], super.id);
-	    result.put(INFO[1], road.id);
-	    result.put(INFO[2], "" + location);
-	    result.put(INFO[3], "" + currentSpeed);
-	    result.put(INFO[4], "" + kilometrage);
-	    result.put(INFO[5], "" + faulty);
-	    result.put(INFO[6], String.join(",", getItineraryIds()));
-	    return result;
-  }                                                                                     
-  
-  @Override
   protected String getReportHeader() {
     return SECTION_TAG_NAME;
   }
-  
+
+  @Override
+  public Map<String, String> describe() {
+    Map<String, String> result = new HashMap<>();
+    result.put(INFO[0], super.id);
+    result.put(INFO[1], road.id);
+    result.put(INFO[2], "" + location);
+    result.put(INFO[3], "" + currentSpeed);
+    result.put(INFO[4], "" + kilometrage);
+    result.put(INFO[5], "" + faulty);
+    result.put(INFO[6], itinerary.stream()
+        .map(SimulatedObject::getId)
+        .collect(joining(",")));
+    return result;
+  }
+
+  // TODO: borrar cuando se compruebe que el stream funciona
   private String[] getItineraryIds() {
-	  String[] ids = new String[itinerary.size()];
-	  int i = 0;
-	  for(Junction j : itinerary) {
-		  ids[i] = j.getId();
-		  i++;
-	  }
-	  return ids;
+    String[] ids = new String[itinerary.size()];
+    int i = 0;
+    for (Junction j : itinerary) {
+      ids[i] = j.getId();
+      i++;
+    }
+    return ids;
   }
 
 }
