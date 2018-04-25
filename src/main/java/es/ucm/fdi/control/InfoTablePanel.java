@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
     model.setRow(element, row);
   }
 
-  public void setElements(List<T> elements) {
+  public void setElements(Collection<T> elements) {
     clear();
     for (T element : elements) {
       addElement(element);

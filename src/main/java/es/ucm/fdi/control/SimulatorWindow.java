@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 
 public class SimulatorWindow extends JFrame {
@@ -306,7 +307,8 @@ public class SimulatorWindow extends JFrame {
 		}
 	}
 
-	private void refreshTables(List<Vehicle> vehicles, List<Road> roads, List<Junction> junctions) {
+  private void refreshTables(Collection<Vehicle> vehicles, Collection<Road> roads,
+                             Collection<Junction> junctions) {
 	  vehiclesTable.setElements(vehicles);
 	  roadsTable.setElements(roads);
 	  junctionsTable.setElements(junctions);

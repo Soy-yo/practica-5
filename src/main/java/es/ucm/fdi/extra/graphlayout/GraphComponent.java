@@ -1,14 +1,13 @@
 package es.ucm.fdi.extra.graphlayout;
 
-import javax.swing.*;
-
 import es.ucm.fdi.model.Junction;
 import es.ucm.fdi.model.Road;
 import es.ucm.fdi.model.Vehicle;
 
+import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GraphComponent extends JComponent {
@@ -246,13 +245,14 @@ public class GraphComponent extends JComponent {
 		repaint();
 	}
 
-	public void generateGraph(List<Vehicle> vehicles, List<Road> roads,
-			List<Junction> junctions) {
+  public void generateGraph(Collection<Vehicle> vehicles, Collection<Road> roads,
+                            Collection<Junction> junctions) {
 		graph = new Graph();
-		Map<Junction, Node> js = new HashMap<>();
+    // TODO: lo he comentado porque creo que no hace falta
+    //Map<Junction, Node> js = new HashMap<>();
 		for (Junction j : junctions) {
 			Node n = new Node(j.getId());
-			js.put(j, n); // <-- para convertir Junction a Node en aristas
+      //js.put(j, n); // <-- para convertir Junction a Node en aristas
 			graph.addNode(n);
 		}
 		for (Road r : roads) {
