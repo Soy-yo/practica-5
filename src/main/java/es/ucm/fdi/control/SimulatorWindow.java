@@ -180,7 +180,7 @@ public class SimulatorWindow extends JFrame {
 	}
 
 	private void addListeners() {
-    controller.addListener(new TrafficSimulator.Listener() {
+		controller.getSimulator().addListener(new TrafficSimulator.Listener() {
       @Override
       public void registered(TrafficSimulator.UpdateEvent ue) {
 
@@ -253,9 +253,10 @@ public class SimulatorWindow extends JFrame {
 		try {
 			String text = eventsEditor.getText();
 			InputStream is = new ByteArrayInputStream(text.getBytes("UTF-8"));
-      controller.clearEvents();
+			TrafficSimulator simulator = controller.getSimulator();
+			simulator.clearEvents();
 			controller.loadEvents(is);
-			List<Event> events = controller.getLoadedEvents();
+			List<Event> events = simulator.getEvents();
 			eventsQueue.setElements(events);
 		} catch (IOException ignored) {
 			// TODO: hacer algo con las excecpciones
@@ -290,9 +291,19 @@ public class SimulatorWindow extends JFrame {
 	}
 
   private void generateReports() {
-    // TODO: lanzar emergente para elegir qué mostrar
-    reportsArea.clear();
-    controller.generateReports(new TextAreaOutputStream(reportsArea.getArea()));
+		SimulatedObjectDialog dialog = new SimulatedObjectDialog(this, "Generate reports");
+		TrafficSimulator simulator = controller.getSimulator();
+		dialog.setVehicles(simulator.getVehicles());
+		dialog.setRoads(simulator.getRoads());
+		dialog.setJunctions(simulator.getJunctions());
+		if (dialog.open() == SimulatedObjectDialog.ACCEPTED) {
+			Collection<Vehicle> vehicles = dialog.getSelectedVehicles();
+			Collection<Road> roads = dialog.getSelectedRoads();
+			Collection<Junction> junctions = dialog.getSelectedJunctions();
+			reportsArea.clear();
+			controller.getSimulator().generateReports(new TextAreaOutputStream(reportsArea.getArea()),
+					vehicles, roads, junctions);
+		}
   }
 
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
