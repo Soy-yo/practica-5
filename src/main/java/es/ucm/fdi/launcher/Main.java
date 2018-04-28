@@ -97,7 +97,9 @@ public class Main {
   }
 
   private static void parseOutFileOption(CommandLine line) {
-    outfile = line.getOptionValue("o");
+    if (!guiMode) {
+      outfile = line.getOptionValue("o");
+    }
   }
 
   private static void parseStepsOption(CommandLine line) throws ParseException {

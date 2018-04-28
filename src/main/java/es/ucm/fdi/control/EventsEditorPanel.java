@@ -31,8 +31,8 @@ public class EventsEditorPanel extends JScrollPane {
       }
     }
     editor = new JTextArea(text);
-    border = new TitledBorder(new LineBorder(Color.BLACK), file == null ? "Events editor" :
-        makeTitle(file));
+    border = new TitledBorder(new LineBorder(Color.BLACK), file == null || !file.exists() ?
+        "Events editor" : makeTitle(file));
     setBorder(border);
     setMinimumSize(size);
     editor.setComponentPopupMenu(new EventsEditorPopupMenu());

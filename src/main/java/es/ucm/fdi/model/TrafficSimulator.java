@@ -94,6 +94,18 @@ public class TrafficSimulator {
     }
   }
 
+  public Collection<Vehicle> getVehicles() {
+    return roadMap.getVehicles();
+  }
+
+  public Collection<Road> getRoads() {
+    return roadMap.getRoads();
+  }
+
+  public Collection<Junction> getJunctions() {
+    return roadMap.getJunctions();
+  }
+
   // Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que
   // los une
   public Queue<Junction> getPath(String[] junctions) {
@@ -111,11 +123,14 @@ public class TrafficSimulator {
     }
   }
 
-  public void generateReports(OutputStream out) {
+  public void generateReports(OutputStream out,
+                              Collection<Vehicle> vehicles,
+                              Collection<Road> roads,
+                              Collection<Junction> junctions) {
     if (out != null) {
-      writeSimulatedObjectsReports(out, roadMap.getJunctions());
-      writeSimulatedObjectsReports(out, roadMap.getRoads());
-      writeSimulatedObjectsReports(out, roadMap.getVehicles());
+      writeSimulatedObjectsReports(out, vehicles);
+      writeSimulatedObjectsReports(out, roads);
+      writeSimulatedObjectsReports(out, junctions);
     }
   }
 
@@ -171,7 +186,7 @@ public class TrafficSimulator {
       }
       currentTime++;
       fireUpdateEvent(EventType.ADVANCED, null);
-      generateReports(out);
+      generateReports(out, roadMap.getVehicles(), roadMap.getRoads(), roadMap.getJunctions());
     }
   }
 

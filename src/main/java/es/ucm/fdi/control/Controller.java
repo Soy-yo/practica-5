@@ -6,12 +6,10 @@ import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.TrafficSimulator;
-import es.ucm.fdi.model.Vehicle;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 public class Controller {
 
@@ -58,20 +56,8 @@ public class Controller {
     }
   }
 
-  public void clearEvents() {
-    simulator.clearEvents();
-  }
-
-  public List<Event> getLoadedEvents() {
-    return simulator.getEvents();
-  }
-
-  void generateReports(OutputStream out) {
-    simulator.generateReports(out);
-  }
-
-  public void addListener(TrafficSimulator.Listener listener) {
-    simulator.addListener(listener);
+  public TrafficSimulator getSimulator() {
+    return simulator;
   }
 
 }
