@@ -184,8 +184,9 @@ public class SimulatedObjectDialog extends JDialog {
     int[] indices = list.getSelectedIndices();
     ListModel<T> model = list.getModel();
     List<T> result = new ArrayList<>();
-    for (int i : indices) {
-      result.add(model.getElementAt(i));
+    // Por alguna razón el checkbox seleccionado se lo traga como otro elemento más (?)
+    for (int i = 0; i < indices.length && indices[i] < model.getSize(); i++) {
+      result.add(model.getElementAt(indices[i]));
     }
     return result;
   }
