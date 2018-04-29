@@ -201,7 +201,8 @@ public class SimulatorWindow extends JFrame {
 			public void advanced(TrafficSimulator.UpdateEvent ue) {
         time.setText("" + ue.getCurrentTime());
         refreshTables(ue.getVehicles(), ue.getRoads(), ue.getJunctions());
-        roadMap.generateGraph(ue.getVehicles(), ue.getRoads(), ue.getJunctions());
+        roadMap.generateGraph(ue.getVehicles(), ue.getRoads(), ue.getJunctions(),
+            controller.getSimulator().getGreenRoads());
 			}
 
       @Override

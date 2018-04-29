@@ -29,7 +29,7 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
     model = new InfoTableModel(titles, 0);
     table = new JTable(model);
     table.setShowGrid(false);
-    //table.setEnabled(false);
+    table.setEnabled(false);
     centerCells();
     setBorder(new TitledBorder(new LineBorder(Color.BLACK), title));
     setMinimumSize(size);

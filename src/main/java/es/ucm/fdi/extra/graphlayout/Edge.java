@@ -10,13 +10,15 @@ public class Edge {
   private Node target;
   private int length;
   private List<Dot> dots;
-	
-	public Edge(String id, Node source, Node target, int length) {
+  private boolean enabled;
+
+  public Edge(String id, Node source, Node target, int length, boolean enabled) {
     this.source = source;
     this.target = target;
     this.id = id;
     this.length = length;
     dots = new ArrayList<>();
+    this.enabled = enabled;
 	}
 	
 	public void addDot(Dot e) {
@@ -43,4 +45,7 @@ public class Edge {
     return dots;
   }
 
+  public boolean isEnabled() {
+    return enabled;
+  }
 }

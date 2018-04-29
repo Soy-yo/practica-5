@@ -16,10 +16,14 @@ public abstract class JunctionWithTimeSlice extends Junction {
   @Override
   // Sobreescrito para usar la nueva IncomingRoad
   public void addRoad(Road road) {
-    incomingRoads.put(road, new IncomingRoad());
+    incomingRoads.put(road, new IncomingRoad(road));
   }
 
   protected class IncomingRoad extends Junction.IncomingRoad {
+
+    IncomingRoad(Road road) {
+      super(road);
+    }
 
     @Override
     void vehicleOut() {

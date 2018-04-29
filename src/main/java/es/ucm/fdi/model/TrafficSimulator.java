@@ -106,6 +106,10 @@ public class TrafficSimulator {
     return roadMap.getJunctions();
   }
 
+  public Set<Road> getGreenRoads() {
+    return roadMap.getGreenRoads();
+  }
+
   // Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que
   // los une
   public Queue<Junction> getPath(String[] junctions) {

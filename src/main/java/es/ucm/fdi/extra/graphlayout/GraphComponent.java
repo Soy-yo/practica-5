@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GraphComponent extends JComponent {
 
@@ -78,7 +79,7 @@ public class GraphComponent extends JComponent {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 		if (graph == null || graph.getNodes().size() == 0) {
-			g.setColor(Color.red);
+      g.setColor(Color.RED);
 			g.drawString("No graph yet!", getWidth() / 2 - 50, getHeight() / 2);
 		} else {
 			drawMap(g);
@@ -99,10 +100,10 @@ public class GraphComponent extends JComponent {
 		// draw nodes
 		for (Node j : graph.getNodes()) {
 			Point p = nodesPositions.get(j.getId());
-			g.setColor(Color.blue);
+      g.setColor(Color.BLUE);
 			g.fillOval(p.cX - NODE_RADIUS / 2, p.cY - NODE_RADIUS / 2,
 					NODE_RADIUS, NODE_RADIUS);
-			g.setColor(Color.black);
+      g.setColor(Color.BLACK);
 			g.drawString(j.getId(), p.tX, p.tY);
 		}
 
@@ -112,9 +113,14 @@ public class GraphComponent extends JComponent {
 			Point p2 = nodesPositions.get(e.getTarget().getId());
 
 			// draw the edge
-			Color arrowColor = Math.random() > 0.5 ? Color.RED : Color.GREEN;
+      //Color arrowColor = Math.random() > 0.5 ? Color.RED : Color.GREEN;
+      Color arrowColor = e.isEnabled() ? Color.GREEN : Color.RED;
 			drawArrowLine(g, p1.cX, p1.cY, p2.cX, p2.cY, 15, 5, Color.BLACK,
 					arrowColor);
+      int idx = (p1.cX + p2.cX) / 2;
+      int idy = (p1.cY + p2.cY) / 2;
+      g.setColor(Color.RED);
+      g.drawString(e.getId(), idx, idy);
 
 			// draw dots as circles. Dots at the same location are drawn with
 			// circles of
@@ -201,7 +207,7 @@ public class GraphComponent extends JComponent {
 				- diam / 2, diam, diam);
 
 		// draw the text
-		g.setColor(Color.darkGray);
+    g.setColor(Color.DARK_GRAY);
 		g.drawString(txt, x1 + xDir * ((int) x) - diam / 2, y1 + yDir
 				* ((int) y) - diam / 2);
 	}
@@ -246,7 +252,7 @@ public class GraphComponent extends JComponent {
 	}
 
   public void generateGraph(Collection<Vehicle> vehicles, Collection<Road> roads,
-                            Collection<Junction> junctions) {
+                            Collection<Junction> junctions, Set<Road> greenRoads) {
 		graph = new Graph();
     // TODO: lo he comentado porque creo que no hace falta
     //Map<Junction, Node> js = new HashMap<>();
@@ -258,7 +264,7 @@ public class GraphComponent extends JComponent {
 		for (Road r : roads) {
 			Node source = graph.getNode(r.getSource());
 			Node destiny = graph.getNode(r.getDestiny());
-			Edge e = new Edge(r.getId(), source, destiny, r.getLength());
+      Edge e = new Edge(r.getId(), source, destiny, r.getLength(), greenRoads.contains(r));
 			graph.addEdge(e);
 		}
 		for (Vehicle v : vehicles) {
