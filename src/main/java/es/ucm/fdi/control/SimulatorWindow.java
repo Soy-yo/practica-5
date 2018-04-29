@@ -11,13 +11,14 @@ import es.ucm.fdi.util.TextAreaOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimulatorWindow extends JFrame {
 
@@ -33,6 +34,8 @@ public class SimulatorWindow extends JFrame {
 	private InfoTablePanel<Junction> junctionsTable;
 	private GraphComponent roadMap;
 
+  private Map<Command, SimulatorAction> actionMap;
+
   private JSpinner stepCounter;
   private JTextField time;
 
@@ -46,32 +49,39 @@ public class SimulatorWindow extends JFrame {
 		setSize(dimension);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		addSections(initialFile);
+    generateActionMap();
 		addToolBar(steps);
 		addListeners();
 		setVisible(true);
 	}
 
-	private void addToolBar(int initialSteps) {
+  private void generateActionMap() {
+    actionMap = new HashMap<>();
+    actionMap.put(Command.LOAD_EVENTS,
+        new SimulatorAction(Command.LOAD_EVENTS, this::loadEvents));
+    actionMap.put(Command.SAVE_EVENTS,
+        new SimulatorAction(Command.SAVE_EVENTS, this::saveEvents));
+    actionMap.put(Command.CLEAR_EVENTS,
+        new SimulatorAction(Command.CLEAR_EVENTS, eventsEditor::clear));
+    actionMap.put(Command.MOVE_EVENTS,
+        new SimulatorAction(Command.MOVE_EVENTS, this::readEvents));
+    actionMap.put(Command.RUN,
+        new SimulatorAction(Command.RUN, this::run));
+    actionMap.put(Command.RESET,
+        new SimulatorAction(Command.RESET, this::reset));
+    actionMap.put(Command.GENERATE_REPORT,
+        new SimulatorAction(Command.GENERATE_REPORT, this::generateReports));
+    actionMap.put(Command.DELETE_REPORT,
+        new SimulatorAction(Command.DELETE_REPORT, this::deleteReports));
+    actionMap.put(Command.SAVE_REPORT,
+        new SimulatorAction(Command.SAVE_REPORT, this::saveReport));
+    actionMap.put(Command.EXIT,
+        new SimulatorAction(Command.EXIT, () -> System.exit(0)));
+  }
+
+  private void addToolBar(int initialSteps) {
 		// Tool bar
 		JToolBar bar = new JToolBar();
-
-		SimulatorAction load = new SimulatorAction("Load events", "open.png",
-        "Load events file", KeyEvent.VK_L, "control L", this::loadEvents);
-
-		SimulatorAction save = new SimulatorAction("Save events", "save.png",
-				"Save events", KeyEvent.VK_S, "control S", this::saveEvents);
-
-		SimulatorAction clear = new SimulatorAction("Clear", "clear.png",
-        "Clear events editor", KeyEvent.VK_C, "control D", eventsEditor::clear);
-
-    SimulatorAction events = new SimulatorAction("Set events", "events.png",
-        "Move events to events queue", null, "control enter", this::readEvents);
-
-		SimulatorAction run = new SimulatorAction("Run", "play.png",
-        "Run simulation", KeyEvent.VK_R, "control P", this::run);
-
-		SimulatorAction reset = new SimulatorAction("Reset", "reset.png",
-        "Reset simulation", null, "control shift P", this::reset);
 
     stepCounter = new JSpinner(new SpinnerNumberModel(initialSteps, 0, 100, 1));
 		stepCounter.setMaximumSize(new Dimension(75, 30));
@@ -82,23 +92,12 @@ public class SimulatorWindow extends JFrame {
 		time.setEnabled(false);
 		time.setDisabledTextColor(UIManager.getColor("TextField.foreground"));
 
-    SimulatorAction generateReport = new SimulatorAction("Generate report", "report.png",
-        "Generate new report", null, null, this::generateReports);
-
-		SimulatorAction deleteReport = new SimulatorAction("Delete report", "delete_report.png",
-        "Delete current report", null, null, reportsArea::clear);
-
-		SimulatorAction saveReport = new SimulatorAction("Save report", "save_report.png", "Save " +
-        "current report", null, "control shift S", this::saveReport);
-
-		SimulatorAction exit = new SimulatorAction("Exit", "exit.png",
-				"Exit application", KeyEvent.VK_E, "control W",
-				() -> System.exit(0));
-
-		addActionToToolBar(bar, load, save, clear, events, run, reset);
+    addActionToToolBar(bar, Command.LOAD_EVENTS, Command.SAVE_EVENTS, Command.CLEAR_EVENTS,
+        Command.MOVE_EVENTS, Command.RUN, Command.RESET);
 		addComponentToToolBar(bar, new JLabel(" Steps: "), stepCounter,
 				new JLabel(" Time: "), time);
-		addActionToToolBar(bar, generateReport, deleteReport, saveReport, exit);
+    addActionToToolBar(bar, Command.GENERATE_REPORT, Command.DELETE_REPORT, Command.SAVE_REPORT,
+        Command.EXIT);
 
 		add(bar, BorderLayout.NORTH);
 
@@ -116,25 +115,25 @@ public class SimulatorWindow extends JFrame {
 
 		JMenu file = new JMenu("File");
 
-		file.add(load);
-		file.add(save);
+    file.add(actionMap.get(Command.LOAD_EVENTS));
+    file.add(actionMap.get(Command.SAVE_EVENTS));
 		file.addSeparator();
-		file.add(saveReport);
+    file.add(actionMap.get(Command.SAVE_REPORT));
 		file.addSeparator();
-		file.add(exit);
+    file.add(actionMap.get(Command.EXIT));
 
 		JMenu simulator = new JMenu("Simulator");
 
-		simulator.add(run);
-		simulator.add(reset);
+    simulator.add(actionMap.get(Command.RUN));
+    simulator.add(actionMap.get(Command.RESET));
 		simulator.addSeparator();
-		simulator.add(events);
+    simulator.add(actionMap.get(Command.MOVE_EVENTS));
     simulator.add(redirectOutput);
 
 		JMenu reports = new JMenu("Reports");
 
-		reports.add(generateReport);
-		reports.add(deleteReport);
+    reports.add(actionMap.get(Command.GENERATE_REPORT));
+    reports.add(actionMap.get(Command.DELETE_REPORT));
 
 		menu.add(file);
 		menu.add(simulator);
@@ -151,7 +150,6 @@ public class SimulatorWindow extends JFrame {
 				WINDOW_SIZE.height / 8);
 
     eventsEditor = new EventsEditorPanel(horizontalThird, initialFile);
-		// TODO: pedir datos para las tablas a las clases
 		eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
 				Event.INFO);
 		reportsArea = new ReportsAreaPanel(horizontalThird);
@@ -183,12 +181,19 @@ public class SimulatorWindow extends JFrame {
 		controller.getSimulator().addListener(new TrafficSimulator.Listener() {
       @Override
       public void registered(TrafficSimulator.UpdateEvent ue) {
-
+        actionMap.get(Command.RUN).setEnabled(false);
+        actionMap.get(Command.RESET).setEnabled(false);
+        actionMap.get(Command.GENERATE_REPORT).setEnabled(false);
+        actionMap.get(Command.DELETE_REPORT).setEnabled(false);
+        actionMap.get(Command.SAVE_REPORT).setEnabled(false);
       }
 
       @Override
       public void reset(TrafficSimulator.UpdateEvent ue) {
         time.setText("" + 0);
+        actionMap.get(Command.MOVE_EVENTS).setEnabled(true);
+        actionMap.get(Command.RESET).setEnabled(false);
+        actionMap.get(Command.GENERATE_REPORT).setEnabled(false);
         refreshTables(ue.getVehicles(), ue.getRoads(), ue.getJunctions());
       }
 
@@ -212,8 +217,8 @@ public class SimulatorWindow extends JFrame {
     });
 	}
 
-	private JSplitPane createSeparator(int orientation, Component first,
-			Component second, double weight) {
+  private JSplitPane createSeparator(int orientation, Component first, Component second,
+                                     double weight) {
 		JSplitPane splitPane = new JSplitPane(orientation, first, second);
 		splitPane.setDividerSize(5);
 		splitPane.setVisible(true);
@@ -226,8 +231,7 @@ public class SimulatorWindow extends JFrame {
 		// TODO: apunta adónde?
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
-		int value = chooser.showOpenDialog(this);
-		if (value == JFileChooser.APPROVE_OPTION) {
+    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			try {
 				eventsEditor.writeFromFile(chooser.getSelectedFile());
 			} catch (IOException ignored) {
@@ -237,11 +241,9 @@ public class SimulatorWindow extends JFrame {
 	}
 
 	private void saveEvents() {
-		// TODO: revisar
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
-		int value = chooser.showSaveDialog(this);
-		if (value == JFileChooser.APPROVE_OPTION) {
+    if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			try {
 				eventsEditor.saveToFile(chooser.getSelectedFile());
 			} catch (IOException e) {
@@ -258,7 +260,10 @@ public class SimulatorWindow extends JFrame {
 			simulator.clearEvents();
 			controller.loadEvents(is);
 			List<Event> events = simulator.getEvents();
-			eventsQueue.setElements(events);
+      if (!events.isEmpty()) {
+        eventsQueue.setElements(events);
+        actionMap.get(Command.RUN).setEnabled(true);
+      }
 		} catch (IOException ignored) {
 			// TODO: hacer algo con las excecpciones
 		} catch (IllegalStateException e) {
@@ -267,8 +272,11 @@ public class SimulatorWindow extends JFrame {
 	}
 
   private void run() {
+    actionMap.get(Command.MOVE_EVENTS).setEnabled(false);
+    actionMap.get(Command.RUN).setEnabled(false);
+    actionMap.get(Command.RESET).setEnabled(true);
+    actionMap.get(Command.GENERATE_REPORT).setEnabled(true);
     int ticks = (Integer) stepCounter.getValue();
-    //controller.setOutputStream(System.out); // para verlo por pantalla en principio
     controller.run(ticks);
   }
 
@@ -304,7 +312,15 @@ public class SimulatorWindow extends JFrame {
 			reportsArea.clear();
 			controller.getSimulator().generateReports(new TextAreaOutputStream(reportsArea.getArea()),
 					vehicles, roads, junctions);
+      actionMap.get(Command.DELETE_REPORT).setEnabled(true);
+      actionMap.get(Command.SAVE_REPORT).setEnabled(true);
 		}
+  }
+
+  private void deleteReports() {
+    reportsArea.clear();
+    actionMap.get(Command.DELETE_REPORT).setEnabled(false);
+    actionMap.get(Command.SAVE_REPORT).setEnabled(false);
   }
 
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
@@ -313,9 +329,9 @@ public class SimulatorWindow extends JFrame {
 		}
 	}
 
-	private void addActionToToolBar(JToolBar bar, Action... actions) {
-		for (Action a : actions) {
-			bar.add(a);
+  private void addActionToToolBar(JToolBar bar, Command... commands) {
+    for (Command c : commands) {
+      bar.add(actionMap.get(c));
 		}
 	}
 
