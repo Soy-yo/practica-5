@@ -109,6 +109,17 @@ public class RoadMap {
     return unmodifiableJunctionList;
   }
 
+  public Set<Road> getGreenRoads() {
+    Set<Road> result = new HashSet<>();
+    for (Junction j : junctions.values()) {
+      Road green = j.getGreenRoad();
+      if (green != null) {
+        result.add(j.getGreenRoad());
+      }
+    }
+    return result;
+  }
+
   // Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que
   // los une
   public Queue<Junction> getPath(String[] path) {

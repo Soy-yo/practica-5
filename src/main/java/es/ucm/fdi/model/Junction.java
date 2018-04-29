@@ -8,10 +8,8 @@ public class Junction extends SimulatedObject {
 	public static final String[] INFO = { "ID", "Green", "Red" };
 
 	protected Map<Road, IncomingRoad> incomingRoads;
-	protected IncomingRoad currentRoadOn; // carretera con semáforo en verde
-											// actualmente
-	protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del
-												// semáforo en verde
+  protected IncomingRoad currentRoadOn; // carretera con semáforo en verde actualmente
+  protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del semáforo en verde
 
 	public Junction(String id) {
 		super(id);
@@ -19,12 +17,16 @@ public class Junction extends SimulatedObject {
 	}
 
 	public void addRoad(Road road) {
-		incomingRoads.put(road, new IncomingRoad());
+    incomingRoads.put(road, new IncomingRoad(road));
 	}
 
 	public void vehicleIn(Vehicle vehicle) {
 		incomingRoads.get(vehicle.getRoad()).vehicleIn(vehicle);
 	}
+
+  public Road getGreenRoad() {
+    return currentRoadOn == null ? null : currentRoadOn.road;
+  }
 
 	@Override
 	public void advance() {
@@ -136,10 +138,12 @@ public class Junction extends SimulatedObject {
 
 	protected class IncomingRoad {
 
+    Road road;
 		Queue<Vehicle> vehicleList;
 		boolean greenLight;
 
-		public IncomingRoad() {
+    public IncomingRoad(Road road) {
+      this.road = road;
 			this.vehicleList = new ArrayDeque<>();
 			greenLight = false;
 		}

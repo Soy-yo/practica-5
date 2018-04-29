@@ -44,6 +44,11 @@ public class SimulatorAction extends AbstractAction {
     this.callback = callback;
   }
 
+  public SimulatorAction(Command command, Runnable callback) {
+    this(command.name, command.icon, command.tooltip, command.keyEvent, command.accelerator,
+        callback);
+  }
+
   // adapted from https://stackoverflow.com/a/35637914/15472
   private static BufferedImage scaleImage(BufferedImage original, int w, int h) {
     BufferedImage scaled = new BufferedImage(w, h, original.getType());

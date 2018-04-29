@@ -83,7 +83,7 @@ public class SimulatedObjectDialog extends JDialog {
     junctionsPanel.add(new JScrollPane(junctionList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
 
-    JCheckBox allVehicles = new JCheckBox("Select all vehicles");
+    JCheckBox allVehicles = new JCheckBox("Select all");
     allVehicles.addActionListener(e -> {
       if (allVehicles.isSelected()) {
         vehicleList.setSelectionInterval(0, vehicles.getSize());
@@ -94,7 +94,7 @@ public class SimulatedObjectDialog extends JDialog {
       }
     });
 
-    JCheckBox allRoads = new JCheckBox("Select all roads");
+    JCheckBox allRoads = new JCheckBox("Select all");
     allRoads.addActionListener(e -> {
       if (allRoads.isSelected()) {
         roadList.setSelectionInterval(0, roads.getSize());
@@ -104,7 +104,7 @@ public class SimulatedObjectDialog extends JDialog {
       }
     });
 
-    JCheckBox allJunctions = new JCheckBox("Select all junctions");
+    JCheckBox allJunctions = new JCheckBox("Select all");
     allJunctions.addActionListener(e -> {
       if (allJunctions.isSelected()) {
         junctionList.setSelectionInterval(0, junctions.getSize());
