@@ -311,7 +311,7 @@ public class SimulatorWindow extends JFrame {
 			Collection<Junction> junctions = dialog.getSelectedJunctions();
 			reportsArea.clear();
 			controller.getSimulator().generateReports(new TextAreaOutputStream(reportsArea.getArea()),
-					vehicles, roads, junctions);
+          junctions, roads, vehicles);
       actionMap.get(Command.DELETE_REPORT).setEnabled(true);
       actionMap.get(Command.SAVE_REPORT).setEnabled(true);
 		}

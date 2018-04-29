@@ -5,6 +5,7 @@ import es.ucm.fdi.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
@@ -106,6 +107,11 @@ class EventBuilderTest {
     @Override
     public Queue<Junction> getPath(String[] path) {
       return roadMapTest.getPath(path);
+    }
+
+    @Override
+    public Collection<Vehicle> getVehicles() {
+      return roadMapTest.getVehicles();
     }
 
   }

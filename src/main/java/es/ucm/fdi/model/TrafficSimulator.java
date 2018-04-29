@@ -128,13 +128,13 @@ public class TrafficSimulator {
   }
 
   public void generateReports(OutputStream out,
-                              Collection<Vehicle> vehicles,
+                              Collection<Junction> junctions,
                               Collection<Road> roads,
-                              Collection<Junction> junctions) {
+                              Collection<Vehicle> vehicles) {
     if (out != null) {
-      writeSimulatedObjectsReports(out, vehicles);
-      writeSimulatedObjectsReports(out, roads);
       writeSimulatedObjectsReports(out, junctions);
+      writeSimulatedObjectsReports(out, roads);
+      writeSimulatedObjectsReports(out, vehicles);
     }
   }
 
@@ -190,7 +190,7 @@ public class TrafficSimulator {
       }
       currentTime++;
       fireUpdateEvent(EventType.ADVANCED, null);
-      generateReports(out, roadMap.getVehicles(), roadMap.getRoads(), roadMap.getJunctions());
+      generateReports(out, roadMap.getJunctions(), roadMap.getRoads(), roadMap.getVehicles());
     }
   }
 
