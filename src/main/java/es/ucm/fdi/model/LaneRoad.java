@@ -16,8 +16,7 @@ public class LaneRoad extends Road {
 
   @Override
   protected int calculateBaseSpeed() {
-    return (int) Math.min(maxSpeed,
-        maxSpeed * lanes / Math.max(vehicleList.sizeOfValues(), 1) + 1);
+    return Math.min(maxSpeed, maxSpeed * lanes / Math.max(vehicleList.sizeOfValues(), 1) + 1);
   }
 
   @Override

@@ -195,6 +195,7 @@ public class SimulatorWindow extends JFrame {
         actionMap.get(Command.RESET).setEnabled(false);
         actionMap.get(Command.GENERATE_REPORT).setEnabled(false);
         refreshTables(ue.getVehicles(), ue.getRoads(), ue.getJunctions());
+        roadMap.clear();
       }
 
       @Override

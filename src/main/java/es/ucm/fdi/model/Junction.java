@@ -2,6 +2,8 @@ package es.ucm.fdi.model;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.joining;
+
 public class Junction extends SimulatedObject {
 
 	private static final String SECTION_TAG_NAME = "junction_report";
@@ -68,7 +70,14 @@ public class Junction extends SimulatedObject {
 
 	@Override
 	public void fillReportDetails(Map<String, String> kvps) {
-		if (!incomingRoads.isEmpty()) {
+    kvps.put("queues", incomingRoads.entrySet().stream()
+        .map(e -> "(" + e.getKey() + "," + e.getValue().lightColor() + ",[" +
+            e.getValue().vehicleList.stream()
+                .map(Vehicle::toString)
+                .collect(joining(",")) + "])")
+        .collect(joining(",")));
+    // TODO: simplificado
+    /*if (!incomingRoads.isEmpty()) {
 			StringBuilder stringBuilder = new StringBuilder();
 			for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
 				// Para cada carretera entrante
@@ -88,6 +97,7 @@ public class Junction extends SimulatedObject {
 		} else {
 			kvps.put("queues", "");
 		}
+		*/
 	}
 
   @Override

@@ -77,7 +77,7 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
    * @return iterable values, ordered by key and then by order-of-insertion
    */
   public Iterable<V> innerValues() {
-    return () -> new InnerIterator();
+    return InnerIterator::new;
   }
 
   /**
