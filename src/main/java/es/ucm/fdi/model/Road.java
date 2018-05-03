@@ -72,8 +72,7 @@ public class Road extends SimulatedObject {
   }
 
   protected int calculateBaseSpeed() {
-    return (int) Math.min(maxSpeed,
-        maxSpeed / Math.max(vehicleList.sizeOfValues(), 1) + 1);
+    return Math.min(maxSpeed, maxSpeed / Math.max(vehicleList.sizeOfValues(), 1) + 1);
   }
 
   protected int calculateReductionFactor(int faultyVehicles) {
@@ -82,7 +81,11 @@ public class Road extends SimulatedObject {
 
   @Override
   public void fillReportDetails(Map<String, String> kvps) {
-    if (vehicleList.sizeOfValues() > 0) {
+    kvps.put("state", vehicleList.valuesList().stream()
+        .map(v -> "(" + v + "," + v.getLocation() + ")")
+        .collect(joining(",")));
+    // TODO: simplificado (de todas formas valueList() tiene get en O(n), no sé si será muy bueno)
+    /*if (vehicleList.sizeOfValues() > 0) {
       StringBuilder stringBuilder = new StringBuilder();
       for (Vehicle v : vehicleList.innerValues()) {
         stringBuilder.append("(" + v + "," + v.getLocation() + "),");
@@ -91,7 +94,7 @@ public class Road extends SimulatedObject {
           stringBuilder.substring(0, stringBuilder.length() - 1));
     } else {
       kvps.put("state", "");
-    }
+    }*/
   }
 
   @Override

@@ -70,6 +70,11 @@ public class GraphComponent extends JComponent {
 		lastWidth = -1;
 		lastHeight = -1;
 	}
+
+  public void clear() {
+    graph = null;
+    refresh();
+  }
 	
 	public void paint(Graphics graphics) {
 		Graphics2D g = (Graphics2D) graphics;
