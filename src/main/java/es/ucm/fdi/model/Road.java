@@ -116,8 +116,7 @@ public class Road extends SimulatedObject {
     return result;
   }
 
-  // TODO: borrar cuando se compruebe que el stream funciona
-  private String[] getVehiclesIds() {
+  protected String[] getVehiclesIds() {
     String[] ids = new String[vehicleList.valuesList().size()];
     int i = 0;
     for (Vehicle v : vehicleList.valuesList()) {

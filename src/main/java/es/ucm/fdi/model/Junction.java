@@ -10,8 +10,10 @@ public class Junction extends SimulatedObject {
 	public static final String[] INFO = { "ID", "Green", "Red" };
 
 	protected Map<Road, IncomingRoad> incomingRoads;
-  protected IncomingRoad currentRoadOn; // carretera con semáforo en verde actualmente
-  protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del semáforo en verde
+	protected IncomingRoad currentRoadOn; // carretera con semáforo en verde
+											// actualmente
+	protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del
+												// semáforo en verde
 
 	public Junction(String id) {
 		super(id);
@@ -19,16 +21,16 @@ public class Junction extends SimulatedObject {
 	}
 
 	public void addRoad(Road road) {
-    incomingRoads.put(road, new IncomingRoad(road));
+		incomingRoads.put(road, new IncomingRoad(road));
 	}
 
 	public void vehicleIn(Vehicle vehicle) {
 		incomingRoads.get(vehicle.getRoad()).vehicleIn(vehicle);
 	}
 
-  public Road getGreenRoad() {
-    return currentRoadOn == null ? null : currentRoadOn.road;
-  }
+	public Road getGreenRoad() {
+		return currentRoadOn == null ? null : currentRoadOn.road;
+	}
 
 	@Override
 	public void advance() {
@@ -70,40 +72,40 @@ public class Junction extends SimulatedObject {
 
 	@Override
 	public void fillReportDetails(Map<String, String> kvps) {
-    kvps.put("queues", incomingRoads.entrySet().stream()
-        .map(e -> "(" + e.getKey() + "," + e.getValue().lightColor() + ",[" +
-            e.getValue().vehicleList.stream()
-                .map(Vehicle::toString)
-                .collect(joining(",")) + "])")
-        .collect(joining(",")));
-    // TODO: simplificado
-    /*if (!incomingRoads.isEmpty()) {
-			StringBuilder stringBuilder = new StringBuilder();
-			for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
-				// Para cada carretera entrante
-				stringBuilder.append("(" + e.getKey() + ","
-						+ e.getValue().lightColor() + ",[");
-				// Rellena los vehículos en la cola
-				for (Vehicle v : e.getValue().vehicles()) {
-					stringBuilder.append(v + ",");
-				}
-				if (!e.getValue().isEmpty()) {
-					stringBuilder.deleteCharAt(stringBuilder.length() - 1); // coma
-				}
-				stringBuilder.append("]),");
-			}
-			kvps.put("queues",
-					stringBuilder.substring(0, stringBuilder.length() - 1));
-		} else {
-			kvps.put("queues", "");
-		}
-		*/
+		kvps.put(
+				"queues",
+				incomingRoads
+						.entrySet()
+						.stream()
+						.map(e -> "("
+								+ e.getKey()
+								+ ","
+								+ e.getValue().lightColor()
+								+ ",["
+								+ e.getValue().vehicleList.stream()
+										.map(Vehicle::toString)
+										.collect(joining(",")) + "])")
+						.collect(joining(",")));
+		// TODO: simplificado
+		/*
+		 * if (!incomingRoads.isEmpty()) { StringBuilder stringBuilder = new
+		 * StringBuilder(); for (Map.Entry<Road, IncomingRoad> e :
+		 * incomingRoads.entrySet()) { // Para cada carretera entrante
+		 * stringBuilder.append("(" + e.getKey() + "," +
+		 * e.getValue().lightColor() + ",["); // Rellena los vehículos en la
+		 * cola for (Vehicle v : e.getValue().vehicles()) {
+		 * stringBuilder.append(v + ","); } if (!e.getValue().isEmpty()) {
+		 * stringBuilder.deleteCharAt(stringBuilder.length() - 1); // coma }
+		 * stringBuilder.append("]),"); } kvps.put("queues",
+		 * stringBuilder.substring(0, stringBuilder.length() - 1)); } else {
+		 * kvps.put("queues", ""); }
+		 */
 	}
 
-  @Override
-  protected String getReportHeader() {
-    return SECTION_TAG_NAME;
-  }
+	@Override
+	protected String getReportHeader() {
+		return SECTION_TAG_NAME;
+	}
 
 	@Override
 	public Map<String, String> describe() {
@@ -111,49 +113,45 @@ public class Junction extends SimulatedObject {
 		StringBuilder greenBuilder = new StringBuilder();
 		StringBuilder redBuilder = new StringBuilder();
 		greenBuilder.append('[');
+		if (currentRoadOn != null) {
+			greenBuilder.append("(" + currentRoadOn.road + "," + "green" + ",[");
+			for (Vehicle v : currentRoadOn.vehicleList) {
+				greenBuilder.append(v + ",");
+				greenBuilder.deleteCharAt(greenBuilder.length() - 1);
+			}
+			greenBuilder.append("]),");
+		}
+
 		redBuilder.append('[');
-		for (Map.Entry<Road, IncomingRoad> e : incomingRoads.entrySet()) {
-			// Para cada carretera entrante
-      if (e.getValue().hasGreenLight()) {
-        greenBuilder.append("(" + e.getKey() + ","
-            + e.getValue().lightColor() + ",[");
-        // Rellena los vehículos en la cola
-        for (Vehicle v : e.getValue().vehicles()) {
-          greenBuilder.append(v + ",");
-        }
-        if (!e.getValue().isEmpty()) {
-          greenBuilder.deleteCharAt(greenBuilder.length() - 1); // coma
-        }
-        greenBuilder.append("]),");
-      } else {
-        redBuilder.append("(" + e.getKey() + ","
-            + e.getValue().lightColor() + ",[");
-        // Rellena los vehículos en la cola
-        for (Vehicle v : e.getValue().vehicles()) {
-          redBuilder.append(v + ",");
-        }
-        if (!e.getValue().isEmpty()) {
-          redBuilder.deleteCharAt(redBuilder.length() - 1); // coma
-        }
-        redBuilder.append("]),");
-      }
-    }
 		greenBuilder.append(']');
 		redBuilder.append(']');
-    result.put(INFO[0], id);
+		result.put(INFO[0], id);
 		result.put(INFO[1], greenBuilder.toString());
-		result.put(INFO[2], redBuilder.toString());
+		result.put(
+				INFO[2],
+				'[' + incomingRoads
+						.entrySet()
+						.stream()
+						.filter(r -> r != currentRoadOn)
+						.map(r -> r.getKey().getId()
+								+ ','
+								+ "red"
+								+ '['
+								+ (r.getValue().vehicleList.stream()
+										.map(Vehicle::toString)
+										.collect(joining(",")) + "])"))
+						.collect(joining(",")) + ']');
 		return result;
 	}
 
 	protected class IncomingRoad {
 
-    Road road;
+		Road road;
 		Queue<Vehicle> vehicleList;
 		boolean greenLight;
 
-    public IncomingRoad(Road road) {
-      this.road = road;
+		public IncomingRoad(Road road) {
+			this.road = road;
 			this.vehicleList = new ArrayDeque<>();
 			greenLight = false;
 		}
@@ -179,9 +177,9 @@ public class Junction extends SimulatedObject {
 			greenLight = !greenLight;
 		}
 
-    boolean hasGreenLight() {
-      return greenLight;
-    }
+		boolean hasGreenLight() {
+			return greenLight;
+		}
 
 		String lightColor() {
 			return greenLight ? "green" : "red";
