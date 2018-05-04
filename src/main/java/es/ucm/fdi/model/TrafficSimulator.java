@@ -45,7 +45,7 @@ public class TrafficSimulator {
   }
 
   public List<Event> getEvents() {
-    return Collections.unmodifiableList(events.valuesList());
+    return events.valuesList();
   }
 
   public void addSimulatedObject(SimulatedObject o) {
