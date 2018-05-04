@@ -11,11 +11,19 @@ import java.util.*;
  */
 public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
 
+  private int valueCount = 0;
+
   public MultiTreeMap() {
   }
 
   public MultiTreeMap(Comparator<K> comparator) {
     super(comparator);
+  }
+
+  @Override
+  public void clear() {
+    super.clear();
+    valueCount = 0;
   }
 
   /**
@@ -29,6 +37,7 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
       put(key, new ArrayList<>());
     }
     get(key).add(value);
+    valueCount++;
   }
 
   /**
@@ -46,6 +55,9 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
     }
     ArrayList<V> bucket = get(key);
     boolean removed = bucket.remove(value);
+    if (removed) {
+      valueCount--;
+    }
     if (bucket.isEmpty()) {
       remove(key);
     }
@@ -56,11 +68,7 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
    * Returns the total number of values stored in this multimap
    */
   public int sizeOfValues() {
-    int total = 0;
-    for (List<V> l : values()) {
-      total += l.size();
-    }
-    return total;
+    return valueCount;
   }
 
   /**
@@ -81,32 +89,46 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
   }
 
   /**
-   * A logical, read-only list containing all elements in
-   * correct order.
+   * A logical, read-only list containing all elements in correct order. As it is usual to get
+   * elements in order, it has an O(1) get() when iterating the list. Otherwise it is O(n) where
+   * n is the number of buckets in the map.
    */
   private class InnerList extends AbstractList<V> {
 
+    int start;
+    int previousIndex = 0;
+    Iterator<ArrayList<V>> it;
+    ArrayList<V> current;
+
+    InnerList() {
+      resetIterators();
+    }
+
+    private void resetIterators() {
+      it = values().iterator();
+      if (it.hasNext()) {
+        start = 0;
+        current = it.next();
+      }
+    }
+
     @Override
     public V get(int index) {
-
-      if (index < 0 || isEmpty()) {
-        throw new IndexOutOfBoundsException(
-            "Index " + index + " is out of bounds");
+      if (index < 0 || index >= sizeOfValues()) {
+        throw new IndexOutOfBoundsException("Index " + index + " is out of bounds");
       }
-
-      Iterator<ArrayList<V>> it = values().iterator();
-      ArrayList<V> current = it.next(); // not empty, therefore hasNext()
-      int start = 0;
-
+      if (index < previousIndex) {
+        resetIterators();
+      }
+      // TODO: borra esto, parece que funciona
+      //Iterator<ArrayList<V>> it = values().iterator();
+      //ArrayList<V> current = it.next(); // not empty, therefore hasNext()
+      //int start = 0;
       while (index >= (start + current.size())) {
-        if (!it.hasNext()) {
-          throw new IndexOutOfBoundsException(
-              "Index " + index + " is out of bounds");
-        }
         start += current.size();
         current = it.next();
       }
-
+      previousIndex = index;
       return current.get(index - start);
     }
 
