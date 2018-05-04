@@ -40,11 +40,13 @@ public class SimulatorWindow extends JFrame {
 	private JSpinner stepCounter;
 	private JTextField time;
 
-	public SimulatorWindow(String title, File initialFile, int steps,
-			Dimension dimension) {
+  private String previousPath;
+
+  public SimulatorWindow(String title, File initialFile, int steps, Dimension dimension) {
 		super(title);
 		controller = new Controller(new TrafficSimulator());
 		initialize(dimension, initialFile, steps);
+    previousPath = initialFile.getPath();
 	}
 
 	private void initialize(Dimension dimension, File initialFile, int steps) {
@@ -196,7 +198,7 @@ public class SimulatorWindow extends JFrame {
 	}
 	
 	private void setStatusText(String text) {
-		statusBarText.setText(text);;
+    statusBarText.setText(text);
 	}
 
 	private void addListeners() {
@@ -219,11 +221,16 @@ public class SimulatorWindow extends JFrame {
 				refreshTables(ue.getVehicles(), ue.getRoads(),
 						ue.getJunctions());
 				roadMap.clear();
-				setStatusText("Simulator has just been resetted!");
+        setStatusText("Simulator has just been reset!");
 			}
 
 			@Override
 			public void newEvent(TrafficSimulator.UpdateEvent ue) {
+        List<Event> events = ue.getEventQueue();
+        if (!events.isEmpty()) {
+          eventsQueue.setElements(events);
+          actionMap.get(Command.RUN).setEnabled(true);
+        }
 				setStatusText("Events have been loaded to the simulator!");
 			}
 
@@ -240,7 +247,9 @@ public class SimulatorWindow extends JFrame {
 
 			@Override
 			public void error(TrafficSimulator.UpdateEvent ue, String msg) {
-				setStatusText("An error ocurred!!");
+        setStatusText("An error occurred!!");
+        showErrorMessage("Simulator error", msg);
+        SimulatorWindow.this.reset();
 			}
 		});
 	}
@@ -256,26 +265,27 @@ public class SimulatorWindow extends JFrame {
 	}
 
 	private void loadEvents() {
-		// TODO: apunta adónde?
-		JFileChooser chooser = new JFileChooser();
+    JFileChooser chooser = new JFileChooser(previousPath);
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+      previousPath = chooser.getSelectedFile().getPath();
 			try {
 				eventsEditor.writeFromFile(chooser.getSelectedFile());
-			} catch (IOException ignored) {
-				// TODO: hacer algo con las excecpciones
+      } catch (IOException e) {
+        showErrorMessage("Error reading file", e.getMessage());
 			}
 		}
 	}
 
 	private void saveEvents() {
-		JFileChooser chooser = new JFileChooser();
+    JFileChooser chooser = new JFileChooser(previousPath);
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+      previousPath = chooser.getSelectedFile().getPath();
 			try {
 				eventsEditor.saveToFile(chooser.getSelectedFile());
 			} catch (IOException e) {
-				// TODO
+        showErrorMessage("Error saving file", e.getMessage());
 			}
 		}
 	}
@@ -287,15 +297,10 @@ public class SimulatorWindow extends JFrame {
 			TrafficSimulator simulator = controller.getSimulator();
 			simulator.clearEvents();
 			controller.loadEvents(is);
-			List<Event> events = simulator.getEvents();
-			if (!events.isEmpty()) {
-				eventsQueue.setElements(events);
-				actionMap.get(Command.RUN).setEnabled(true);
-			}
-		} catch (IOException ignored) {
-			// TODO: hacer algo con las excecpciones
+    } catch (IOException e) {
+      showErrorMessage("Error reading file", e.getMessage());
 		} catch (IllegalStateException e) {
-			e.printStackTrace();
+      showErrorMessage("Error reading events", e.getMessage());
 		}
 	}
 
@@ -322,14 +327,13 @@ public class SimulatorWindow extends JFrame {
 			try {
 				reportsArea.saveToFile(chooser.getSelectedFile());
 			} catch (IOException e) {
-				// TODO
+        showErrorMessage("Error saving file", e.getMessage());
 			}
 		}
 	}
 
 	private void generateReports() {
-		SimulatedObjectDialog dialog = new SimulatedObjectDialog(this,
-				"Generate reports");
+    SimulatedObjectDialog dialog = new SimulatedObjectDialog(this, "Generate reports");
 		TrafficSimulator simulator = controller.getSimulator();
 		dialog.setVehicles(simulator.getVehicles());
 		dialog.setRoads(simulator.getRoads());
@@ -352,6 +356,11 @@ public class SimulatorWindow extends JFrame {
 		actionMap.get(Command.DELETE_REPORT).setEnabled(false);
 		actionMap.get(Command.SAVE_REPORT).setEnabled(false);
 	}
+
+  private void showErrorMessage(String title, String msg) {
+    JOptionPane.showMessageDialog(SimulatorWindow.this, msg, title,
+        JOptionPane.ERROR_MESSAGE);
+  }
 
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {

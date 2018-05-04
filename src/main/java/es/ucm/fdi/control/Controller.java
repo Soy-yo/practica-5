@@ -2,7 +2,6 @@ package es.ucm.fdi.control;
 
 import es.ucm.fdi.events.Event;
 import es.ucm.fdi.events.EventBuilder;
-import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.TrafficSimulator;
@@ -25,11 +24,7 @@ public class Controller {
   }
 
   public void run(int ticks) {
-    try {
-      simulator.execute(ticks, outputStream);
-    } catch (SimulatorError e) {
-      throw new SimulatorError("Execution failed", e);
-    }
+    simulator.execute(ticks, outputStream);
   }
 
   public void reset() {
