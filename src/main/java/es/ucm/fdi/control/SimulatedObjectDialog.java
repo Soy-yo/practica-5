@@ -135,6 +135,16 @@ public class SimulatedObjectDialog extends JDialog {
     });
     buttonsPanel.add(cancelButton);
 
+    JButton allObjectsButton = new JButton("All objects");
+    allObjectsButton.addActionListener(e -> {
+      vehicleList.setSelectionInterval(0, vehicles.getSize());
+      roadList.setSelectionInterval(0, roads.getSize());
+      junctionList.setSelectionInterval(0, junctions.getSize());
+      status = ACCEPTED;
+      setVisible(false);
+    });
+    buttonsPanel.add(allObjectsButton);
+
     JButton okButton = new JButton("OK");
     okButton.addActionListener(e -> {
       status = ACCEPTED;
