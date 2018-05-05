@@ -84,17 +84,6 @@ public class Road extends SimulatedObject {
     kvps.put("state", vehicleList.valuesList().stream()
         .map(v -> "(" + v + "," + v.getLocation() + ")")
         .collect(joining(",")));
-    // TODO: simplificado (de todas formas valueList() tiene get en O(n), no sé si será muy bueno)
-    /*if (vehicleList.sizeOfValues() > 0) {
-      StringBuilder stringBuilder = new StringBuilder();
-      for (Vehicle v : vehicleList.innerValues()) {
-        stringBuilder.append("(" + v + "," + v.getLocation() + "),");
-      }
-      kvps.put("state",
-          stringBuilder.substring(0, stringBuilder.length() - 1));
-    } else {
-      kvps.put("state", "");
-    }*/
   }
 
   @Override
@@ -114,15 +103,6 @@ public class Road extends SimulatedObject {
         .map(SimulatedObject::getId)
         .collect(joining(",")));
     return result;
-  }
-
-  protected String[] getVehiclesIds() {
-    String[] ids = new String[vehicleList.valuesList().size()];
-    int i = 0;
-    for (Vehicle v : vehicleList.valuesList()) {
-      ids[i] = v.getId();
-    }
-    return ids;
   }
 
 }

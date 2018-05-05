@@ -31,11 +31,6 @@ public class TrafficSimulator {
   }
 
   public void addEvent(Event event) {
-    if (event.getTime() < currentTime) {
-      String msg = "Event " + event.getId() + " is breaking the space-time continuum";
-      fireUpdateEvent(EventType.ERROR, msg);
-      throw new IllegalStateException(msg);
-    }
     events.putValue(event.getTime(), event);
     fireUpdateEvent(EventType.NEW_EVENT, null);
   }
@@ -121,9 +116,7 @@ public class TrafficSimulator {
     if (v != null) {
       v.setFaulty(time);
     } else {
-      String msg = "Vehicle " + id + " not found";
-      fireUpdateEvent(EventType.ERROR, msg);
-      throw new IllegalArgumentException(msg);
+      throw new IllegalArgumentException("Vehicle " + id + " not found");
     }
   }
 
@@ -144,9 +137,7 @@ public class TrafficSimulator {
       try {
         writeReport(o.generateReport(currentTime), out);
       } catch (SimulatorError e) {
-        String msg = "Something went wrong while writing " + o + "'s report";
-        fireUpdateEvent(EventType.ERROR, msg);
-        throw new SimulatorError(msg, e);
+        fireUpdateEvent(EventType.ERROR, "Something went wrong while writing " + o + "'s report");
       }
     }
   }
@@ -175,10 +166,11 @@ public class TrafficSimulator {
         for (Event e : events.get(currentTime)) {
           try {
             e.execute(this);
-          } catch (IllegalArgumentException ex) {
-            String msg = "Something went wrong while executing event " + e;
-            fireUpdateEvent(EventType.ERROR, msg);
-            throw new SimulatorError(msg, ex);
+          } catch (IllegalArgumentException | IllegalStateException ex) {
+            fireUpdateEvent(EventType.ERROR, "Something went wrong while executing event " + e +
+                "\n" + ex.getMessage());
+            // Error occurred, can't continue at this point
+            return;
           }
         }
       }

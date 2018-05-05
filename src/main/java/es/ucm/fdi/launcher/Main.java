@@ -175,7 +175,30 @@ public class Main {
    */
   private static void startBatchMode() {
 
-    Controller controller = new Controller(new TrafficSimulator());
+    TrafficSimulator simulator = new TrafficSimulator();
+    simulator.addListener(new TrafficSimulator.Listener() {
+      @Override
+      public void registered(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void reset(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void newEvent(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void advanced(TrafficSimulator.UpdateEvent ue) {
+      }
+
+      @Override
+      public void error(TrafficSimulator.UpdateEvent ue, String msg) {
+        System.err.println(msg);
+      }
+    });
+    Controller controller = new Controller(simulator);
 
     try {
       controller.loadEvents(new FileInputStream(infile));

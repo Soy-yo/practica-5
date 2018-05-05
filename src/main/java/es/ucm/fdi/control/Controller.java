@@ -2,8 +2,8 @@ package es.ucm.fdi.control;
 
 import es.ucm.fdi.events.Event;
 import es.ucm.fdi.events.EventBuilder;
-import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
+import es.ucm.fdi.ini.IniError;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.TrafficSimulator;
 
@@ -25,11 +25,7 @@ public class Controller {
   }
 
   public void run(int ticks) {
-    try {
-      simulator.execute(ticks, outputStream);
-    } catch (SimulatorError e) {
-      throw new SimulatorError("Execution failed", e);
-    }
+    simulator.execute(ticks, outputStream);
   }
 
   public void reset() {
@@ -51,8 +47,9 @@ public class Controller {
           throw new IllegalStateException("Failed while trying to load events", e);
         }
       }
-    } catch (IOException e) {
-      throw new IllegalStateException("Something went wrong while reading ini file", e);
+    } catch (IOException | IniError e) {
+      throw new IllegalStateException("Something went wrong while reading ini file\n" +
+          e.getMessage(), e);
     }
   }
 

@@ -259,22 +259,25 @@ public class GraphComponent extends JComponent {
   public void generateGraph(Collection<Vehicle> vehicles, Collection<Road> roads,
                             Collection<Junction> junctions, Set<Road> greenRoads) {
 		graph = new Graph();
-    // TODO: lo he comentado porque creo que no hace falta
-    //Map<Junction, Node> js = new HashMap<>();
+    Map<String, Node> js = new HashMap<>();
 		for (Junction j : junctions) {
 			Node n = new Node(j.getId());
-      //js.put(j, n); // <-- para convertir Junction a Node en aristas
+      js.put(j.getId(), n);
 			graph.addNode(n);
 		}
+    Map<String, Edge> rs = new HashMap<>();
 		for (Road r : roads) {
-			Node source = graph.getNode(r.getSource());
-			Node destiny = graph.getNode(r.getDestiny());
+      Node source = js.get(r.getSource());
+      Node destiny = js.get(r.getDestiny());
       Edge e = new Edge(r.getId(), source, destiny, r.getLength(), greenRoads.contains(r));
+      rs.put(r.getId(), e);
 			graph.addEdge(e);
 		}
 		for (Vehicle v : vehicles) {
-			Edge e = graph.getEdge(v.getRoad().getId());
-			e.addDot(new Dot(v.getId(), v.getLocation()));
+      if (!v.hasArrived()) {
+        Edge e = rs.get(v.getRoad().getId());
+        e.addDot(new Dot(v.getId(), v.getLocation()));
+      }
 		}
 		calculateNodeCoordinates();
 		refresh();
