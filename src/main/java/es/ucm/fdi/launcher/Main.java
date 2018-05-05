@@ -198,23 +198,23 @@ public class Main {
         System.err.println(msg);
       }
     });
-    Controller controller = new Controller(simulator);
 
+    Controller controller = new Controller(simulator);
     try {
       controller.loadEvents(new FileInputStream(infile));
+
+      try {
+        controller.setOutputStream(outfile == null ? System.out : new FileOutputStream(outfile));
+      } catch (IOException e) {
+        throw new SimulatorError("Something went wrong with output file (" + outfile + ")", e);
+      }
+      controller.run(timeLimit);
+
     } catch (IllegalStateException e) {
       throw new SimulatorError("Load failed", e);
     } catch (IOException e) {
       throw new SimulatorError("Something went wrong with input file (" + infile + ")", e);
     }
-
-    try {
-      controller.setOutputStream(outfile == null ? System.out : new FileOutputStream(outfile));
-    } catch (IOException e) {
-      throw new SimulatorError("Something went wrong with output file (" + outfile + ")", e);
-    }
-
-    controller.run(timeLimit);
   }
 
   private static void start(String[] args) {

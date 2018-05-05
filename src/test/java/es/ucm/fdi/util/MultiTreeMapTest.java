@@ -1,18 +1,18 @@
 package es.ucm.fdi.util;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for MultiTreeMap
  */
-class MultiTreeMapTest {
+public class MultiTreeMapTest {
 
   /**
    * A simple test class with 2 fields, only the first of which is
@@ -60,7 +60,7 @@ class MultiTreeMapTest {
   }
 
   @Test
-  void testValuesListGet() throws Exception {
+  public void testValuesListGet() throws Exception {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
     T[] array = new T[]{
         new T(0, "0"),   // 0
@@ -81,7 +81,7 @@ class MultiTreeMapTest {
   }
 
   @Test
-  void putAndRemove() throws Exception {
+  public void putAndRemove() throws Exception {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
     T[] array = new T[]{
         new T(3, "3"),
@@ -103,15 +103,15 @@ class MultiTreeMapTest {
     assertEquals(3, ts.get(t.i).size());
     // borrar elimina el primero, pero no el duplicado
     boolean removed = ts.removeValue(t.i, t);
-    assertTrue(removed, "removed correctly");
+    assertTrue("removed correctly", removed);
     assertTrue(ts.get(t.i).get(1) == t);
     removed = ts.removeValue(t.i, t);
-    assertTrue(removed, "removed correctly");
+    assertTrue("removed correctly", removed);
     assertEquals(1, ts.get(t.i).size());
   }
 
   @Test
-  void testEmptiesCorrectly() throws Exception {
+  public void testEmptiesCorrectly() throws Exception {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
     T one = new T(1, "1");
     ts.putValue(1, one);
@@ -122,7 +122,7 @@ class MultiTreeMapTest {
   }
 
   @Test
-  void sizeComputation() throws Exception {
+  public void sizeComputation() throws Exception {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
     T[] array = new T[]{
         new T(3, "3"),
@@ -136,11 +136,11 @@ class MultiTreeMapTest {
         new T(2, "2.2")};
 
     for (T t : array) ts.putValue(t.i, t);
-    assertEquals(array.length, ts.sizeOfValues(), "size ok");
+    assertEquals("size ok", array.length, ts.sizeOfValues());
   }
 
   @Test
-  void innerValuesAscending() throws Exception {
+  public void innerValuesAscending() throws Exception {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
     T[] array = new T[]{
         new T(3, "3"),
@@ -159,14 +159,14 @@ class MultiTreeMapTest {
     int i = 0;
     for (T t : ts.innerValues()) {
       //System.err.println(t + " vs " + array[i]);
-      assertEquals(array[i], t, "correct order at position " + i);
+      assertEquals("correct order at position " + i, array[i], t);
       i++;
     }
-    assertEquals(array.length, i, "all elements iterated");
+    assertEquals("all elements iterated", array.length, i);
   }
 
   @Test
-  void innerValuesDescending() throws Exception {
+  public void innerValuesDescending() throws Exception {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>((Integer a, Integer b) -> b.compareTo(a));
     T[] array = new T[]{
         new T(3, "3"),
@@ -185,14 +185,14 @@ class MultiTreeMapTest {
     int i = 0;
     for (T t : ts.innerValues()) {
       System.err.println(t + " vs " + array[i]);
-      assertEquals(array[i], t, "correct order at position " + i);
+      assertEquals("correct order at position " + i, array[i], t);
       i++;
     }
-    assertEquals(array.length, i, "all elements iterated");
+    assertEquals("all elements iterated", array.length, i);
   }
 
   @Test
-  void valuesListTest() {
+  public void valuesListTest() {
     MultiTreeMap<Integer, T> ts = new MultiTreeMap<>();
     T[] array = new T[]{
         new T(3, "3"),
@@ -212,14 +212,14 @@ class MultiTreeMapTest {
 
     for (int i = 0; i < values.size(); i++) {
       values.get(i);
-      assertEquals(array[i], values.get(i), "Get in order works");
+      assertEquals("Get in order works", array[i], values.get(i));
     }
 
     // random
     Random rnd = new Random();
     for (int i = 0; i < 100; i++) {
       int index = rnd.nextInt(array.length);
-      assertEquals(array[index], values.get(index), "Get also works with random indices");
+      assertEquals("Get also works with random indices", array[index], values.get(index));
     }
 
   }
