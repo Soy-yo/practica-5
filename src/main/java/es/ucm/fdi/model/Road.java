@@ -52,6 +52,10 @@ public class Road extends SimulatedObject {
   }
 
   @Override
+  /**
+   * Hace avanzar a todos los vehículos que se encuentran en la carretera
+   * dependiendo de su coeficiente de reducción
+   */
   public void advance() {
     if (vehicleList.sizeOfValues() > 0) {
       int baseSpeed = calculateBaseSpeed();

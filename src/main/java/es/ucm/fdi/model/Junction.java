@@ -59,8 +59,10 @@ public class Junction extends SimulatedObject {
 		return nextRoad.next();
 	}
 
-	// Devuelve la carretera que une el cruce con id previousJunction con esta
-	// (si existe)
+	/**
+	 *  Devuelve la carretera que une el cruce con id previousJunction con esta
+	 * (si existe)
+	 */
 	public Road getStraightRoad(String previousJunction) {
 		for (Road r : incomingRoads.keySet()) {
 			if (r.getSource().equals(previousJunction)) {

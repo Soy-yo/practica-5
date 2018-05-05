@@ -72,6 +72,10 @@ public class RoadMap {
     junctions.put(j.getId(), j);
   }
 
+  /**
+   * Devuelve el objeto buscado si existe o null
+   * en caso contrario
+   */
   public SimulatedObject searchById(String id) {
     if (vehicles.containsKey(id)) {
       return vehicles.get(id);
@@ -120,8 +124,10 @@ public class RoadMap {
     return result;
   }
 
-  // Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que
-  // los une
+  /**
+   * Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que
+   * los une
+   */
   public Queue<Junction> getPath(String[] path) {
     Queue<Junction> result = new ArrayDeque<>();
     String previousJunctionId = null;
