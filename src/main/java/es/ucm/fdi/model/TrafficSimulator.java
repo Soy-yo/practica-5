@@ -116,7 +116,7 @@ public class TrafficSimulator {
     if (v != null) {
       v.setFaulty(time);
     } else {
-      fireUpdateEvent(EventType.ERROR, "Vehicle " + id + " not found");
+      throw new IllegalArgumentException("Vehicle " + id + " not found");
     }
   }
 
@@ -166,8 +166,11 @@ public class TrafficSimulator {
         for (Event e : events.get(currentTime)) {
           try {
             e.execute(this);
-          } catch (IllegalArgumentException ex) {
-            fireUpdateEvent(EventType.ERROR, "Something went wrong while executing event " + e);
+          } catch (IllegalArgumentException | IllegalStateException ex) {
+            fireUpdateEvent(EventType.ERROR, "Something went wrong while executing event " + e +
+                "\n" + ex.getMessage());
+            // Error occurred, can't continue at this point
+            return;
           }
         }
       }

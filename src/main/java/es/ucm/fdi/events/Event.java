@@ -7,7 +7,6 @@ import es.ucm.fdi.model.TrafficSimulator;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: repasar añadidos en las subclases por si se pudiera sacar factor común
 public abstract class Event implements Describable {
 
   public static final String[] INFO = {"#", "Time", "Type"};

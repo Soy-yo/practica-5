@@ -51,12 +51,19 @@ public class Vehicle extends SimulatedObject {
   }
 
   public void setFaulty(int faulty) {
+    if (hasArrived) {
+      throw new IllegalStateException("Vehicle has already arrived");
+    }
     this.faulty += faulty;
     currentSpeed = 0;
   }
 
   public List<Junction> getItinerary() {
     return Collections.unmodifiableList(new ArrayList<>(itinerary));
+  }
+
+  public boolean hasArrived() {
+    return hasArrived;
   }
 
   @Override
@@ -113,9 +120,9 @@ public class Vehicle extends SimulatedObject {
   @Override
   public Map<String, String> describe() {
     Map<String, String> result = new HashMap<>();
-    result.put(INFO[0], super.id);
+    result.put(INFO[0], id);
     result.put(INFO[1], road.id);
-    result.put(INFO[2], "" + location);
+    result.put(INFO[2], hasArrived ? "arrived" : "" + location);
     result.put(INFO[3], "" + currentSpeed);
     result.put(INFO[4], "" + kilometrage);
     result.put(INFO[5], "" + faulty);
@@ -123,17 +130,6 @@ public class Vehicle extends SimulatedObject {
         .map(SimulatedObject::getId)
         .collect(joining(",")));
     return result;
-  }
-
-  // TODO: borrar cuando se compruebe que el stream funciona
-  private String[] getItineraryIds() {
-    String[] ids = new String[itinerary.size()];
-    int i = 0;
-    for (Junction j : itinerary) {
-      ids[i] = j.getId();
-      i++;
-    }
-    return ids;
   }
 
 }

@@ -78,20 +78,6 @@ public class Junction extends SimulatedObject {
 										.map(Vehicle::toString)
 										.collect(joining(",")) + "])")
 						.collect(joining(",")));
-		// TODO: simplificado
-		/*
-		 * if (!incomingRoads.isEmpty()) { StringBuilder stringBuilder = new
-		 * StringBuilder(); for (Map.Entry<Road, IncomingRoad> e :
-		 * incomingRoads.entrySet()) { // Para cada carretera entrante
-		 * stringBuilder.append("(" + e.getKey() + "," +
-		 * e.getValue().lightColor() + ",["); // Rellena los vehículos en la
-		 * cola for (Vehicle v : e.getValue().vehicles()) {
-		 * stringBuilder.append(v + ","); } if (!e.getValue().isEmpty()) {
-		 * stringBuilder.deleteCharAt(stringBuilder.length() - 1); // coma }
-		 * stringBuilder.append("]),"); } kvps.put("queues",
-		 * stringBuilder.substring(0, stringBuilder.length() - 1)); } else {
-		 * kvps.put("queues", ""); }
-		 */
 	}
 
 	@Override
@@ -102,25 +88,6 @@ public class Junction extends SimulatedObject {
 	@Override
 	public Map<String, String> describe() {
 		Map<String, String> result = new HashMap<>();
-		/*StringBuilder greenBuilder = new StringBuilder();
-		StringBuilder redBuilder = new StringBuilder();
-		greenBuilder.append('[');
-		if (currentRoadOn != null) {
-			greenBuilder.append("(" + currentRoadOn.road + ",green,[" +
-          currentRoadOn.vehicleList.stream()
-              .map(Vehicle::toString)
-              .collect(joining(","))
-      + "]),");
-			for (Vehicle v : currentRoadOn.vehicleList) {
-				greenBuilder.append(v + ",");
-				greenBuilder.deleteCharAt(greenBuilder.length() - 1);
-			}
-			greenBuilder.append("]),");
-		}
-
-		redBuilder.append('[');
-		greenBuilder.append(']');
-		redBuilder.append(']');*/
 		result.put(INFO[0], id);
     result.put(INFO[1], currentRoadOn == null ? "[]" : "[(" + currentRoadOn.road + "," +
         currentRoadOn.lightColor() + ",[" + currentRoadOn.vehicleList.stream()

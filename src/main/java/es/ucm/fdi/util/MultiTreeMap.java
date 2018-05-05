@@ -120,10 +120,6 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
       if (index < previousIndex) {
         resetIterators();
       }
-      // TODO: borra esto, parece que funciona
-      //Iterator<ArrayList<V>> it = values().iterator();
-      //ArrayList<V> current = it.next(); // not empty, therefore hasNext()
-      //int start = 0;
       while (index >= (start + current.size())) {
         start += current.size();
         current = it.next();

@@ -27,7 +27,7 @@ public class EventsEditorPanel extends JScrollPane {
       try {
         text = new String(Files.readAllBytes(file.toPath()), "UTF-8");
       } catch (IOException e) {
-        // TODO: hacer algo con esto
+        throw new IllegalArgumentException("Could not read default file " + file.getName(), e);
       }
     }
     editor = new JTextArea(text);
@@ -40,10 +40,10 @@ public class EventsEditorPanel extends JScrollPane {
   }
 
   public void writeFromFile(File file) throws IOException {
-    // FIXME: no funciona la primera vez (por alguna razón después sí)
     border.setTitle(makeTitle(file));
     String text = new String(Files.readAllBytes(file.toPath()), "UTF-8");
     editor.setText(text);
+    repaint();
   }
 
   private String makeTitle(File file) {

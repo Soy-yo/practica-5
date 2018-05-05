@@ -62,7 +62,6 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
     model.addRow(element);
   }
 
-  // TODO: implementación mejorable?
   private class InfoTableModel extends AbstractTableModel {
 
     private final String[] titles;
@@ -119,7 +118,7 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
       addRow(describe(element));
     }
 
-    void addRow(String[] newRow) {
+    private void addRow(String[] newRow) {
       checkColumnCount(newRow);
       elements.add(newRow);
       fireTableRowsInserted(elements.size() - 1, elements.size() - 1);
@@ -129,7 +128,7 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
       setRow(describe(element), rowIndex);
     }
 
-    void setRow(String[] newRow, int rowIndex) {
+    private void setRow(String[] newRow, int rowIndex) {
       checkRowBounds(rowIndex);
       checkColumnCount(newRow);
       elements.set(rowIndex, newRow);

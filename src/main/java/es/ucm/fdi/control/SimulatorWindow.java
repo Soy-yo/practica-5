@@ -23,6 +23,8 @@ import java.util.Map;
 public class SimulatorWindow extends JFrame {
 
 	public static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
+  private static final String READ_FILE_ERROR = "Error reading file";
+  private static final String WRITE_FILE_ERROR = "Error writing file";
 
 	private Controller controller;
 
@@ -157,7 +159,11 @@ public class SimulatorWindow extends JFrame {
 		Dimension verticalThird = new Dimension(WINDOW_SIZE.width / 3,
 				WINDOW_SIZE.height / 8);
 
-		eventsEditor = new EventsEditorPanel(horizontalThird, initialFile);
+    try {
+      eventsEditor = new EventsEditorPanel(horizontalThird, initialFile);
+    } catch (IllegalArgumentException e) {
+      showErrorMessage(READ_FILE_ERROR, e.getMessage());
+    }
 		eventsQueue = new InfoTablePanel<>("Events Queue", horizontalThird,
 				Event.INFO);
 		reportsArea = new ReportsAreaPanel(horizontalThird);
@@ -272,7 +278,7 @@ public class SimulatorWindow extends JFrame {
 			try {
 				eventsEditor.writeFromFile(chooser.getSelectedFile());
       } catch (IOException e) {
-        showErrorMessage("Error reading file", e.getMessage());
+        showErrorMessage(READ_FILE_ERROR, e.getMessage());
 			}
 		}
 	}
@@ -285,7 +291,7 @@ public class SimulatorWindow extends JFrame {
 			try {
 				eventsEditor.saveToFile(chooser.getSelectedFile());
 			} catch (IOException e) {
-        showErrorMessage("Error saving file", e.getMessage());
+        showErrorMessage(WRITE_FILE_ERROR, e.getMessage());
 			}
 		}
 	}
@@ -298,7 +304,7 @@ public class SimulatorWindow extends JFrame {
 			simulator.clearEvents();
 			controller.loadEvents(is);
     } catch (IOException e) {
-      showErrorMessage("Error reading file", e.getMessage());
+      showErrorMessage(READ_FILE_ERROR, e.getMessage());
 		} catch (IllegalStateException e) {
       showErrorMessage("Error reading events", e.getMessage());
 		}
@@ -327,7 +333,7 @@ public class SimulatorWindow extends JFrame {
 			try {
 				reportsArea.saveToFile(chooser.getSelectedFile());
 			} catch (IOException e) {
-        showErrorMessage("Error saving file", e.getMessage());
+        showErrorMessage(WRITE_FILE_ERROR, e.getMessage());
 			}
 		}
 	}
@@ -374,8 +380,8 @@ public class SimulatorWindow extends JFrame {
 		}
 	}
 
-	private void refreshTables(Collection<Vehicle> vehicles,
-			Collection<Road> roads, Collection<Junction> junctions) {
+  private void refreshTables(Collection<Vehicle> vehicles, Collection<Road> roads,
+                             Collection<Junction> junctions) {
 		vehiclesTable.setElements(vehicles);
 		roadsTable.setElements(roads);
 		junctionsTable.setElements(junctions);
