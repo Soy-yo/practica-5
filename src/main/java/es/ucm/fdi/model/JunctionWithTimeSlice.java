@@ -14,7 +14,9 @@ public abstract class JunctionWithTimeSlice extends Junction {
   }
 
   @Override
-  // Sobreescrito para usar la nueva IncomingRoad
+  /**
+   *  Sobreescrito para usar la nueva IncomingRoad
+   */
   public void addRoad(Road road) {
     incomingRoads.put(road, new IncomingRoad(road));
   }
