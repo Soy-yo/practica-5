@@ -174,7 +174,7 @@ public class SimulatorWindow extends JFrame {
         showErrorMessage(READ_FILE_ERROR, e.getMessage());
       }
     }
-    eventsEditor.setComponentPopupMenu(createTemplatePopupMenu(eventsEditor));
+    createTemplatePopupMenu();
     eventsEditorScroll.setViewportView(eventsEditor);
 
     JScrollPane eventsQueueScroll = new JScrollPane();
@@ -230,7 +230,7 @@ public class SimulatorWindow extends JFrame {
 
 	}
 
-  private JPopupMenu createTemplatePopupMenu(JTextArea textArea) {
+  private void createTemplatePopupMenu() {
     JPopupMenu popup = new JPopupMenu();
     JMenu menu = new JMenu("Add template");
     menu.setEnabled(true);
@@ -238,15 +238,16 @@ public class SimulatorWindow extends JFrame {
     for (Event.Builder builder : EventBuilder.SUPPORTED_EVENTS) {
       JMenuItem item = new JMenuItem(builder.getEventName());
       item.addActionListener(e ->
-          textArea.insert("\n" + builder.getEventFileTemplate(), textArea.getCaretPosition()));
+          eventsEditor.insert(builder.getEventFileTemplate() + "\n",
+              eventsEditor.getCaretPosition()));
       menu.add(item);
     }
     popup.add(menu);
+    popup.addSeparator();
     popup.add(actionMap.get(Command.LOAD_EVENTS));
     popup.add(actionMap.get(Command.SAVE_EVENTS));
     popup.add(actionMap.get(Command.CLEAR_EVENTS));
-    popup.addSeparator();
-    return popup;
+    eventsEditor.setComponentPopupMenu(popup);
   }
 
 	private void addStatusBar() {
@@ -370,9 +371,8 @@ public class SimulatorWindow extends JFrame {
 			TrafficSimulator simulator = controller.getSimulator();
 			simulator.clearEvents();
 			controller.loadEvents(is);
-    } catch (IOException e) {
-      showErrorMessage(READ_FILE_ERROR, e.getMessage());
-		} catch (IllegalStateException e) {
+    } catch (IOException | IllegalStateException e) {
+      reset();
       showErrorMessage("Error reading events", e.getMessage());
 		}
 	}

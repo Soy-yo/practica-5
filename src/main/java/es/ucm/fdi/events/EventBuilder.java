@@ -26,7 +26,8 @@ public class EventBuilder {
         i++;
       }
     } catch (IllegalArgumentException e) {
-      throw new IllegalStateException("Something went wrong while parsing section\n" + section, e);
+      throw new IllegalStateException(
+          "Something went wrong while parsing section\n" + section + "\n" + e.getMessage(), e);
     }
     return result;
   }
