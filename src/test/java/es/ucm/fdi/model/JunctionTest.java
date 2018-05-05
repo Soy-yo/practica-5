@@ -1,18 +1,18 @@
 package es.ucm.fdi.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Queue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
-class JunctionTest {
+public class JunctionTest {
 
   @Test
-  void simpleAdvance() {
+  public void simpleAdvance() {
     Junction source = new Junction("jt1");
     Junction mid = new Junction("jt2");
     Junction dest = new Junction("jt3");
@@ -50,7 +50,7 @@ class JunctionTest {
   }
 
   @Test
-  void reportTest() {
+  public void reportTest() {
     Junction source = new Junction("jt1");
     Junction dest = new Junction("jt2");
     Queue<Junction> queue = new ArrayDeque<>();
@@ -83,7 +83,7 @@ class JunctionTest {
   }
 
   @Test
-  void roundRobinTest() {
+  public void roundRobinTest() {
     Junction source1 = new Junction("jt1");
     Junction source2 = new Junction("jt2");
     Junction dest = new RoundRobinJunction("jt4", 1, 3);
@@ -152,7 +152,7 @@ class JunctionTest {
   }
 
   @Test
-  void mostCrowdedTest() {
+  public void mostCrowdedTest() {
     Junction source1 = new Junction("jt1");
     Junction source2 = new Junction("jt2");
     Junction source3 = new Junction("jt3");

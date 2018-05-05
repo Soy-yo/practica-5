@@ -1,55 +1,55 @@
 package es.ucm.fdi.events;
 
 import es.ucm.fdi.ini.IniSection;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-class EventTest {
+public class EventTest {
 
   private Event.Builder eb = new Implementation();
 
   @Test
-  void validIdTest1() {
+  public void validIdTest1() {
     assertTrue(eb.isValid("v1"));
   }
 
   @Test
-  void validIdTest2() {
+  public void validIdTest2() {
     assertTrue(eb.isValid("_v1"));
   }
 
   @Test
-  void validIdTest3() {
+  public void validIdTest3() {
     // sin espacios
     assertFalse(eb.isValid("vehicle 1"));
   }
 
   @Test
-  void validIdTest4() {
+  public void validIdTest4() {
     assertTrue(eb.isValid("vehicle_1"));
   }
 
   @Test
-  void validIdTest5() {
+  public void validIdTest5() {
     // alfabeto inglés
     assertFalse(eb.isValid("vehicle_ñ"));
   }
 
   @Test
-  void validIdTest6() {
+  public void validIdTest6() {
     // sin guiones
     assertFalse(eb.isValid("v-1"));
   }
 
   @Test
-  void validIdTest7() {
+  public void validIdTest7() {
     assertTrue(eb.isValid("1234"));
   }
 
   @Test
-  void validIdTest8() {
+  public void validIdTest8() {
     assertTrue(eb.isValid("vehicle"));
   }
 

@@ -44,12 +44,13 @@ public class Controller {
           }
           simulator.addEvent(event);
         } catch (IllegalStateException e) {
-          throw new IllegalStateException("Failed while trying to load events", e);
+          throw new IllegalStateException(
+              "Failed while trying to load events\n" + e.getMessage(), e);
         }
       }
     } catch (IOException | IniError e) {
-      throw new IllegalStateException("Something went wrong while reading ini file\n" +
-          e.getMessage(), e);
+      throw new IllegalStateException(
+          "Something went wrong while reading ini file\n" + e.getMessage(), e);
     }
   }
 

@@ -1,19 +1,19 @@
 package es.ucm.fdi.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-class VehicleTest {
+public class VehicleTest {
 
   @Test
-  void simpleAdvance() {
+  public void simpleAdvance() {
     Junction source = new Junction("jt1");
     Junction dest = new Junction("jt2");
     Queue<Junction> queue = new ArrayDeque<>();
@@ -37,7 +37,7 @@ class VehicleTest {
   }
 
   @Test
-  void endOfRoad() {
+  public void endOfRoad() {
     Junction source = new Junction("jt1");
     Junction dest = new Junction("jt2");
     Queue<Junction> queue = new ArrayDeque<>();
@@ -71,7 +71,7 @@ class VehicleTest {
   }
 
   @Test
-  void faultyVehicle() {
+  public void faultyVehicle() {
     Junction source = new Junction("jt1");
     Junction dest = new Junction("jt2");
     Queue<Junction> queue = new ArrayDeque<>();
@@ -102,7 +102,7 @@ class VehicleTest {
   }
 
   @Test
-  void bikeTest() {
+  public void bikeTest() {
     Junction source = new Junction("jt1");
     Junction dest = new Junction("jt2");
     Queue<Junction> queue = new ArrayDeque<>();
@@ -127,7 +127,7 @@ class VehicleTest {
   }
 
   @Test
-  void carTest() {
+  public void carTest() {
     Junction source = new Junction("jt1");
     Junction dest = new Junction("jt2");
     Queue<Junction> queue = new ArrayDeque<>();

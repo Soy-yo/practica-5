@@ -2,19 +2,19 @@ package es.ucm.fdi.events;
 
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class EventBuilderTest {
+public class EventBuilderTest {
 
   @Test
-  void simpleVehicleEvent() {
+  public void simpleVehicleEvent() {
     TestSimulator simulator = new TestSimulator();
     Junction j1 = new Junction("jt1");
     Junction j2 = new Junction("jt2");
@@ -45,25 +45,37 @@ class EventBuilderTest {
   }
 
   @Test
-  void unknownEvent() {
+  public void unknownEvent() {
     IniSection section = new IniSection("unknown_tag");
     section.setValue("id", "some_id");
     assertNull(EventBuilder.parse(section));
   }
 
   @Test
-  void wrongIds() {
+  public void wrongIds() {
     IniSection section = new IniSection("new_vehicle");
     section.setValue("id", "");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
     section.setValue("id", "hello world");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
     section.setValue("id", "hello-world");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
   }
 
   @Test
-  void wrongType() {
+  public void wrongType() {
     IniSection section = new IniSection("new_vehicle");
     section.setValue("time", "0");
     section.setValue("id", "vehicle");
@@ -74,25 +86,41 @@ class EventBuilderTest {
   }
 
   @Test
-  void wrongTime() {
+  public void wrongTime() {
     IniSection section = new IniSection("new_junction");
     section.setValue("time", "-1");
     section.setValue("id", "j");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
     section.setValue("time", "hello_world");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
   }
 
   @Test
-  void wrongItinerary() {
+  public void wrongItinerary() {
     IniSection section = new IniSection("new_vehicle");
     section.setValue("time", "0");
     section.setValue("id", "vehicle");
     section.setValue("itinerary", "");
     section.setValue("max_speed", "20");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
     section.setValue("itinerary", "");
-    assertThrows(IllegalStateException.class, () -> EventBuilder.parse(section));
+    try {
+      EventBuilder.parse(section);
+      fail();
+    } catch (IllegalStateException ignored) {
+    }
   }
 
   private class TestSimulator extends TrafficSimulator {

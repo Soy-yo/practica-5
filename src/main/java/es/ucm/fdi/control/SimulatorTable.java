@@ -3,44 +3,37 @@ package es.ucm.fdi.control;
 import es.ucm.fdi.model.Describable;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class InfoTablePanel<T extends Describable> extends JScrollPane {
+public class SimulatorTable<T extends Describable> extends JTable {
 
-  private JTable table;
-  private InfoTableModel model;
+  private SimulatorTableModel model;
   private String[] titles;
 
-  InfoTablePanel(String panelTitle, Dimension minimumSize, String[] titles) {
+  SimulatorTable(String[] titles) {
     super();
     this.titles = titles;
-    initialize(minimumSize, panelTitle);
+    initialize();
   }
 
-  private void initialize(Dimension size, String title) {
-    model = new InfoTableModel(titles, 0);
-    table = new JTable(model);
-    table.setShowGrid(false);
-    table.setEnabled(false);
+  private void initialize() {
+    model = new SimulatorTableModel(titles, 0);
+    setModel(model);
+    setShowGrid(false);
+    setEnabled(false);
     centerCells();
-    setBorder(new TitledBorder(new LineBorder(Color.BLACK), title));
-    setMinimumSize(size);
-    setViewportView(table);
   }
 
   // https://stackoverflow.com/questions/7433602/how-to-center-in-jtable-cell-a-value
   private void centerCells() {
     DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
     centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-    table.setDefaultRenderer(String.class, centerRenderer);
+    setDefaultRenderer(String.class, centerRenderer);
   }
 
   public void clear() {
@@ -62,12 +55,12 @@ public class InfoTablePanel<T extends Describable> extends JScrollPane {
     model.addRow(element);
   }
 
-  private class InfoTableModel extends AbstractTableModel {
+  private class SimulatorTableModel extends AbstractTableModel {
 
     private final String[] titles;
     private List<String[]> elements;
 
-    InfoTableModel(String[] titles, int rowCount) {
+    SimulatorTableModel(String[] titles, int rowCount) {
       this.titles = titles;
       elements = new ArrayList<>(rowCount);
     }
