@@ -2,6 +2,9 @@ package es.ucm.fdi.model;
 
 import java.util.Map;
 
+/**
+ * Carretera de barro que es más lenta cuantos más vehículos averiados la recorran
+ */
 public class DirtRoad extends Road {
 
   public static final String TYPE = "dirt";

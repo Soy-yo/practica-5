@@ -44,7 +44,7 @@ public class NewDirtRoadEvent extends NewRoadEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return super.getEventFileTemplate() + "\ntype=" + DirtRoad.TYPE + "\n";
+      return super.getEventFileTemplate() + "\ntype = " + DirtRoad.TYPE + "\n";
     }
 
   }

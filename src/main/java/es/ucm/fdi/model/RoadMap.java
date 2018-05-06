@@ -2,6 +2,9 @@ package es.ucm.fdi.model;
 
 import java.util.*;
 
+/**
+ * Clase que representa el mapa de carreteras, uniendo cruces, carrteras y vehículos
+ */
 public class RoadMap {
 
   private Map<String, Vehicle> vehicles;
@@ -16,6 +19,9 @@ public class RoadMap {
     reset();
   }
 
+  /**
+   * Devuelve el mapa a su estado inicial
+   */
   public void reset() {
     vehicles = new LinkedHashMap<>();
     unmodifiableVehicleList = Collections.unmodifiableCollection(vehicles.values());
@@ -25,10 +31,16 @@ public class RoadMap {
     unmodifiableJunctionList = Collections.unmodifiableCollection(junctions.values());
   }
 
+  /**
+   * Determina si el objeto con el id indicado se encuentra en el mapa
+   */
   public boolean contains(String id) {
     return vehicles.containsKey(id) || roads.containsKey(id) || junctions.containsKey(id);
   }
 
+  /**
+   * Añade un nuevo objeto al mapa si no se encontraba ya en él
+   */
   public void addSimulatedObject(SimulatedObject o) {
     if (contains(o.getId())) {
       throw new IllegalArgumentException("Object " + o.getId() + " is already registered");
@@ -42,7 +54,10 @@ public class RoadMap {
     }
   }
 
-  public void addVehicle(Vehicle v) {
+  /**
+   * Añade un nuevo vehículo al mapa si tiene un itinerario válido
+   */
+  private void addVehicle(Vehicle v) {
     List<Junction> itinerary = v.getItinerary();
     // Comprueba que el itinerario del vehículo es posible
     for (Junction j : itinerary) {
@@ -55,9 +70,11 @@ public class RoadMap {
     vehicles.put(v.getId(), v);
   }
 
-  public void addRoad(Road r) {
+  /**
+   * Añade una carretera al mapa si su origen y destino existen en el mapa
+   */
+  private void addRoad(Road r) {
     Junction destination = junctionSearch(r.getDestiny());
-    // Comprueba que tanto el origen como el destino existen en el mapa
     if (!junctions.containsKey(r.getSource())) {
       throw new IllegalArgumentException("Couldn't find source for road " + r.getId());
     }
@@ -68,13 +85,15 @@ public class RoadMap {
     roads.put(r.getId(), r);
   }
 
-  public void addJunction(Junction j) {
+  /**
+   * Añade un cruce al mapa
+   */
+  private void addJunction(Junction j) {
     junctions.put(j.getId(), j);
   }
 
   /**
-   * Devuelve el objeto buscado si existe o null
-   * en caso contrario
+   * Devuelve el objeto buscado si existe o null en caso contrario
    */
   public SimulatedObject searchById(String id) {
     if (vehicles.containsKey(id)) {
@@ -89,36 +108,58 @@ public class RoadMap {
     return null;
   }
 
+  /**
+   * Devuelve el vehículo con el id indicado si existe o null en caso contrario
+   */
   public Vehicle vehicleSearch(String id) {
     return vehicles.get(id);
   }
 
+  /**
+   * Devuelve la carretera con el id indicado si existe o null en caso contrario
+   */
   public Road roadSearch(String id) {
     return roads.get(id);
   }
 
+  /**
+   * Devuelve el cruce con el id indicado si existe o null en caso contrario
+   */
   public Junction junctionSearch(String id) {
     return junctions.get(id);
   }
 
+  /**
+   * Devuelve una colección no modificable con todos los vehiculos del mapa
+   */
   public Collection<Vehicle> getVehicles() {
     return unmodifiableVehicleList;
   }
 
+  /**
+   * Devuelve una colección no modificable con todas las carreteras del mapa
+   */
   public Collection<Road> getRoads() {
     return unmodifiableRoadList;
   }
 
+  /**
+   * Devuelve una colección no modificable con todos los cruces del mapa
+   */
   public Collection<Junction> getJunctions() {
     return unmodifiableJunctionList;
   }
 
+  /**
+   * Devuelve el conjunto de todas las carreteras con su luz del semáforo en verde en su cruce de
+   * destino
+   */
   public Set<Road> getGreenRoads() {
     Set<Road> result = new HashSet<>();
     for (Junction j : junctions.values()) {
       Road green = j.getGreenRoad();
       if (green != null) {
-        result.add(j.getGreenRoad());
+        result.add(green);
       }
     }
     return result;

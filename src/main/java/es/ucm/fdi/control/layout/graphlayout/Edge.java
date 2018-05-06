@@ -1,4 +1,4 @@
-package es.ucm.fdi.extra.graphlayout;
+package es.ucm.fdi.control.layout.graphlayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,33 +19,34 @@ public class Edge {
     this.length = length;
     dots = new ArrayList<>();
     this.enabled = enabled;
-	}
-	
-	public void addDot(Dot e) {
+  }
+
+  public void addDot(Dot e) {
     dots.add(e);
   }
 
-	public String getId() {
+  public String getId() {
     return id;
-	}
-	
-	public Node getSource() {
-    return source;
-	}
-	
-	public Node getTarget() {
-    return target;
-	}
+  }
 
-	public int getLength() {
+  public Node getSource() {
+    return source;
+  }
+
+  public Node getTarget() {
+    return target;
+  }
+
+  public int getLength() {
     return length;
-	}
-	
-	public List<Dot> getDots() {
+  }
+
+  public List<Dot> getDots() {
     return dots;
   }
 
   public boolean isEnabled() {
     return enabled;
   }
+
 }

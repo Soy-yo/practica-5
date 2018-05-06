@@ -41,7 +41,7 @@ public class NewMostCrowdedJunctionEvent extends NewJunctionEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return super.getEventFileTemplate() + "\ntype=" + MostCrowdedJunction.TYPE + "\n";
+      return super.getEventFileTemplate() + "\ntype = " + MostCrowdedJunction.TYPE + "\n";
     }
 
   }

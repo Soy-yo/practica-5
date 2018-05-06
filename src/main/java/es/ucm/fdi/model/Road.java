@@ -8,6 +8,9 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Clase que representa una carretera
+ */
 public class Road extends SimulatedObject {
 
   private static final String SECTION_TAG_NAME = "road_report";
@@ -20,13 +23,11 @@ public class Road extends SimulatedObject {
   protected String sourceId;
   protected String destinationId;
 
-  public Road(String id, int length, int maxSpeed, String sourceId,
-              String destinationId) {
+  public Road(String id, int length, int maxSpeed, String sourceId, String destinationId) {
     super(id);
     this.length = length;
     this.maxSpeed = maxSpeed;
-    vehicleList = new MultiTreeMap<>(Comparator
-        .comparing(Integer::intValue).reversed());
+    vehicleList = new MultiTreeMap<>(Comparator.comparing(Integer::intValue).reversed());
     this.sourceId = sourceId;
     this.destinationId = destinationId;
   }
@@ -51,17 +52,18 @@ public class Road extends SimulatedObject {
     vehicleList.removeValue(vehicle.getLocation(), vehicle);
   }
 
-  @Override
   /**
-   * Hace avanzar a todos los vehículos que se encuentran en la carretera
-   * dependiendo de su coeficiente de reducción
+   * Hace avanzar a todos los vehículos que se encuentran en la carretera dependiendo de su
+   * coeficiente de reducción
    */
+  @Override
   public void advance() {
     if (vehicleList.sizeOfValues() > 0) {
       int baseSpeed = calculateBaseSpeed();
       int faultyVehicles = 0;
-      MultiTreeMap<Integer, Vehicle> temp = new MultiTreeMap<>(Comparator
-          .comparing(Integer::intValue).reversed());
+      // Nuevo mapa donde almacenar los vehículos
+      MultiTreeMap<Integer, Vehicle> temp =
+          new MultiTreeMap<>(Comparator.comparing(Integer::intValue).reversed());
       for (Vehicle v : vehicleList.innerValues()) {
         int reductionFactor = calculateReductionFactor(faultyVehicles);
         if (v.getFaulty() > 0) {
@@ -75,10 +77,16 @@ public class Road extends SimulatedObject {
     }
   }
 
+  /**
+   * Calcula la velocidad base que tienen los vehículo de la carrtera
+   */
   protected int calculateBaseSpeed() {
     return Math.min(maxSpeed, maxSpeed / Math.max(vehicleList.sizeOfValues(), 1) + 1);
   }
 
+  /**
+   * Calcula el factor de reducción de velocidad que quizá haga que los vehículos vayan más lentos
+   */
   protected int calculateReductionFactor(int faultyVehicles) {
     return faultyVehicles > 0 ? 2 : 1;
   }

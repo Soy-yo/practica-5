@@ -2,14 +2,18 @@ package es.ucm.fdi.model;
 
 import java.util.Map;
 
+/**
+ * Autopista con varios carriles que permite a los coches ir a mayor velocidad esquivando
+ * vehículos averiados
+ */
 public class LaneRoad extends Road {
 
   public static final String TYPE = "lanes";
 
   private int lanes;
 
-  public LaneRoad(String id, int length, int maxSpeed, String sourceId,
-                  String destinationId, int lanes) {
+  public LaneRoad(String id, int length, int maxSpeed, String sourceId, String destinationId,
+                  int lanes) {
     super(id, length, maxSpeed, sourceId, destinationId);
     this.lanes = lanes;
   }

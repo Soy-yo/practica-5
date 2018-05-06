@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Clase que pone en contacto la interfaz con el simulador
+ */
 public class Controller {
 
   private TrafficSimulator simulator;
@@ -18,6 +21,10 @@ public class Controller {
 
   public Controller(TrafficSimulator simulator) {
     this.simulator = simulator;
+  }
+
+  public TrafficSimulator getSimulator() {
+    return simulator;
   }
 
   public void setOutputStream(OutputStream os) {
@@ -61,10 +68,6 @@ public class Controller {
       throw new IllegalStateException(
           "Something went wrong while reading ini file\n" + e.getMessage(), e);
     }
-  }
-
-  public TrafficSimulator getSimulator() {
-    return simulator;
   }
 
 }

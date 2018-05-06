@@ -1,4 +1,4 @@
-package es.ucm.fdi.control;
+package es.ucm.fdi.control.layout;
 
 import es.ucm.fdi.model.Describable;
 
@@ -41,10 +41,6 @@ public class SimulatorTable<T extends Describable> extends JTable {
 
   public void clear() {
     model.clear();
-  }
-
-  public void setElement(T element, int row) {
-    model.setRow(element, row);
   }
 
   public void setElements(Collection<T> elements) {
@@ -118,17 +114,6 @@ public class SimulatorTable<T extends Describable> extends JTable {
       checkColumnCount(newRow);
       elements.add(newRow);
       fireTableRowsInserted(elements.size() - 1, elements.size() - 1);
-    }
-
-    void setRow(T element, int rowIndex) {
-      setRow(describe(element), rowIndex);
-    }
-
-    private void setRow(String[] newRow, int rowIndex) {
-      checkRowBounds(rowIndex);
-      checkColumnCount(newRow);
-      elements.set(rowIndex, newRow);
-      fireTableRowsUpdated(elements.size() - 1, elements.size() - 1);
     }
 
     void clear() {

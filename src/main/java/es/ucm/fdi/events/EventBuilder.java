@@ -2,20 +2,27 @@ package es.ucm.fdi.events;
 
 import es.ucm.fdi.ini.IniSection;
 
+/**
+ * Constructora de eventos
+ */
 public class EventBuilder {
 
-	public static final Event.Builder[] SUPPORTED_EVENTS = {
-			new NewCarEvent.Builder(), new NewBicycleEvent.Builder(),
-			new NewVehicleEvent.Builder(), new NewLaneRoadEvent.Builder(),
-			new NewDirtRoadEvent.Builder(), new NewRoadEvent.Builder(),
-			new NewRoundRobinJunctionEvent.Builder(),
-			new NewMostCrowdedJunctionEvent.Builder(),
-			new NewJunctionEvent.Builder(),
-			new MakeVehicleFaultyEvent.Builder() };
+  public static final Event.Builder[] SUPPORTED_EVENTS = {
+      new NewCarEvent.Builder(),
+      new NewBicycleEvent.Builder(),
+      new NewVehicleEvent.Builder(),
+      new NewLaneRoadEvent.Builder(),
+      new NewDirtRoadEvent.Builder(),
+      new NewRoadEvent.Builder(),
+      new NewRoundRobinJunctionEvent.Builder(),
+      new NewMostCrowdedJunctionEvent.Builder(),
+      new NewJunctionEvent.Builder(),
+      new MakeVehicleFaultyEvent.Builder()
+  };
 
   /**
-   * Dado un ini decide de qué evento se trata (null si no se corresponde con
-   * ninguno) y lo devuelve ya creado
+   * Dado un ini decide de qué evento se trata (null si no se corresponde con ninguno) y lo
+   * devuelve ya creado
    */
   public static Event parse(IniSection section) throws IllegalStateException {
     int i = 0;

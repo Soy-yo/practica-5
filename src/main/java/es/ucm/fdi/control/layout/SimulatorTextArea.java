@@ -1,4 +1,4 @@
-package es.ucm.fdi.control;
+package es.ucm.fdi.control.layout;
 
 import javax.swing.*;
 import java.io.File;
@@ -21,7 +21,7 @@ public class SimulatorTextArea extends JTextArea {
   public void writeFromFile(File file) throws IOException {
     setText(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
   }
-  
+
   /**
    * Guarda el contenido del área de texto en un archivo Ini
    */

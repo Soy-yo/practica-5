@@ -1,7 +1,7 @@
 package es.ucm.fdi.launcher;
 
 import es.ucm.fdi.control.Controller;
-import es.ucm.fdi.control.SimulatorWindow;
+import es.ucm.fdi.control.layout.SimulatorWindow;
 import es.ucm.fdi.excepcions.SimulatorError;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.TrafficSimulator;
@@ -235,25 +235,7 @@ public class Main {
   }
 
   public static void main(String[] args) {
-
-    // example command lines:
-    //
-    // -i resources/examples/events/basic/ex1.ini
-    // -i resources/examples/events/basic/ex1.ini -o ex1.out
-    // -i resources/examples/events/basic/ex1.ini -t 20
-    // -i resources/examples/events/basic/ex1.ini -o ex1.out -t 20
-    // --help
-    //
-
-    // Call test in order to test the simulator on all examples in a
-    // directory.
-    //
-	//test("src/test/resources/examples/err");
-	
-
-    // Call start to start the simulator from command line, etc.
     start(args);
-
   }
 
 }

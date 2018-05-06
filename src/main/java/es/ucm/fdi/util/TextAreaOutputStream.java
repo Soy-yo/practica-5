@@ -1,7 +1,6 @@
 package es.ucm.fdi.util;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -14,7 +13,7 @@ public class TextAreaOutputStream extends OutputStream {
   }
 
   @Override
-  public void write(int b) throws IOException {
+  public void write(int b) {
     textArea.append("" + b);
   }
 
