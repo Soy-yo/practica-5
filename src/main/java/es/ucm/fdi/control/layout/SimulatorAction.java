@@ -1,4 +1,4 @@
-package es.ucm.fdi.control;
+package es.ucm.fdi.control.layout;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

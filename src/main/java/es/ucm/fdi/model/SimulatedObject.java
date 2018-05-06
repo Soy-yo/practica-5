@@ -5,70 +5,70 @@ import java.util.Map;
 
 public abstract class SimulatedObject implements Describable {
 
-	protected final String id; // id único
+  protected final String id; // id único
 
-	public SimulatedObject(String id) {
-		this.id = id;
-	}
+  public SimulatedObject(String id) {
+    this.id = id;
+  }
 
-	/**
-	 * Hace a el objeto en cuestión avanzar si es un vehículo o que avancen los
-	 * vehículos que están en él en caso contrario
-	 */
-	public abstract void advance();
+  /**
+   * Hace a el objeto en cuestión avanzar si es un vehículo o que avancen los
+   * vehículos que están en él en caso contrario
+   */
+  public abstract void advance();
 
-	/**
-	 * Rellena los datos del objeto para poder ser impresos en su report
-	 */
-	public abstract void fillReportDetails(Map<String, String> kvps);
+  /**
+   * Rellena los datos del objeto para poder ser impresos en su report
+   */
+  public abstract void fillReportDetails(Map<String, String> kvps);
 
-	/**
-	 * Devuelve el nombre del tipo del objeto para el report
-	 */
-	protected abstract String getReportHeader();
+  /**
+   * Devuelve el nombre del tipo del objeto para el report
+   */
+  protected abstract String getReportHeader();
 
-	/**
-	 * Devuelve un mapa con los datos del objeto para ser impresos en la tabla
-	 * correspondiente
-	 */
-	public abstract Map<String, String> describe();
+  /**
+   * Devuelve un mapa con los datos del objeto para ser impresos en la tabla
+   * correspondiente
+   */
+  public abstract Map<String, String> describe();
 
-	public String getId() {
-		return id;
-	}
-	
-	/**
-	 * Genera el report utilizando los detalles del objeto
-	 */
-	public Map<String, String> generateReport(int time) {
-		Map<String, String> kvps = new LinkedHashMap<>();
-		kvps.put("", getReportHeader());
-		kvps.put("id", id);
-		kvps.put("time", "" + time);
-		fillReportDetails(kvps);
-		return kvps;
-	}
+  public String getId() {
+    return id;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		SimulatedObject other = (SimulatedObject) o;
-		return id.equals(other.id);
-	}
+  /**
+   * Genera el report utilizando los detalles del objeto
+   */
+  public Map<String, String> generateReport(int time) {
+    Map<String, String> kvps = new LinkedHashMap<>();
+    kvps.put("", getReportHeader());
+    kvps.put("id", id);
+    kvps.put("time", "" + time);
+    fillReportDetails(kvps);
+    return kvps;
+  }
 
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SimulatedObject other = (SimulatedObject) o;
+    return id.equals(other.id);
+  }
 
-	@Override
-	public String toString() {
-		return id;
-	}
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return id;
+  }
 
 }
