@@ -42,7 +42,7 @@ public class NewBicycleEvent extends NewVehicleEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return super.getEventFileTemplate() + "\ntype = " + Bicycle.TYPE + "\n";
+      return super.getEventFileTemplate() + "type = " + Bicycle.TYPE + "\n";
     }
 
   }

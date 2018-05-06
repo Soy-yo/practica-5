@@ -60,7 +60,7 @@ public class NewCarEvent extends NewVehicleEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return super.getEventFileTemplate() + "\ntype = " + Car.TYPE + "\n" +
+      return super.getEventFileTemplate() + "type = " + Car.TYPE + "\n" +
           String.join(" = \n", ATTRIBUTES) + " = \n";
     }
 
