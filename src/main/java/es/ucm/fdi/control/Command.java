@@ -2,6 +2,9 @@ package es.ucm.fdi.control;
 
 import java.awt.event.KeyEvent;
 
+/**
+ * Enumerado con los tipos de comandos que habrá en la barra de herramientas
+ */
 public enum Command {
 
   LOAD_EVENTS("Load events", "open.png", "Load events file", KeyEvent.VK_L, "control L"),

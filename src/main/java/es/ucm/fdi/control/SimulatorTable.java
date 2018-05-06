@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase para implementar las tablas de objetos en la interfaz
+ */
 public class SimulatorTable<T extends Describable> extends JTable {
 
   private SimulatorTableModel model;

@@ -23,25 +23,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Ventana principal para el modo GUI
+ */
 public class SimulatorWindow extends JFrame {
 
-  public static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
-  private static final Dimension HORIZONTAL_THIRD = new Dimension(WINDOW_SIZE.width / 6,
-      WINDOW_SIZE.height / 8);
-  private static final Dimension VERTICAL_THIRD = new Dimension(WINDOW_SIZE.width / 3,
-      WINDOW_SIZE.height / 8);
-  private static final String READ_FILE_ERROR = "Error reading file";
-  private static final String WRITE_FILE_ERROR = "Error writing file";
+	public static Dimension WINDOW_SIZE = new Dimension(1000, 1000);
+	private static final Dimension HORIZONTAL_THIRD = new Dimension(
+			WINDOW_SIZE.width / 6, WINDOW_SIZE.height / 8);
+	private static final Dimension VERTICAL_THIRD = new Dimension(
+			WINDOW_SIZE.width / 3, WINDOW_SIZE.height / 8);
+	private static final String READ_FILE_ERROR = "Error reading file";
+	private static final String WRITE_FILE_ERROR = "Error writing file";
 
 	private Controller controller;
 
-  private SimulatorTextArea eventsEditor;
-  private JScrollPane eventsEditorScroll;
-  private SimulatorTable<Event> eventsQueue;
-  private SimulatorTextArea reportsArea;
-  private SimulatorTable<Vehicle> vehiclesTable;
-  private SimulatorTable<Road> roadsTable;
-  private SimulatorTable<Junction> junctionsTable;
+	private SimulatorTextArea eventsEditor;
+	private JScrollPane eventsEditorScroll;
+	private SimulatorTable<Event> eventsQueue;
+	private SimulatorTextArea reportsArea;
+	private SimulatorTable<Vehicle> vehiclesTable;
+	private SimulatorTable<Road> roadsTable;
+	private SimulatorTable<Junction> junctionsTable;
 	private GraphComponent roadMap;
 	private JLabel statusBarText;
 
@@ -50,20 +53,23 @@ public class SimulatorWindow extends JFrame {
 	private JSpinner stepCounter;
 	private JTextField time;
 
-  private String previousPath;
+	private String previousPath;
 
-  public SimulatorWindow(String title, File initialFile, int steps, Dimension dimension) {
+	public SimulatorWindow(String title, File initialFile, int steps,
+			Dimension dimension) {
 		super(title);
 		controller = new Controller(new TrafficSimulator());
 		initialize(dimension, initialFile, steps);
-    previousPath = initialFile.getPath();
+		if (initialFile != null) {
+			previousPath = initialFile.getPath();
+		}
 	}
 
 	private void initialize(Dimension dimension, File initialFile, int steps) {
 		setSize(dimension);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    generateActionMap();
-    addSections(initialFile);
+		generateActionMap();
+		addSections(initialFile);
 		addToolBar(steps);
 		addStatusBar();
 		addListeners();
@@ -72,26 +78,25 @@ public class SimulatorWindow extends JFrame {
 
 	private void generateActionMap() {
 		actionMap = new HashMap<>();
-    actionMap.put(Command.LOAD_EVENTS,
-        new SimulatorAction(Command.LOAD_EVENTS, this::loadEvents));
-    actionMap.put(Command.SAVE_EVENTS,
-        new SimulatorAction(Command.SAVE_EVENTS, this::saveEvents));
-    actionMap.put(Command.CLEAR_EVENTS,
-        new SimulatorAction(Command.CLEAR_EVENTS, this::clearEvents));
-    actionMap.put(Command.MOVE_EVENTS,
-        new SimulatorAction(Command.MOVE_EVENTS, this::readEvents));
-    actionMap.put(Command.RUN,
-        new SimulatorAction(Command.RUN, this::run));
-    actionMap.put(Command.RESET,
-        new SimulatorAction(Command.RESET, this::reset));
-    actionMap.put(Command.GENERATE_REPORT,
-        new SimulatorAction(Command.GENERATE_REPORT, this::generateReports));
-    actionMap.put(Command.DELETE_REPORT,
-        new SimulatorAction(Command.DELETE_REPORT, this::deleteReports));
-    actionMap.put(Command.SAVE_REPORT,
-        new SimulatorAction(Command.SAVE_REPORT, this::saveReport));
-    actionMap.put(Command.EXIT,
-        new SimulatorAction(Command.EXIT, () -> System.exit(0)));
+		actionMap.put(Command.LOAD_EVENTS, new SimulatorAction(
+				Command.LOAD_EVENTS, this::loadEvents));
+		actionMap.put(Command.SAVE_EVENTS, new SimulatorAction(
+				Command.SAVE_EVENTS, this::saveEvents));
+		actionMap.put(Command.CLEAR_EVENTS, new SimulatorAction(
+				Command.CLEAR_EVENTS, this::clearEvents));
+		actionMap.put(Command.MOVE_EVENTS, new SimulatorAction(
+				Command.MOVE_EVENTS, this::readEvents));
+		actionMap.put(Command.RUN, new SimulatorAction(Command.RUN, this::run));
+		actionMap.put(Command.RESET, new SimulatorAction(Command.RESET,
+				this::reset));
+		actionMap.put(Command.GENERATE_REPORT, new SimulatorAction(
+				Command.GENERATE_REPORT, this::generateReports));
+		actionMap.put(Command.DELETE_REPORT, new SimulatorAction(
+				Command.DELETE_REPORT, this::deleteReports));
+		actionMap.put(Command.SAVE_REPORT, new SimulatorAction(
+				Command.SAVE_REPORT, this::saveReport));
+		actionMap.put(Command.EXIT, new SimulatorAction(Command.EXIT,
+				() -> System.exit(0)));
 	}
 
 	private void addToolBar(int initialSteps) {
@@ -120,13 +125,15 @@ public class SimulatorWindow extends JFrame {
 
 		JCheckBoxMenuItem redirectOutput = new JCheckBoxMenuItem(
 				"Redirect output");
-		redirectOutput.addItemListener(e -> {
-			if (redirectOutput.isSelected()) {
-        controller.setOutputStream(new TextAreaOutputStream(reportsArea));
-			} else {
-				controller.setOutputStream(null);
-			}
-		});
+		redirectOutput
+				.addItemListener(e -> {
+					if (redirectOutput.isSelected()) {
+						controller.setOutputStream(new TextAreaOutputStream(
+								reportsArea));
+					} else {
+						controller.setOutputStream(null);
+					}
+				});
 
 		// Menu bar
 		JMenuBar menu = new JMenuBar();
@@ -162,105 +169,113 @@ public class SimulatorWindow extends JFrame {
 
 	private void addSections(File initialFile) {
 
-    eventsEditorScroll = new JScrollPane();
-    eventsEditorScroll.setMinimumSize(HORIZONTAL_THIRD);
-    eventsEditorScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK), initialFile == null ||
-        !initialFile.exists() ? "Events editor" : "Events: " + initialFile.getName()));
-    eventsEditor = new SimulatorTextArea(true);
-    if (initialFile != null) {
-      try {
-        eventsEditor.writeFromFile(initialFile);
-      } catch (IOException e) {
-        showErrorMessage(READ_FILE_ERROR, e.getMessage());
-      }
-    }
-    createTemplatePopupMenu();
-    eventsEditorScroll.setViewportView(eventsEditor);
+		eventsEditorScroll = new JScrollPane();
+		eventsEditorScroll.setMinimumSize(HORIZONTAL_THIRD);
+		eventsEditorScroll.setBorder(new TitledBorder(new LineBorder(
+				Color.BLACK),
+				initialFile == null || !initialFile.exists() ? "Events editor"
+						: "Events: " + initialFile.getName()));
+		eventsEditor = new SimulatorTextArea(true);
+		if (initialFile != null) {
+			try {
+				eventsEditor.writeFromFile(initialFile);
+			} catch (IOException e) {
+				showErrorMessage(READ_FILE_ERROR, e.getMessage());
+			}
+		}
+		createTemplatePopupMenu();
+		eventsEditorScroll.setViewportView(eventsEditor);
 
-    JScrollPane eventsQueueScroll = new JScrollPane();
-    eventsQueueScroll.setMinimumSize(HORIZONTAL_THIRD);
-    eventsQueueScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Events Queue"));
-    eventsQueue = new SimulatorTable<>(Event.INFO);
-    eventsQueueScroll.setViewportView(eventsQueue);
+		JScrollPane eventsQueueScroll = new JScrollPane();
+		eventsQueueScroll.setMinimumSize(HORIZONTAL_THIRD);
+		eventsQueueScroll.setBorder(new TitledBorder(
+				new LineBorder(Color.BLACK), "Events Queue"));
+		eventsQueue = new SimulatorTable<>(Event.INFO);
+		eventsQueueScroll.setViewportView(eventsQueue);
 
-    JScrollPane reportsAreaScroll = new JScrollPane();
-    reportsAreaScroll.setMinimumSize(HORIZONTAL_THIRD);
-    reportsAreaScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Reports"));
-    reportsArea = new SimulatorTextArea(false);
-    reportsArea.setDisabledTextColor(Color.BLACK);
-    reportsAreaScroll.setViewportView(reportsArea);
+		JScrollPane reportsAreaScroll = new JScrollPane();
+		reportsAreaScroll.setMinimumSize(HORIZONTAL_THIRD);
+		reportsAreaScroll.setBorder(new TitledBorder(
+				new LineBorder(Color.BLACK), "Reports"));
+		reportsArea = new SimulatorTextArea(false);
+		reportsArea.setDisabledTextColor(Color.BLACK);
+		reportsAreaScroll.setViewportView(reportsArea);
 
-    JScrollPane vehiclesScroll = new JScrollPane();
-    vehiclesScroll.setMinimumSize(VERTICAL_THIRD);
-    vehiclesScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Vehicles"));
-    vehiclesTable = new SimulatorTable<>(Vehicle.INFO);
-    vehiclesScroll.setViewportView(vehiclesTable);
+		JScrollPane vehiclesScroll = new JScrollPane();
+		vehiclesScroll.setMinimumSize(VERTICAL_THIRD);
+		vehiclesScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK),
+				"Vehicles"));
+		vehiclesTable = new SimulatorTable<>(Vehicle.INFO);
+		vehiclesScroll.setViewportView(vehiclesTable);
 
-    JScrollPane roadsScroll = new JScrollPane();
-    roadsScroll.setMinimumSize(VERTICAL_THIRD);
-    roadsScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Roads"));
-    roadsTable = new SimulatorTable<>(Road.INFO);
-    roadsScroll.setViewportView(roadsTable);
+		JScrollPane roadsScroll = new JScrollPane();
+		roadsScroll.setMinimumSize(VERTICAL_THIRD);
+		roadsScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK),
+				"Roads"));
+		roadsTable = new SimulatorTable<>(Road.INFO);
+		roadsScroll.setViewportView(roadsTable);
 
-    JScrollPane junctionsScroll = new JScrollPane();
-    junctionsScroll.setMinimumSize(VERTICAL_THIRD);
-    junctionsScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Junctions"));
-    junctionsTable = new SimulatorTable<>(Junction.INFO);
-    junctionsScroll.setViewportView(junctionsTable);
+		JScrollPane junctionsScroll = new JScrollPane();
+		junctionsScroll.setMinimumSize(VERTICAL_THIRD);
+		junctionsScroll.setBorder(new TitledBorder(new LineBorder(Color.BLACK),
+				"Junctions"));
+		junctionsTable = new SimulatorTable<>(Junction.INFO);
+		junctionsScroll.setViewportView(junctionsTable);
 
 		roadMap = new GraphComponent();
 
 		JSplitPane topLeftSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
-        eventsEditorScroll, eventsQueueScroll, .5);
+				eventsEditorScroll, eventsQueueScroll, .5);
 		JSplitPane topRightSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
-        topLeftSplit, reportsAreaScroll, .66);
+				topLeftSplit, reportsAreaScroll, .66);
 
 		JSplitPane bottomLeftTopSplit = createSeparator(
-        JSplitPane.VERTICAL_SPLIT, vehiclesScroll, roadsScroll, .5);
+				JSplitPane.VERTICAL_SPLIT, vehiclesScroll, roadsScroll, .5);
 		JSplitPane bottomLeftSplit = createSeparator(JSplitPane.VERTICAL_SPLIT,
-        bottomLeftTopSplit, junctionsScroll, .66);
+				bottomLeftTopSplit, junctionsScroll, .66);
 
 		JSplitPane bottomSplit = createSeparator(JSplitPane.HORIZONTAL_SPLIT,
 				bottomLeftSplit, roadMap, .5);
 
 		JSplitPane main = createSeparator(JSplitPane.VERTICAL_SPLIT,
 				topRightSplit, bottomSplit, .4);
-		
+
 		add(main);
 
 	}
 
-  private void createTemplatePopupMenu() {
-    JPopupMenu popup = new JPopupMenu();
-    JMenu menu = new JMenu("Add template");
-    menu.setEnabled(true);
-    // Aprovecha los Event.Builder
-    for (Event.Builder builder : EventBuilder.SUPPORTED_EVENTS) {
-      JMenuItem item = new JMenuItem(builder.getEventName());
-      item.addActionListener(e ->
-          eventsEditor.insert(builder.getEventFileTemplate() + "\n",
-              eventsEditor.getCaretPosition()));
-      menu.add(item);
-    }
-    popup.add(menu);
-    popup.addSeparator();
-    popup.add(actionMap.get(Command.LOAD_EVENTS));
-    popup.add(actionMap.get(Command.SAVE_EVENTS));
-    popup.add(actionMap.get(Command.CLEAR_EVENTS));
-    eventsEditor.setComponentPopupMenu(popup);
-  }
+	private void createTemplatePopupMenu() {
+		JPopupMenu popup = new JPopupMenu();
+		JMenu menu = new JMenu("Add template");
+		menu.setEnabled(true);
+		// Aprovecha los Event.Builder
+		for (Event.Builder builder : EventBuilder.SUPPORTED_EVENTS) {
+			JMenuItem item = new JMenuItem(builder.getEventName());
+			item.addActionListener(e -> eventsEditor.insert(
+					builder.getEventFileTemplate() + "\n",
+					eventsEditor.getCaretPosition()));
+			menu.add(item);
+		}
+		popup.add(menu);
+		popup.addSeparator();
+		popup.add(actionMap.get(Command.LOAD_EVENTS));
+		popup.add(actionMap.get(Command.SAVE_EVENTS));
+		popup.add(actionMap.get(Command.CLEAR_EVENTS));
+		eventsEditor.setComponentPopupMenu(popup);
+	}
 
 	private void addStatusBar() {
 		JPanel statusBar = new JPanel();
 		statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
+		statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		statusBarText = new JLabel("Welcome to the simulator!");
 		statusBar.add(statusBarText);
 		add(statusBar, BorderLayout.SOUTH);
 
 	}
-	
+
 	private void setStatusText(String text) {
-    statusBarText.setText(text);
+		statusBarText.setText(text);
 	}
 
 	private void addListeners() {
@@ -283,16 +298,16 @@ public class SimulatorWindow extends JFrame {
 				refreshTables(ue.getVehicles(), ue.getRoads(),
 						ue.getJunctions());
 				roadMap.clear();
-        setStatusText("Simulator has just been reset!");
+				setStatusText("Simulator has just been reset!");
 			}
 
 			@Override
 			public void newEvent(TrafficSimulator.UpdateEvent ue) {
-        List<Event> events = ue.getEventQueue();
-        if (!events.isEmpty()) {
-          eventsQueue.setElements(events);
-          actionMap.get(Command.RUN).setEnabled(true);
-        }
+				List<Event> events = ue.getEventQueue();
+				if (!events.isEmpty()) {
+					eventsQueue.setElements(events);
+					actionMap.get(Command.RUN).setEnabled(true);
+				}
 				setStatusText("Events have been loaded to the simulator!");
 			}
 
@@ -304,14 +319,15 @@ public class SimulatorWindow extends JFrame {
 				roadMap.generateGraph(ue.getVehicles(), ue.getRoads(), ue
 						.getJunctions(), controller.getSimulator()
 						.getGreenRoads());
-				setStatusText("Simulator advanced " + stepCounter.getValue() + " steps!");
+				setStatusText("Simulator advanced " + stepCounter.getValue()
+						+ " steps!");
 			}
 
 			@Override
 			public void error(TrafficSimulator.UpdateEvent ue, String msg) {
-        setStatusText("An error occurred!!");
-        showErrorMessage("Simulator error", msg);
-        SimulatorWindow.this.reset();
+				setStatusText("An error occurred!!");
+				showErrorMessage("Simulator error", msg);
+				SimulatorWindow.this.reset();
 			}
 		});
 	}
@@ -327,42 +343,44 @@ public class SimulatorWindow extends JFrame {
 	}
 
 	private void loadEvents() {
-    JFileChooser chooser = new JFileChooser(previousPath);
+		JFileChooser chooser = new JFileChooser(previousPath);
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
-      previousPath = file.getPath();
+			File file = chooser.getSelectedFile();
+			previousPath = file.getPath();
 			try {
-        eventsEditor.writeFromFile(file);
-        TitledBorder border = (TitledBorder) eventsEditorScroll.getBorder();
-        border.setTitle("Events: " + file.getName());
-        eventsEditorScroll.repaint();
-      } catch (IOException e) {
-        showErrorMessage(READ_FILE_ERROR, e.getMessage());
+				eventsEditor.writeFromFile(file);
+				TitledBorder border = (TitledBorder) eventsEditorScroll
+						.getBorder();
+				border.setTitle("Events: " + file.getName());
+				eventsEditorScroll.repaint();
+			} catch (IOException e) {
+				showErrorMessage(READ_FILE_ERROR, e.getMessage());
 			}
 		}
 	}
 
 	private void saveEvents() {
-    JFileChooser chooser = new JFileChooser(previousPath);
+		JFileChooser chooser = new JFileChooser(previousPath);
 		chooser.setFileFilter(new FileNameExtensionFilter("INI files", "ini"));
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
-      previousPath = file.getPath();
+			File file = chooser.getSelectedFile();
+			previousPath = file.getPath();
 			try {
-        eventsEditor.saveToFile(file);
-        TitledBorder border = (TitledBorder) eventsEditorScroll.getBorder();
-        border.setTitle("Events: " + file.getName());
-        eventsEditorScroll.repaint();
+				eventsEditor.saveToFile(file);
+				TitledBorder border = (TitledBorder) eventsEditorScroll
+						.getBorder();
+				border.setTitle("Events: " + file.getName());
+				eventsEditorScroll.repaint();
 			} catch (IOException e) {
-        showErrorMessage(WRITE_FILE_ERROR, e.getMessage());
+				showErrorMessage(WRITE_FILE_ERROR, e.getMessage());
 			}
 		}
 	}
 
-  private void clearEvents() {
-    eventsEditor.clear();
-  }
+	private void clearEvents() {
+		eventsEditor.clear();
+	}
 
 	private void readEvents() {
 		try {
@@ -371,9 +389,9 @@ public class SimulatorWindow extends JFrame {
 			TrafficSimulator simulator = controller.getSimulator();
 			simulator.clearEvents();
 			controller.loadEvents(is);
-    } catch (IOException | IllegalStateException e) {
-      reset();
-      showErrorMessage("Error reading events", e.getMessage());
+		} catch (IOException | IllegalStateException e) {
+			reset();
+			showErrorMessage("Error reading events", e.getMessage());
 		}
 	}
 
@@ -400,13 +418,14 @@ public class SimulatorWindow extends JFrame {
 			try {
 				reportsArea.saveToFile(chooser.getSelectedFile());
 			} catch (IOException e) {
-        showErrorMessage(WRITE_FILE_ERROR, e.getMessage());
+				showErrorMessage(WRITE_FILE_ERROR, e.getMessage());
 			}
 		}
 	}
 
 	private void generateReports() {
-    SimulatedObjectDialog dialog = new SimulatedObjectDialog(this, "Generate reports");
+		SimulatedObjectDialog dialog = new SimulatedObjectDialog(this,
+				"Generate reports");
 		TrafficSimulator simulator = controller.getSimulator();
 		dialog.setVehicles(simulator.getVehicles());
 		dialog.setRoads(simulator.getRoads());
@@ -417,7 +436,8 @@ public class SimulatorWindow extends JFrame {
 			Collection<Junction> junctions = dialog.getSelectedJunctions();
 			reportsArea.clear();
 			controller.getSimulator().generateReports(
-          new TextAreaOutputStream(reportsArea), junctions, roads, vehicles);
+					new TextAreaOutputStream(reportsArea), junctions, roads,
+					vehicles);
 			actionMap.get(Command.DELETE_REPORT).setEnabled(true);
 			actionMap.get(Command.SAVE_REPORT).setEnabled(true);
 		}
@@ -429,10 +449,10 @@ public class SimulatorWindow extends JFrame {
 		actionMap.get(Command.SAVE_REPORT).setEnabled(false);
 	}
 
-  private void showErrorMessage(String title, String msg) {
-    JOptionPane.showMessageDialog(SimulatorWindow.this, msg, title,
-        JOptionPane.ERROR_MESSAGE);
-  }
+	private void showErrorMessage(String title, String msg) {
+		JOptionPane.showMessageDialog(SimulatorWindow.this, msg, title,
+				JOptionPane.ERROR_MESSAGE);
+	}
 
 	private void addComponentToToolBar(JComponent bar, JComponent... elements) {
 		for (JComponent c : elements) {
@@ -446,8 +466,8 @@ public class SimulatorWindow extends JFrame {
 		}
 	}
 
-  private void refreshTables(Collection<Vehicle> vehicles, Collection<Road> roads,
-                             Collection<Junction> junctions) {
+	private void refreshTables(Collection<Vehicle> vehicles,
+			Collection<Road> roads, Collection<Junction> junctions) {
 		vehiclesTable.setElements(vehicles);
 		roadsTable.setElements(roads);
 		junctionsTable.setElements(junctions);

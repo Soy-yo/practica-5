@@ -24,14 +24,23 @@ public class Controller {
     outputStream = os;
   }
 
+  /**
+   * Ejecuta la simulación tantos pasos como se le indiquen
+   */
   public void run(int ticks) {
     simulator.execute(ticks, outputStream);
   }
 
+  /**
+   * Resetea el simulador
+   */
   public void reset() {
     simulator.reset();
   }
 
+  /**
+   * Carga los eventos desde la entrada que se le indica
+   */
   public void loadEvents(InputStream is) {
     try {
       Ini ini = new Ini(is);
