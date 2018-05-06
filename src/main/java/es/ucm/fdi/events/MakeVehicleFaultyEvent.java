@@ -26,7 +26,7 @@ public class MakeVehicleFaultyEvent extends Event {
 
   @Override
   public String toString() {
-    return "Break vehicles [" + String.join(",", vehicles) + "]";
+    return "Break Vehicles [" + String.join(",", vehicles) + "]";
   }
 
   static class Builder implements Event.Builder {

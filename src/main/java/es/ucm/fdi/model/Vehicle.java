@@ -66,26 +66,26 @@ public class Vehicle extends SimulatedObject {
 		return hasArrived;
 	}
 
-	@Override
-	/**
-	 * Hace avanzar al vehículo si no hay ningún problema
-	 */
-	public void advance() {
-		if (faulty > 0) {
-			faulty--;
-		} else if (!inJunction) {
-			int newLocation = location + currentSpeed;
-			if (newLocation >= road.getLength()) {
-				newLocation = road.getLength();
-				Junction nextJunction = itinerary.peek();
-				nextJunction.vehicleIn(this);
-				currentSpeed = 0;
-				inJunction = true;
-			}
-			kilometrage += newLocation - location;
-			location = newLocation;
-		}
-	}
+  /**
+   * Hace avanzar al vehículo si no hay ningún problema
+   */
+  @Override
+  public void advance() {
+    if (faulty > 0) {
+      faulty--;
+    } else if (!inJunction) {
+      int newLocation = location + currentSpeed;
+      if (newLocation >= road.getLength()) {
+        newLocation = road.getLength();
+        Junction nextJunction = itinerary.peek();
+        nextJunction.vehicleIn(this);
+        currentSpeed = 0;
+        inJunction = true;
+      }
+      kilometrage += newLocation - location;
+      location = newLocation;
+    }
+  }
 
 	/**
 	 * Cambia al vehículo de la carretera actual (si está en una) a la siguiente
@@ -102,6 +102,7 @@ public class Vehicle extends SimulatedObject {
 				hasArrived = true;
 				currentSpeed = 0;
 				road.vehicleOut(this);
+        road = null;
 			} else {
 				road = next.getStraightRoad(actual);
 				location = 0;
@@ -129,13 +130,13 @@ public class Vehicle extends SimulatedObject {
 	public Map<String, String> describe() {
 		Map<String, String> result = new HashMap<>();
 		result.put(INFO[0], id);
-		result.put(INFO[1], road.id);
+    result.put(INFO[1], hasArrived ? "arrived" : road.id);
 		result.put(INFO[2], hasArrived ? "arrived" : "" + location);
 		result.put(INFO[3], "" + currentSpeed);
 		result.put(INFO[4], "" + kilometrage);
 		result.put(INFO[5], "" + faulty);
-		result.put(INFO[6], itinerary.stream().map(SimulatedObject::getId)
-				.collect(joining(",")));
+    result.put(INFO[6], "[" + itinerary.stream().map(SimulatedObject::getId)
+        .collect(joining(",")) + "]");
 		return result;
 	}
 
