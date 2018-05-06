@@ -10,10 +10,8 @@ public class Junction extends SimulatedObject {
 	public static final String[] INFO = { "ID", "Green", "Red" };
 
 	protected Map<Road, IncomingRoad> incomingRoads;
-	protected IncomingRoad currentRoadOn; // carretera con semáforo en verde
-											// actualmente
-	protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del
-												// semáforo en verde
+  protected IncomingRoad currentRoadOn; // carretera con semáforo en verde actualmente
+  protected Iterator<IncomingRoad> nextRoad; // siguiente carretera a la del semáforo en verde
 
 	public Junction(String id) {
 		super(id);
@@ -96,12 +94,12 @@ public class Junction extends SimulatedObject {
         .map(Vehicle::toString)
         .collect(joining(","))
         + "])]");
-    result.put(INFO[2], '[' + incomingRoads.entrySet().stream()
+    result.put(INFO[2], "[" + incomingRoads.entrySet().stream()
         .filter(r -> r.getValue() != currentRoadOn)
-        .map(r -> r.getKey() + ",red,[" + (r.getValue().vehicleList.stream()
+        .map(r -> "(" + r.getKey() + ",red,[" + (r.getValue().vehicleList.stream()
 										.map(Vehicle::toString)
 										.collect(joining(",")) + "])"))
-						.collect(joining(",")) + ']');
+        .collect(joining(",")) + "]");
 		return result;
 	}
 

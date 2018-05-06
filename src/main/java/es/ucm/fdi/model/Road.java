@@ -103,9 +103,9 @@ public class Road extends SimulatedObject {
     result.put(INFO[2], destinationId);
     result.put(INFO[3], "" + length);
     result.put(INFO[4], "" + maxSpeed);
-    result.put(INFO[5], vehicleList.valuesList().stream()
+    result.put(INFO[5], "[" + vehicleList.valuesList().stream()
         .map(SimulatedObject::getId)
-        .collect(joining(",")));
+        .collect(joining(",")) + "]");
     return result;
   }
 
