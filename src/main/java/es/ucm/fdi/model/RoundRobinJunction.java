@@ -2,6 +2,10 @@ package es.ucm.fdi.model;
 
 import java.util.Map;
 
+/**
+ * Cruce que determina la duración del siguiente semáforo en verde en función del número de
+ * vehículos que pasó por la última carretera con el semáforo en verde
+ */
 public class RoundRobinJunction extends JunctionWithTimeSlice {
 
   public static final String TYPE = "rr";

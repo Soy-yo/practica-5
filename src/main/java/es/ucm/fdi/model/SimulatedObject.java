@@ -3,17 +3,23 @@ package es.ucm.fdi.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Clase que representa un objeto abstracto de la simulación
+ */
 public abstract class SimulatedObject implements Describable {
 
-  protected final String id; // id único
+  /**
+   * Id único de cada objeto
+   */
+  protected final String id;
 
   public SimulatedObject(String id) {
     this.id = id;
   }
 
   /**
-   * Hace a el objeto en cuestión avanzar si es un vehículo o que avancen los
-   * vehículos que están en él en caso contrario
+   * Hace a el objeto en cuestión avanzar si es un vehículo o que avancen los vehículos que están
+   * en él en caso contrario
    */
   public abstract void advance();
 
@@ -27,10 +33,7 @@ public abstract class SimulatedObject implements Describable {
    */
   protected abstract String getReportHeader();
 
-  /**
-   * Devuelve un mapa con los datos del objeto para ser impresos en la tabla
-   * correspondiente
-   */
+  @Override
   public abstract Map<String, String> describe();
 
   public String getId() {
@@ -38,7 +41,7 @@ public abstract class SimulatedObject implements Describable {
   }
 
   /**
-   * Genera el report utilizando los detalles del objeto
+   * Genera el informe utilizando los detalles del objeto
    */
   public Map<String, String> generateReport(int time) {
     Map<String, String> kvps = new LinkedHashMap<>();

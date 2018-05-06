@@ -1,5 +1,9 @@
 package es.ucm.fdi.model;
 
+/**
+ * Clase que representa un cruce en el que los semáforos necesitan varias llamadas a advance para
+ * cambiar de color
+ */
 public abstract class JunctionWithTimeSlice extends Junction {
 
   protected int timeLapse;
@@ -13,10 +17,10 @@ public abstract class JunctionWithTimeSlice extends Junction {
     timesUsed = 0;
   }
 
-  @Override
   /**
    *  Sobreescrito para usar la nueva IncomingRoad
    */
+  @Override
   public void addRoad(Road road) {
     incomingRoads.put(road, new IncomingRoad(road));
   }

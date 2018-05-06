@@ -11,13 +11,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
+/**
+ * Clase que representa un simulador de tráfico que se ejecuta mediante una serie de eventos
+ * indicados por el usuario
+ */
 public class TrafficSimulator {
 
   private int currentTime;
   private MultiTreeMap<Integer, Event> events;
   private RoadMap roadMap;
-  private List<Listener> listeners; // lista de listeners para comunicar
-  // cambios de estado
+  // Lista de listeners para comunicar cambios de estado
+  private List<Listener> listeners;
 
   public TrafficSimulator() {
     listeners = new ArrayList<>();
@@ -77,6 +81,9 @@ public class TrafficSimulator {
     listeners.remove(listener);
   }
 
+  /**
+   * Informa a los observadores que el simulador ha sido actualizado de alguna forma
+   */
   private void fireUpdateEvent(EventType type, String error) {
     UpdateEvent ue = new UpdateEvent(type);
     switch (type) {
@@ -125,8 +132,8 @@ public class TrafficSimulator {
   }
 
   /**
-   * Devuelve una cola de cruces a partir de sus ids si todos existen y hay
-   * alguna carretera que los une
+   * Devuelve una cola de cruces a partir de sus ids si todos existen y hay alguna carretera que
+   * los une
    */
   public Queue<Junction> getPath(String[] junctions) {
     return roadMap.getPath(junctions);
@@ -145,10 +152,11 @@ public class TrafficSimulator {
   }
 
   /**
-   * Escribe los reports de todos los objetos en la salida que se le indica
+   * Escribe los informes de los objetos indicados en la salida que se le indica si esta no es null
    */
   public void generateReports(OutputStream out,
-                              Collection<Junction> junctions, Collection<Road> roads,
+                              Collection<Junction> junctions,
+                              Collection<Road> roads,
                               Collection<Vehicle> vehicles) {
     if (out != null) {
       writeSimulatedObjectsReports(out, junctions);
@@ -157,18 +165,23 @@ public class TrafficSimulator {
     }
   }
 
+  /**
+   * Escribe el informe de una serie de objetos de un único tipo
+   */
   private void writeSimulatedObjectsReports(OutputStream out,
                                             Collection<? extends SimulatedObject> objects) {
     for (SimulatedObject o : objects) {
       try {
         writeReport(o.generateReport(currentTime), out);
       } catch (SimulatorError e) {
-        fireUpdateEvent(EventType.ERROR,
-            "Something went wrong while writing " + o + "'s report");
+        fireUpdateEvent(EventType.ERROR, "Something went wrong while writing " + o + "'s report");
       }
     }
   }
 
+  /**
+   * Escribe un informe en formato ini en la salida indicada a partir de un mapa (clave->valor)
+   */
   private void writeReport(Map<String, String> report, OutputStream out) {
     Ini ini = new Ini();
     IniSection sec = new IniSection(report.get(""));
@@ -198,8 +211,7 @@ public class TrafficSimulator {
             e.execute(this);
           } catch (IllegalArgumentException | IllegalStateException ex) {
             fireUpdateEvent(EventType.ERROR,
-                "Something went wrong while executing event "
-                    + e + "\n" + ex.getMessage());
+                "Something went wrong while executing event " + e + "\n" + ex.getMessage());
             // Error occurred, can't continue at this point
             return;
           }
@@ -213,8 +225,7 @@ public class TrafficSimulator {
       }
       currentTime++;
       fireUpdateEvent(EventType.ADVANCED, null);
-      generateReports(out, roadMap.getJunctions(), roadMap.getRoads(),
-          roadMap.getVehicles());
+      generateReports(out, roadMap.getJunctions(), roadMap.getRoads(), roadMap.getVehicles());
     }
   }
 
@@ -223,14 +234,29 @@ public class TrafficSimulator {
    */
   public interface Listener {
 
+    /**
+     * Método a invocar cuando un observador se ha registrado
+     */
     void registered(UpdateEvent ue);
 
+    /**
+     * Método a invocar cuando el simulador se ha reiniciado
+     */
     void reset(UpdateEvent ue);
 
+    /**
+     * Método a invocar cuando un evento ha sido añadido al simulador
+     */
     void newEvent(UpdateEvent ue);
 
+    /**
+     * Método a invocar cuando el simulador ha avanzado
+     */
     void advanced(UpdateEvent ue);
 
+    /**
+     * Método a invocar cuando se ha producido un error en la simulación
+     */
     void error(UpdateEvent ue, String msg);
 
   }
@@ -243,8 +269,7 @@ public class TrafficSimulator {
   }
 
   /**
-   * Clase que se envía con los observadores y que tiene la información de la
-   * actualización
+   * Clase que se envía con los observadores y que tiene la información de la actualización
    */
   public class UpdateEvent {
 

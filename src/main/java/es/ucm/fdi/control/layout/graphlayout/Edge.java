@@ -48,4 +48,5 @@ public class Edge {
   public boolean isEnabled() {
     return enabled;
   }
+
 }

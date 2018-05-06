@@ -2,6 +2,11 @@ package es.ucm.fdi.model;
 
 import java.util.Map;
 
+/**
+ * Cruce que actualiza el semáforo a la carretera con más vehículos a la espera más cercana en el
+ * sentido de las agujas del reloj a la actual en verde y calcula el tiempo que estará en verde
+ * el semáforo en función de los coches que haya en la cola
+ */
 public class MostCrowdedJunction extends JunctionWithTimeSlice {
 
   public static final String TYPE = "mc";
@@ -25,6 +30,10 @@ public class MostCrowdedJunction extends JunctionWithTimeSlice {
     }
   }
 
+  /**
+   * Busca la siguiente carretera que debe ponerse en verde y la actualiza, así como el iterador
+   * a la siguiente
+   */
   private void findNextRoad() {
     IncomingRoad road = (IncomingRoad) getNextRoad();
     IncomingRoad mostCrowded = road;

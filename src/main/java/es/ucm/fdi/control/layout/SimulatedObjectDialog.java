@@ -14,8 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Clase que permite abrir un diálogo para elegir los objetos de los que
- * queremos informes
+ * Clase que permite abrir un diálogo para elegir los objetos de los que queremos informes
  */
 public class SimulatedObjectDialog extends JDialog {
 
@@ -32,8 +31,7 @@ public class SimulatedObjectDialog extends JDialog {
 
   private int status;
 
-  private Border defaultBorder = BorderFactory.createLineBorder(Color.BLACK,
-      2);
+  private Border defaultBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 
   public SimulatedObjectDialog(JFrame parent, String title) {
     super(parent);
@@ -44,6 +42,7 @@ public class SimulatedObjectDialog extends JDialog {
 
     status = CANCELED;
 
+    // Es necesario cerrarlo para que continúe la ejecución
     setModal(true);
     setResizable(false);
     setTitle(title);
@@ -53,6 +52,7 @@ public class SimulatedObjectDialog extends JDialog {
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
     mainPanel.add(contentPanel, BorderLayout.CENTER);
 
+    // Paneles para mostrar las listas
     JPanel vehiclesPanel = new JPanel(new BorderLayout());
     JPanel roadsPanel = new JPanel(new BorderLayout());
     JPanel junctionsPanel = new JPanel(new BorderLayout());
@@ -61,18 +61,18 @@ public class SimulatedObjectDialog extends JDialog {
     contentPanel.add(roadsPanel);
     contentPanel.add(junctionsPanel);
 
-    vehiclesPanel.setBorder(BorderFactory.createTitledBorder(defaultBorder,
-        "Vehicles", TitledBorder.LEFT, TitledBorder.TOP));
-    roadsPanel.setBorder(BorderFactory.createTitledBorder(defaultBorder,
-        "Roads", TitledBorder.LEFT, TitledBorder.TOP));
-    junctionsPanel.setBorder(BorderFactory
-        .createTitledBorder(defaultBorder, "Junctions",
-            TitledBorder.LEFT, TitledBorder.TOP));
+    vehiclesPanel.setBorder(BorderFactory.createTitledBorder(defaultBorder, "Vehicles",
+        TitledBorder.LEFT, TitledBorder.TOP));
+    roadsPanel.setBorder(BorderFactory.createTitledBorder(defaultBorder, "Roads",
+        TitledBorder.LEFT, TitledBorder.TOP));
+    junctionsPanel.setBorder(BorderFactory.createTitledBorder(defaultBorder, "Junctions",
+        TitledBorder.LEFT, TitledBorder.TOP));
 
     vehiclesPanel.setMinimumSize(new Dimension(100, 1000));
     roadsPanel.setMinimumSize(new Dimension(100, 1000));
     junctionsPanel.setMinimumSize(new Dimension(100, 1000));
 
+    // Listas de objetos
     vehicleList = new JList<>();
     roadList = new JList<>();
     junctionList = new JList<>();
@@ -92,12 +92,12 @@ public class SimulatedObjectDialog extends JDialog {
             JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
         BorderLayout.CENTER);
 
+    // Checkboxes para seleccionar/deseleccionar todos los objetos de un tipo
     JCheckBox allVehicles = new JCheckBox("Select all");
     allVehicles.addActionListener(e -> {
       if (allVehicles.isSelected()) {
         vehicleList.setSelectionInterval(0, vehicles.getSize());
-        // Sin esta línea da problemas (por alguna razón el otro
-        // listener lo deselecciona)
+        // Sin esta línea da problemas (por alguna razón el otro listener lo deselecciona)
         allVehicles.setSelected(true);
       } else {
         vehicleList.clearSelection();
@@ -124,21 +124,20 @@ public class SimulatedObjectDialog extends JDialog {
       }
     });
 
-    vehicleList
-        .addListSelectionListener(e -> allVehicles
-            .setSelected(vehicleList.getSelectedIndices().length == vehicles
-                .getSize()));
-    roadList.addListSelectionListener(e -> allRoads.setSelected(roadList
-        .getSelectedIndices().length == roads.getSize()));
-    junctionList
-        .addListSelectionListener(e -> allJunctions
-            .setSelected(junctionList.getSelectedIndices().length == junctions
-                .getSize()));
+    // Si al seleccionar algo en una lista están todos seleccionados marca el checkbox,
+    // si no, lo desmarca
+    vehicleList.addListSelectionListener(e ->
+        allVehicles.setSelected(vehicleList.getSelectedIndices().length == vehicles.getSize()));
+    roadList.addListSelectionListener(e ->
+        allRoads.setSelected(roadList.getSelectedIndices().length == roads.getSize()));
+    junctionList.addListSelectionListener(e ->
+        allJunctions.setSelected(junctionList.getSelectedIndices().length == junctions.getSize()));
 
     vehiclesPanel.add(allVehicles, BorderLayout.SOUTH);
     roadsPanel.add(allRoads, BorderLayout.SOUTH);
     junctionsPanel.add(allJunctions, BorderLayout.SOUTH);
 
+    // Botones para cerrar el cuadro
     JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     mainPanel.add(buttonsPanel, BorderLayout.PAGE_END);
 
@@ -166,12 +165,12 @@ public class SimulatedObjectDialog extends JDialog {
     });
     buttonsPanel.add(okButton);
 
+    // Texto superior
     JPanel infoPanel = new JPanel();
     infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
     mainPanel.add(infoPanel, BorderLayout.PAGE_START);
 
-    infoPanel.add(new JLabel(
-        "Select items for which you want to generate reports."));
+    infoPanel.add(new JLabel("Select items for which you want to generate reports."));
 
     setContentPane(mainPanel);
     setMinimumSize(new Dimension(100, 100));
@@ -209,8 +208,7 @@ public class SimulatedObjectDialog extends JDialog {
     int[] indices = list.getSelectedIndices();
     ListModel<T> model = list.getModel();
     List<T> result = new ArrayList<>();
-    // Por alguna razón el checkbox seleccionado se lo traga como otro
-    // elemento más (?)
+    // Por alguna razón si el checkbox seleccionado se lo traga como otro elemento más
     for (int i = 0; i < indices.length && indices[i] < model.getSize(); i++) {
       result.add(model.getElementAt(indices[i]));
     }
@@ -218,23 +216,26 @@ public class SimulatedObjectDialog extends JDialog {
   }
 
   public int open() {
-    setLocation(getParent().getLocation().x + 50,
-        getParent().getLocation().y + 50);
+    setLocation(getParent().getLocation().x + 50, getParent().getLocation().y + 50);
     pack();
     setVisible(true);
     return status;
   }
 
-  private class SimulatedObjectListModel<T extends SimulatedObject> extends
-      DefaultListModel<T> {
+  /**
+   * Clase interna que representa el modelo de la lista donde mostrar los objetos
+   */
+  private class SimulatedObjectListModel<T extends SimulatedObject> extends DefaultListModel<T> {
 
     List<T> list;
 
-    SimulatedObjectListModel(Collection<T> list) {
-      if (list == null) {
+    SimulatedObjectListModel(Collection<T> c) {
+      if (c == null) {
         throw new IllegalArgumentException("List model cannot be null");
       }
-      this.list = new ArrayList<>(list);
+      // Es necesaria la copia porque los objetos llegan como Collection
+      // Al fin y al cabo la creación de este objeto no se va a dar muy a menudo
+      list = new ArrayList<>(c);
       refresh();
     }
 

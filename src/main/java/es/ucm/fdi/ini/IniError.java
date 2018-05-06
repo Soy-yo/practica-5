@@ -7,4 +7,5 @@ public class IniError extends RuntimeException {
   IniError(String msg) {
     super(msg);
   }
+
 }

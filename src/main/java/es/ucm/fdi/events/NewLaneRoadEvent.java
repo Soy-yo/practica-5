@@ -49,8 +49,8 @@ public class NewLaneRoadEvent extends NewRoadEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return super.getEventFileTemplate() + "\ntype=" + LaneRoad.TYPE + "\n" +
-          String.join("=\n", ATTRIBUTES) + "=";
+      return super.getEventFileTemplate() + "\ntype = " + LaneRoad.TYPE + "\n" +
+          String.join(" = \n", ATTRIBUTES) + " = \n";
     }
 
   }

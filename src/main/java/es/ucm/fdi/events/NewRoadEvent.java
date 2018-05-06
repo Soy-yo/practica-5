@@ -62,7 +62,7 @@ public class NewRoadEvent extends Event {
 
     @Override
     public String getEventFileTemplate() {
-      return "[" + SECTION_TAG_NAME + "]\n" + String.join("=\n", ATTRIBUTES) + "=";
+      return "[" + SECTION_TAG_NAME + "]\n" + String.join(" = \n", ATTRIBUTES) + " = \n";
     }
 
   }

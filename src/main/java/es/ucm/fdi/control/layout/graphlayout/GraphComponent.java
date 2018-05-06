@@ -256,7 +256,7 @@ public class GraphComponent extends JComponent {
   }
 
   /**
-   * Genera un gráfico con los objetos del simulador
+   * Genera un grafo con los objetos del simulador
    */
   public void generateGraph(Collection<Vehicle> vehicles, Collection<Road> roads,
                             Collection<Junction> junctions, Set<Road> greenRoads) {

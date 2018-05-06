@@ -7,8 +7,14 @@ import es.ucm.fdi.model.TrafficSimulator;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clase que representa un evento abstracto en la simulación
+ */
 public abstract class Event implements Describable {
 
+  /**
+   * Títulos de la descripción
+   */
   public static final String[] INFO = {"#", "Time", "Type"};
 
   protected final int time;
@@ -27,6 +33,9 @@ public abstract class Event implements Describable {
     return id;
   }
 
+  /**
+   * Ejecuta la acción del evento
+   */
   public abstract void execute(TrafficSimulator simulator);
 
   public Map<String, String> describe() {
@@ -42,6 +51,9 @@ public abstract class Event implements Describable {
     return getClass().getSimpleName() + " " + id;
   }
 
+  /**
+   * Permite construir eventos a partir de una sección de un archivo ini
+   */
   public interface Builder {
 
     /**
@@ -49,13 +61,18 @@ public abstract class Event implements Describable {
      */
     Event parse(IniSection section);
 
+    /**
+     * Devuelve el nombre del evento que construye
+     */
     String getEventName();
 
+    /**
+     * Devuelve la plantilla que tiene una sección de este evento
+     */
     String getEventFileTemplate();
 
     /**
-     * Comprueba que el tipo especificado sea el mismo que la subclase de
-     * Event concreta
+     * Comprueba que el tipo especificado sea el mismo que la subclase de Event concreta
      */
     default boolean matchesType(IniSection section) {
       return section.getValue("type") == null;
@@ -69,8 +86,7 @@ public abstract class Event implements Describable {
     }
 
     /**
-     * Lee una cadena de texto o lanza un error si no existe tal clave en la
-     * sección
+     * Lee una cadena de texto o lanza un error si no existe tal clave en la sección
      */
     default String parseString(IniSection section, String key) {
       String result = section.getValue(key);
@@ -81,11 +97,10 @@ public abstract class Event implements Describable {
     }
 
     /**
-     * Lee un entero del ini y devuelve dicho entero o un valor por defecto
-     * si no hay entrada o un error si no es un número o es negativo
+     * Lee un entero del ini y devuelve dicho entero o un valor por defecto si no hay entrada o
+     * un error si no es un número o es negativo
      */
-    default int parsePositiveInt(IniSection section, String key,
-                                 int defaultValue) {
+    default int parsePositiveInt(IniSection section, String key, int defaultValue) {
       try {
         int result = Integer.parseInt(parseString(section, key));
         if (result >= 0) {
@@ -99,21 +114,19 @@ public abstract class Event implements Describable {
       }
       // Si ha llegado aquí es que es negativo
       // No se lanza antes para que no lo capture el catch
-      throw new IllegalArgumentException(key
-          + " must be positive or zero");
+      throw new IllegalArgumentException(key + " must be positive or zero");
     }
 
     /**
-     * Lee un entero positivo del ini y devuelve dicho entero o un error si
-     * no es un numero o es negativo
+     * Lee un entero positivo del ini y devuelve dicho entero o un error si no es un numero o es
+     * negativo
      */
     default int parsePositiveInt(IniSection section, String key) {
       int result;
       try {
         result = Integer.parseInt(parseString(section, key));
         if (result <= 0) {
-          throw new IllegalArgumentException(key
-              + " must be positive");
+          throw new IllegalArgumentException(key + " must be positive");
         }
       } catch (NumberFormatException e) {
         throw new IllegalArgumentException(key + " must be a number", e);
@@ -122,11 +135,10 @@ public abstract class Event implements Describable {
     }
 
     /**
-     * Lee un long del ini y devuelve dicho entero o un valor por defecto si
-     * no hay entrada o un error si no es un número o es negativo
+     * Lee un long del ini y devuelve dicho entero o un valor por defecto si no hay entrada o un
+     * error si no es un número o es negativo
      */
-    default long parsePositiveLong(IniSection section, String key,
-                                   long defaultValue) {
+    default long parsePositiveLong(IniSection section, String key, long defaultValue) {
       try {
         long result = Long.parseLong(parseString(section, key));
         if (result > 0) {
@@ -142,17 +154,15 @@ public abstract class Event implements Describable {
     }
 
     /**
-     * Lee un double positivo del ini y devuelve dicho entero o un error si
-     * no es un numero, es negativo o mayor que un máximo dado
+     * Lee un double positivo del ini y devuelve dicho entero o un error si no es un numero, es
+     * negativo o mayor que un máximo dado
      */
-    default double parsePositiveDouble(IniSection section, String key,
-                                       double maxValue) {
+    default double parsePositiveDouble(IniSection section, String key, double maxValue) {
       double result;
       try {
         result = Double.parseDouble(parseString(section, key));
         if (result < 0 || result > maxValue) {
-          throw new IllegalArgumentException(key
-              + " has to be between 0 and " + maxValue);
+          throw new IllegalArgumentException(key + " has to be between 0 and " + maxValue);
         }
       } catch (NumberFormatException e) {
         throw new IllegalArgumentException(key + " must be a number");
@@ -161,25 +171,25 @@ public abstract class Event implements Describable {
     }
 
     /**
-     * Devuelve un array con una lista de ids que estaban separados por
-     * comas (al menos minElements)
+     * Devuelve un array con una lista de ids que estaban separados por comas (al menos minElements)
      */
-    default String[] parseIdList(IniSection section, String key,
-                                 int minElements) {
+    default String[] parseIdList(IniSection section, String key, int minElements) {
       String values = parseString(section, key);
       String[] result = values.split("[, ]+");
       if (result.length < minElements) {
-        throw new IllegalArgumentException("The id list for " + key
-            + " must contain at list " + minElements + " elements");
+        throw new IllegalArgumentException(
+            "The id list for " + key + " must contain at list " + minElements + " elements");
       }
       return result;
     }
 
+    /**
+     * Devuelve el campo id de la sección section
+     */
     default String getId(IniSection section) {
       String id = parseString(section, "id");
       if (!isValid(id)) {
-        throw new IllegalArgumentException("Id \"" + id
-            + "\" is not a valid id");
+        throw new IllegalArgumentException("Id \"" + id + "\" is not a valid id");
       }
       return id;
     }

@@ -49,8 +49,8 @@ public class NewRoundRobinJunctionEvent extends NewJunctionEvent {
 
     @Override
     public String getEventFileTemplate() {
-      return super.getEventFileTemplate() + "\ntype=" + RoundRobinJunction.TYPE + "\n" +
-          String.join("=\n", ATTRIBUTES) + "=";
+      return super.getEventFileTemplate() + "\ntype = " + RoundRobinJunction.TYPE + "\n" +
+          String.join(" = \n", ATTRIBUTES) + " = \n";
     }
 
   }

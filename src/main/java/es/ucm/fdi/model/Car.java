@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+/**
+ * Vehículo con cierta probabilidad de estropearse
+ */
 public class Car extends Vehicle {
 
   public static final String TYPE = "car";
@@ -14,9 +17,8 @@ public class Car extends Vehicle {
   private int maxFaultDuration;
   private Random randomNumber;
 
-  public Car(String id, int maxSpeed, Queue<Junction> itinerary,
-             int resistance, double faultProbability, int maxFaultDuration,
-             long seed) {
+  public Car(String id, int maxSpeed, Queue<Junction> itinerary, int resistance,
+             double faultProbability, int maxFaultDuration, long seed) {
     super(id, maxSpeed, itinerary);
     this.resistance = resistance;
     this.faultyProbability = faultProbability;

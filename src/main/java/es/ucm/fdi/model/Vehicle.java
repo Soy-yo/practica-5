@@ -4,6 +4,9 @@ import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Clase que representa un vehículo
+ */
 public class Vehicle extends SimulatedObject {
 
   private static final String SECTION_TAG_NAME = "vehicle_report";
@@ -135,7 +138,8 @@ public class Vehicle extends SimulatedObject {
     result.put(INFO[3], "" + currentSpeed);
     result.put(INFO[4], "" + kilometrage);
     result.put(INFO[5], "" + faulty);
-    result.put(INFO[6], "[" + itinerary.stream().map(SimulatedObject::getId)
+    result.put(INFO[6], "[" + itinerary.stream()
+        .map(SimulatedObject::getId)
         .collect(joining(",")) + "]");
     return result;
   }
