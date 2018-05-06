@@ -55,6 +55,9 @@ public class Main {
 
   }
 
+  /**
+   * Construye las opciones del comando help
+   */
   private static Options buildOptions() {
     Options cmdLineOptions = new Options();
 
@@ -148,6 +151,9 @@ public class Main {
 
   }
 
+  /**
+   * Probar un test y ver si coincide con la salida esperada
+   */
   private static boolean test(String inFile, String outFile,
                               String expectedOutFile, int timeLimit) throws IOException {
     outfile = outFile;
@@ -164,14 +170,16 @@ public class Main {
     return equalOutput;
   }
 
-
+  /**
+   * Ejecutar el simulador en modo gui
+   */
   private static void startGuiMode() {
     File initialFile = infile == null ? null : new File(infile);
     new SimulatorWindow("Traffic Simulator", initialFile, timeLimit, SimulatorWindow.WINDOW_SIZE);
   }
 
   /**
-   * Run the simulator in batch mode
+   * Ejecutar el simulador en modo batch
    */
   private static void startBatchMode() {
 
